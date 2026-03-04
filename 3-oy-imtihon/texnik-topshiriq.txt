@@ -1,0 +1,104 @@
+TEXNIK TOPSHIRIQ (TZ)
+Loyihani nomi: Najotkutubxona — Onlayn kutubxona tizimi
+Loyihani maqsadi: Foydalanuvchilar onlayn tarzda kutubxonadagi kitoblarni ko‘rish, izohlash, qidirish va kitoblar haqida ma’lumot olish imkoniyatiga ega bo‘lishi uchun backend (server) qismi uchun kuchli va optimallashgan PostgreSQL ma’lumotlar bazasi tuzish.
+
+📚 Asosiy jadvallar va ularning tavsifi
+1. users — foydalanuvchilar ro‘yxati
+column nomi
+type
+Tavsif
+id
+SERIAL (PK)
+Foydalanuvchi ID
+full_name
+VARCHAR(100)
+To‘liq ism
+email
+VARCHAR(100)
+Email (UNIQUE)
+password
+TEXT
+Parol hashlangan ko‘rinishda
+created_at
+TIMESTAMP
+Ro‘yxatdan o‘tgan sana
+
+
+2. books — kutubxona kitoblari
+column nomi
+type
+Tavsif
+id
+SERIAL (PK)
+Kitob ID
+title
+VARCHAR(150)
+Kitob nomi
+author_id
+INTEGER (FK)
+Muallif (authors.id ga FK)
+description
+TEXT
+Kitob haqida ma'lumot
+published_year
+INTEGER
+Nashr qilingan yil
+genre_id
+INTEGER (FK)
+Janr (genres.id ga FK)
+created_at
+TIMESTAMP
+Tizimga qo‘shilgan vaqti
+
+
+3. authors — mualliflar
+column nomi
+type
+Tavsif
+id
+SERIAL (PK)
+Muallif ID
+full_name
+VARCHAR(100)
+F.I.Sh
+country
+VARCHAR(100)
+Davlati
+
+
+
+4. genres — janrlar
+
+column nomi
+type
+Tavsif
+id
+SERIAL (PK)
+Janr ID
+name
+VARCHAR(50)
+Masalan: “Dasturlash”, “Ilmiy”
+
+
+
+
+
+5. comments — kitoblar bo‘yicha fikrlar
+column nomi
+     type
+Tavsif
+id
+SERIAL (PK)
+Izoh ID
+user_id
+INTEGER (FK)
+Kim izoh yozdi (users.id)
+book_id
+INTEGER (FK)
+Qaysi kitobga (books.id)
+content
+TEXT
+Izoh matni
+created_at
+TIMESTAMP
+Yozilgan vaqt
