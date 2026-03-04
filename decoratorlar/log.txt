@@ -1,0 +1,2 @@
+Funksiya: sonni_kubi | args=(1, 2, 3, 4, 5) kwargs={}
+Funksiya: sonni_kubi | args=(1, 2, 3, 4, 5) kwargs={} | Funksiya natijasi: [1, 8, 27, 64, 125]
