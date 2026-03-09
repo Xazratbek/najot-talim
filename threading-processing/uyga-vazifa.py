@@ -1,5 +1,5 @@
 # MultiThreading bo‘yicha 10 ta masala
-
+from queue import Queue
 from multiprocessing import Process, Pool, Queue
 from threading import Thread
 from functools import reduce
