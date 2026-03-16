@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }} - O'chirish</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #dc3545;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .warning-text {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .user-info-item {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .user-info-item strong {
+            color: #764ba2;
+        }
+
+        .danger-warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #856404;
+            font-weight: 500;
+        }
+
+        form {
+            margin-top: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-direction: column;
+        }
+
+        button, a.btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="icon">⚠️</div>
+            <h1>O'chirilsinmi?</h1>
+
+            <div class="user-info">
+                <div class="user-info-item">
+                    <strong>Ism:</strong> {{ user.name }}
+                </div>
+                <div class="user-info-item">
+                    <strong>Email:</strong> {{ user.email }}
+                </div>
+                <div class="user-info-item">
+                    <strong>Yosh:</strong> {{ user.age }}
+                </div>
+            </div>
+
+            <p class="warning-text">
+                Bu foydalanuvchini butunlay o'chirib tashlaysiz. Ushbu amalni qaytarib bo'lmaydi!
+            </p>
+
+            <div class="danger-warning">
+                ⚠️ Ehtiyot: O'chirilgan ma'lumotlar qayta tiklanib bo'lmaydi!
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="button-group">
+                    <a href="{% url 'user_detail' user.id %}" class="btn btn-cancel">← Bekor Qilish</a>
+                    <button type="submit" class="btn btn-delete">🗑️ Ha, O'chirish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

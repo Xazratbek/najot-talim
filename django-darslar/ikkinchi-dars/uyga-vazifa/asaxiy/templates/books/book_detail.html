@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.name }} - Kitob</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 30px;
+            font-size: 1em;
+            transition: opacity 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 0.8;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .book-header {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            padding: 40px;
+            align-items: start;
+        }
+
+        .book-cover-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .book-cover {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            width: 200px;
+            height: 280px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 80px;
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .book-info h1 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .book-author {
+            color: #f5576c;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .price-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .price-section .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .price-section .value {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .date-info {
+            color: #aaa;
+            font-size: 0.95em;
+        }
+
+        .description {
+            padding: 0 40px;
+            border-top: 2px solid #f0f0f0;
+            border-bottom: 2px solid #f0f0f0;
+            padding: 30px 40px;
+            margin-bottom: 40px;
+        }
+
+        .description-label {
+            color: #f5576c;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .description-text {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            padding: 0 40px 40px 40px;
+        }
+
+        .detail-item {
+            border-left: 4px solid #f5576c;
+            padding-left: 15px;
+        }
+
+        .detail-label {
+            color: #aaa;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            padding: 30px 40px;
+            background: #f8f8f8;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 2px solid #f5576c;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        @media (max-width: 768px) {
+            .book-header {
+                grid-template-columns: 1fr;
+            }
+
+            .book-cover {
+                width: 150px;
+                height: 210px;
+                font-size: 60px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'book_list' %}" class="back-link">← Orqaga qaytish</a>
+
+        <div class="card">
+            <div class="book-header">
+                <div class="book-cover-section">
+                    <div class="book-cover">📖</div>
+                </div>
+                <div class="book-info">
+                    <h1>{{ book.name }}</h1>
+                    <div class="book-author">✍️ {{ book.author }}</div>
+                    <div class="price-section">
+                        <div class="label">Narxi:</div>
+                        <div class="value">{{ book.price }} so'm</div>
+                    </div>
+                    <div class="date-info">
+                        📅 Qo'shilgan: {{ book.created_at|date:"d.m.Y H:i" }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="description">
+                <label class="description-label">📝 Ta'rifi</label>
+                <p class="description-text">{{ book.description }}</p>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Muallif</div>
+                    <div class="detail-value">{{ book.author }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Narxi</div>
+                    <div class="detail-value">{{ book.price|floatformat:0 }} so'm</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Raqami</div>
+                    <div class="detail-value">#{{ book.id }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Ro'yxatdan O'tgan</div>
+                    <div class="detail-value">{{ book.created_at|date:"d.m.Y" }}</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{% url 'book_list' %}" class="btn btn-secondary">← Barcha Kitoblar</a>
+                <button class="btn btn-primary">🛒 Sotib Olish</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

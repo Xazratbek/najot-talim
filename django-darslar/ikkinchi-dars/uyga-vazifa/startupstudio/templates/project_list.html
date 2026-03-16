@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyihalarin Ro'yxati</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .project-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .project-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .project-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .project-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+        .info-value {
+            color: #666;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status.completed {
+            background: #4caf50;
+            color: white;
+        }
+        .status.pending {
+            background: #ff9800;
+            color: white;
+        }
+        .empty-message {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            padding: 40px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Bizning Loyihalar</h1>
+
+        {% if projects %}
+            <div class="projects-grid">
+                {% for project in projects %}
+                    <div class="project-card">
+                        <h2 class="project-title">{{ project.title }}</h2>
+                        <p class="project-description">{{ project.description }}</p>
+
+                        <div class="project-info">
+                            <div class="info-item">
+                                <span class="info-label">Texnologiya:</span>
+                                <span class="info-value">{{ project.technology }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Mijoz:</span>
+                                <span class="info-value">{{ project.client }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Vaqti:</span>
+                                <span class="info-value">{{ project.duration }} kun</span>
+                            </div>
+                        </div>
+
+                        {% if project.completed %}
+                            <span class="status completed">✓ Tugatildi</span>
+                        {% else %}
+                            <span class="status pending">⏳ Jarayonda</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-message">
+                Hozircha hech qanday loyiha yo'q 😢
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
