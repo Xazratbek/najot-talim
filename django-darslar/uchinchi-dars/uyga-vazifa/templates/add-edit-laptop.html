@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if laptop %}Edit Laptop - LaptopHub{% else %}Add New Laptop - LaptopHub{% endif %}{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .form-hero {
+        padding: 3rem 0;
+        animation: fade-in 0.8s ease-out;
+    }
+
+    .form-hero h1 {
+        color: var(--mint);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-hero .subtitle {
+        color: var(--slate-400);
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto 4rem;
+    }
+
+    .form-wrapper {
+        background: linear-gradient(135deg, rgba(42, 63, 95, 0.5) 0%, rgba(26, 42, 74, 0.7) 100%);
+        border: 2px solid var(--copper);
+        border-radius: 4px;
+        padding: 2.5rem;
+        box-shadow: var(--shadow-lg);
+        animation: form-slide 0.8s ease-out;
+    }
+
+    @keyframes form-slide {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2.5rem;
+        border-bottom: 2px solid rgba(139, 90, 60, 0.3);
+    }
+
+    .form-section:last-of-type {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .form-section h3 {
+        color: var(--mint);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid var(--copper);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .form-section h3::before {
+        content: '›';
+        font-size: 1.8rem;
+        color: var(--copper-light);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-grid.full {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--copper-light);
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.95rem;
+        background: rgba(15, 20, 25, 0.6);
+        border: 2px solid var(--copper);
+        color: var(--white);
+        font-family: var(--font-sans);
+        border-radius: 2px;
+        font-size: 1rem;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: rgba(255, 255, 255, 0.35);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        background: rgba(15, 20, 25, 0.9);
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 140px;
+        font-family: var(--font-sans);
+    }
+
+    .input-hint {
+        font-size: 0.75rem;
+        color: var(--mint);
+        margin-top: 0.3rem;
+        font-family: var(--font-mono);
+        opacity: 0.8;
+    }
+
+    .form-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--copper), transparent);
+        margin: 2rem 0;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 2px solid rgba(139, 90, 60, 0.3);
+        flex-wrap: wrap;
+    }
+
+    .button-group .btn {
+        flex: 1;
+        min-width: 140px;
+        padding: 1.1rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .button-group .btn:first-child {
+        flex: 2;
+    }
+
+    .form-notice {
+        background: rgba(45, 212, 191, 0.1);
+        border-left: 4px solid var(--mint);
+        border-radius: 2px;
+        padding: 1.2rem;
+        margin: 1.5rem 0;
+        font-size: 0.9rem;
+        color: var(--slate-300);
+    }
+
+    .form-notice strong {
+        color: var(--mint);
+        font-family: var(--font-mono);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--mint);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 2rem;
+        transition: var(--transition);
+    }
+
+    .back-link:hover {
+        transform: translateX(-4px);
+    }
+
+    .field-group-label {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--copper);
+        margin-bottom: 0.8rem;
+        display: block;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .form-wrapper {
+            padding: 1.5rem;
+        }
+
+        .form-hero h1 {
+            font-size: 1.8rem;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .button-group .btn {
+            width: 100%;
+        }
+
+        .form-section h3 {
+            font-size: 1.2rem;
+        }
+    }
+
+    .required::after {
+        content: '*';
+        color: var(--error);
+        margin-left: 0.3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if laptop %}
+        <a href="{% url 'laptop-detail' laptop.0.id %}" class="back-link">← Back to Device</a>
+    {% else %}
+        <a href="{% url 'laptop-list' %}" class="back-link">← Back to Catalog</a>
+    {% endif %}
+
+    <div class="form-hero">
+        <h1>
+            {% if laptop %}
+                Modify Device Specifications
+            {% else %}
+                ⚡ Add New Laptop
+            {% endif %}
+        </h1>
+        <p class="subtitle">
+            {% if laptop %}
+                Update the device information in our catalog
+            {% else %}
+                Contribute a high-performance machine to the collection
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="form-container">
+        <div class="form-wrapper">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-notice">
+                    <strong>Note:</strong> All fields marked with <span style="color: var(--error);">*</span> are required. Specifications must be accurate and up-to-date.
+                </div>
+
+                <!-- Brand & Name Section -->
+                <div class="form-section">
+                    <h3>Device Identification</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="brand" class="required">Brand</label>
+                            <input type="text" id="brand" name="brand" placeholder="e.g. Apple, Dell, ASUS"
+                                   value="{% if laptop %}{{ laptop.0.brand }}{% endif %}" required>
+                            <span class="input-hint">Manufacturer name</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="required">Model Name</label>
+                            <input type="text" id="name" name="name" placeholder="e.g. MacBook Pro 16, XPS 15"
+                                   value="{% if laptop %}{{ laptop.0.name }}{% endif %}" required>
+                            <span class="input-hint">Full model designation</span>
+                        </div>
+                    </div>
+                    <div class="form-grid full">
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" placeholder="Describe the laptop's key characteristics, target audience, and notable features...">{% if laptop %}{{ laptop.0.description }}{% endif %}</textarea>
+                            <span class="input-hint">Optional: Provide detailed context about this machine</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Image Section -->
+                <div class="form-section">
+                    <h3>Product Image</h3>
+                    <div class="form-grid full">
+                        <div class="form-group">
+                            <label for="image">Laptop Rasm</label>
+                            <input type="file" id="image" name="image" accept="image/*">
+                            <span class="input-hint">PNG, JPG, yoki GIF formatida (ixtiyoriy)</span>
+                        </div>
+                        {% if laptop and laptop.0.image %}
+                            <div style="margin-top: 1rem; padding: 1rem; background: rgba(45, 212, 191, 0.1); border-left: 4px solid var(--mint); border-radius: 2px;">
+                                <p style="margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--slate-300);">Hozirgi rasm:</p>
+                                <img src="{{ laptop.0.image.url }}" alt="Current" style="max-width: 200px; border-radius: 2px;">
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Pricing Section -->
+                <div class="form-section">
+                    <h3>Pricing</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="price" class="required">Price (USD)</label>
+                            <input type="number" id="price" name="price" placeholder="0.00" step="0.01" min="0"
+                                   value="{% if laptop %}{{ laptop.0.price }}{% endif %}" required>
+                            <span class="input-hint">Base price in US dollars</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processor & Graphics Section -->
+                <div class="form-section">
+                    <h3>Processor & Graphics</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cpu" class="required">CPU</label>
+                            <input type="text" id="cpu" name="cpu" placeholder="e.g. Intel Core i7-12700H, AMD Ryzen 7 5800X"
+                                   value="{% if laptop %}{{ laptop.0.cpu }}{% endif %}" required>
+                            <span class="input-hint">Processor model and specs</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="gpu">GPU (Optional)</label>
+                            <input type="text" id="gpu" name="gpu" placeholder="e.g. NVIDIA RTX 3080, Iris Xe Graphics"
+                                   value="{% if laptop %}{{ laptop.0.gpu }}{% endif %}">
+                            <span class="input-hint">Graphics processor or chipset</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory & Storage Section -->
+                <div class="form-section">
+                    <h3>Memory & Storage</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ram" class="required">RAM (GB)</label>
+                            <input type="number" id="ram" name="ram" placeholder="8" min="1" max="128"
+                                   value="{% if laptop %}{{ laptop.0.ram }}{% endif %}" required>
+                            <span class="input-hint">Total memory in gigabytes</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="storage" class="required">Storage (GB)</label>
+                            <input type="number" id="storage" name="storage" placeholder="512" min="64"
+                                   value="{% if laptop %}{{ laptop.0.storage }}{% endif %}" required>
+                            <span class="input-hint">Total storage capacity</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="storage_type" class="required">Storage Type</label>
+                            <select id="storage_type" name="storage_type" required>
+                                <option value="">Select storage type</option>
+                                <option value="ssd" {% if laptop and laptop.0.storage_type == 'ssd' %}selected{% endif %}>SSD (Solid State Drive)</option>
+                                <option value="hdd" {% if laptop and laptop.0.storage_type == 'hdd' %}selected{% endif %}>HDD (Hard Disk Drive)</option>
+                            </select>
+                            <span class="input-hint">Storage drive technology</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display & Battery Section -->
+                <div class="form-section">
+                    <h3>Display & Battery</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="screen_size" class="required">Screen Size (inches)</label>
+                            <input type="number" id="screen_size" name="screen_size" placeholder="15.6" step="0.1" min="7" max="20"
+                                   value="{% if laptop %}{{ laptop.0.screen_size }}{% endif %}" required>
+                            <span class="input-hint">Display diagonal in inches</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="resolution" class="required">Resolution</label>
+                            <input type="text" id="resolution" name="resolution" placeholder="e.g. 1920x1200, 2560x1440"
+                                   value="{% if laptop %}{{ laptop.0.resolution }}{% endif %}" required>
+                            <span class="input-hint">Display pixel dimensions (WxH)</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="battery">Battery Capacity (mAh)</label>
+                            <input type="number" id="battery" name="battery" placeholder="50000" min="1000"
+                                   value="{% if laptop %}{{ laptop.0.battery }}{% endif %}">
+                            <span class="input-hint">Battery capacity in milliamp hours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Physical & System Section -->
+                <div class="form-section">
+                    <h3>Physical Specifications & OS</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="weight" class="required">Weight (kg)</label>
+                            <input type="number" id="weight" name="weight" placeholder="1.8" step="0.01" min="0.1" max="5"
+                                   value="{% if laptop %}{{ laptop.0.weight }}{% endif %}" required>
+                            <span class="input-hint">Device weight in kilograms</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="os">Operating System</label>
+                            <input type="text" id="os" name="os" placeholder="e.g. Windows 11, macOS Ventura, Ubuntu 22.04"
+                                   value="{% if laptop %}{{ laptop.0.os }}{% endif %}">
+                            <span class="input-hint">Installed or supported operating system</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="button-group">
+                    <button type="submit" class="btn">
+                        {% if laptop %}
+                            💾 Save Changes
+                        {% else %}
+                            ➕ Add to Catalog
+                        {% endif %}
+                    </button>
+                    <a href="{% if laptop %}{% url 'laptop-detail' laptop.0.id %}{% else %}{% url 'laptop-list' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

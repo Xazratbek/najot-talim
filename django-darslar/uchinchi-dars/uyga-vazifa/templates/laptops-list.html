@@ -1,0 +1,442 @@
+{% extends 'base.html' %}
+
+{% block title %}LaptopHub - Laptop Catalog{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .hero {
+        padding: 6rem 0;
+        text-align: center;
+        margin-bottom: 4rem;
+        animation: hero-entrance 0.8s ease-out;
+    }
+
+    @keyframes hero-entrance {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .hero h1 {
+        background: linear-gradient(135deg, var(--mint) 0%, var(--copper-light) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        font-size: 3.2rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        color: var(--slate-400);
+        max-width: 600px;
+        margin: 0 auto 2rem;
+    }
+
+    .cta-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Product Grid */
+    .products-section {
+        margin-bottom: 5rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 3rem;
+        border-bottom: 3px solid var(--copper);
+        padding-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .section-header h2::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: var(--mint);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .product-count {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        color: var(--copper);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2.5rem;
+        animation: grid-stagger 0.8s ease-out;
+    }
+
+    @keyframes grid-stagger {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .product-card {
+        background: linear-gradient(135deg, rgba(42, 63, 95, 0.6) 0%, rgba(26, 42, 74, 0.8) 100%);
+        border: 2px solid var(--copper);
+        border-radius: 4px;
+        overflow: hidden;
+        transition: var(--transition);
+        position: relative;
+        cursor: pointer;
+        animation: card-float 0.8s ease-out backwards;
+    }
+
+    .product-card:nth-child(1) { animation-delay: 0.05s; }
+    .product-card:nth-child(2) { animation-delay: 0.1s; }
+    .product-card:nth-child(3) { animation-delay: 0.15s; }
+    .product-card:nth-child(n+4) { animation-delay: 0.2s; }
+
+    @keyframes card-float {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .product-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.1), transparent);
+        transition: left 0.6s ease;
+        z-index: 1;
+    }
+
+    .product-card:hover::before {
+        left: 100%;
+    }
+
+    .product-card:hover {
+        border-color: var(--mint);
+        box-shadow: 0 0 30px rgba(45, 212, 191, 0.2), inset 0 0 30px rgba(45, 212, 191, 0.05);
+        transform: translateY(-8px);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 220px;
+        background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        border-bottom: 2px solid var(--copper);
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.1);
+    }
+
+    .product-image::after {
+        content: attr(data-brand);
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--copper);
+        color: var(--white);
+        padding: 0.4rem 0.8rem;
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 2px;
+        opacity: 0;
+        transition: var(--transition);
+    }
+
+    .product-card:hover .product-image::after {
+        opacity: 1;
+        transform: translateX(-1rem);
+    }
+
+    .product-content {
+        padding: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .product-header {
+        margin-bottom: 1rem;
+    }
+
+    .product-brand {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--mint);
+        margin-bottom: 0.3rem;
+    }
+
+    .product-name {
+        font-size: 1.3rem;
+        margin: 0.5rem 0;
+        color: var(--white);
+        line-height: 1.3;
+    }
+
+    .product-price {
+        font-family: var(--font-mono);
+        font-size: 1.8rem;
+        color: var(--copper-light);
+        font-weight: 700;
+        margin: 1rem 0;
+    }
+
+    .specs {
+        font-size: 0.85rem;
+        color: var(--slate-400);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+        margin: 1.2rem 0;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-left: 3px solid var(--mint);
+        border-radius: 2px;
+    }
+
+    .spec-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .spec-label {
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--mint);
+        margin-bottom: 0.2rem;
+    }
+
+    .spec-value {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        color: var(--slate-300);
+    }
+
+    .description {
+        font-size: 0.9rem;
+        color: var(--slate-400);
+        margin: 1rem 0;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.8rem;
+        margin-top: 1.2rem;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        padding: 0.7rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .add-laptop-section {
+        background: linear-gradient(135deg, rgba(42, 63, 95, 0.4) 0%, rgba(45, 212, 191, 0.1) 100%);
+        border: 2px dashed var(--mint);
+        border-radius: 4px;
+        padding: 3rem;
+        text-align: center;
+        margin-bottom: 4rem;
+        transition: var(--transition);
+    }
+
+    .add-laptop-section:hover {
+        border-color: var(--copper-light);
+        background: linear-gradient(135deg, rgba(42, 63, 95, 0.6) 0%, rgba(45, 212, 191, 0.15) 100%);
+    }
+
+    .add-laptop-section h3 {
+        color: var(--mint);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-state h2 {
+        color: var(--slate-400);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--slate-400);
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.2rem;
+        }
+
+        .products-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .specs {
+            grid-template-columns: 1fr;
+        }
+
+        .cta-group {
+            flex-direction: column;
+        }
+
+        .section-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero">
+        <h1>High-Performance Computing</h1>
+        <p>Discover meticulously curated laptops engineered for power and precision.</p>
+        <div class="cta-group">
+            <a href="{% url 'add-laptop' %}" class="btn">+ Add New Device</a>
+            <a href="#products" class="btn btn-secondary">Browse Catalog</a>
+        </div>
+    </div>
+
+    <div class="add-laptop-section">
+        <h3>⚡ Contribute to Our Collection</h3>
+        <p>Know the perfect machine? Help us expand the catalog by adding a laptop.</p>
+        <a href="{% url 'add-laptop' %}" class="btn">Add Laptop</a>
+    </div>
+
+    <div class="products-section" id="products">
+        {% if laptops %}
+            <div class="section-header">
+                <h2>Available Machines</h2>
+                <span class="product-count">{{ laptops.count }} devices</span>
+            </div>
+
+            <div class="products-grid">
+                {% for laptop in laptops %}
+                    <div class="product-card">
+                        <div class="product-image" data-brand="{{ laptop.brand }}">
+                            {% if laptop.image %}
+                                <img src="{{ laptop.image.url }}" alt="{{ laptop.name }}">
+                            {% else %}
+                                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: var(--slate-400);">
+                                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">💻</div>
+                                    <span style="font-family: var(--font-mono); font-size: 0.75rem;">NO IMAGE</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="product-content">
+                            <div class="product-header">
+                                <div class="product-brand">{{ laptop.brand }}</div>
+                                <div class="product-name">{{ laptop.name }}</div>
+                            </div>
+
+                            <div class="product-price">
+                                ${{ laptop.price|floatformat:2 }}
+                            </div>
+
+                            <div class="specs">
+                                <div class="spec-item">
+                                    <span class="spec-label">Processor</span>
+                                    <span class="spec-value">{{ laptop.cpu|truncatewords:3 }}</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">RAM</span>
+                                    <span class="spec-value">{{ laptop.ram }} GB</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Storage</span>
+                                    <span class="spec-value">{{ laptop.storage }} GB {{laptop.storage_type|upper}}</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Display</span>
+                                    <span class="spec-value">{{ laptop.screen_size }}" {{ laptop.resolution }}</span>
+                                </div>
+                            </div>
+
+                            {% if laptop.description %}
+                                <div class="description">{{ laptop.description }}</div>
+                            {% endif %}
+
+                            <div class="action-buttons">
+                                <a href="{% url 'laptop-detail' laptop.id %}" class="btn">View Details</a>
+                                <a href="{% url 'laptop-update' laptop.id %}" class="btn btn-secondary">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>No Devices Found</h2>
+                <p>The catalog is currently empty. Be the first to add a laptop.</p>
+                <a href="{% url 'add-laptop' %}" class="btn">Add Your First Laptop</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
