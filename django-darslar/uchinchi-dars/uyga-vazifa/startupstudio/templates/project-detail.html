@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyiha Tafsilotlari</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        a.back-btn {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        a.back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .detail-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .project-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        .detail-item {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        .detail-value {
+            color: #333;
+            font-size: 1em;
+            line-height: 1.6;
+            padding-left: 10px;
+            border-left: 3px solid #667eea;
+        }
+        .status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .status.completed {
+            background: #4caf50;
+            color: white;
+        }
+        .status.pending {
+            background: #ff9800;
+            color: white;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .btn-edit {
+            background: #667eea;
+            color: white;
+        }
+        .btn-edit:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+        .empty-message {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            padding: 40px 20px;
+        }
+        .navigation-footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+        .nav-link:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Loyiha Tafsiloti</h1>
+            <a href="{% url 'projects' %}" class="back-btn">← Orqaga</a>
+        </div>
+
+        {% if pr %}
+            <div class="detail-card">
+                <h2 class="project-title">{{ pr.title }}</h2>
+
+                <div class="detail-item">
+                    <span class="detail-label">📝 Tavsif:</span>
+                    <span class="detail-value">{{ pr.description }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">🛠️ Texnologiya:</span>
+                    <span class="detail-value">{{ pr.technology }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">👤 Mijoz:</span>
+                    <span class="detail-value">{{ pr.client }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">⏱️ Vaqti:</span>
+                    <span class="detail-value">{{ pr.duration }} kun</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">📅 Yaratilgan:</span>
+                    <span class="detail-value">{{ pr.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">✅ Holati:</span>
+                    {% if pr.completed %}
+                        <span class="status completed">✓ Tugatildi</span>
+                    {% else %}
+                        <span class="status pending">⏳ Jarayonda</span>
+                    {% endif %}
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'update-project' pr.id %}" class="btn btn-edit">Tahrirlash</a>
+                    <a href="{% url 'delete-project' pr.id %}" class="btn btn-delete" onclick="return confirm('Aniq o\'chirasizmi?')">O'chirish</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-message">
+                Loyiha topilmadi 😢
+            </div>
+        {% endif %}
+
+        <div class="navigation-footer">
+            <a href="{% url 'projects' %}" class="nav-link">📋 Loyihalar</a>
+            <a href="{% url 'add-project' %}" class="nav-link">➕ Yangı Qo'shish</a>
+        </div>
+    </div>
+</body>
+</html>

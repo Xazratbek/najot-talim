@@ -25,7 +25,7 @@ def add_laptop(request):
         os = request.POST.get("os")
         image = request.FILES.get("image")
 
-        laptop = Laptop.objects.create(
+        Laptop.objects.create(
             brand=brand, name=name, description=description, price=price,
             cpu=cpu, gpu=gpu, storage=storage, storage_type=storage_type,
             ram=ram, screen_size=screen_size, resolution=resolution,

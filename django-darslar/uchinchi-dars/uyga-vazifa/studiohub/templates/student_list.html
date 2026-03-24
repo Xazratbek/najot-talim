@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+
+{% block title %}Students - StudioHub{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .students-container {
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .students-wrapper {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(15, 118, 110, 0.12);
+        border: 1px solid var(--border);
+    }
+
+    .students-header {
+        padding: 2.5rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .students-header h2 {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .student-count {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+
+    .students-list {
+        overflow-x: auto;
+    }
+
+    .students-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .students-table thead {
+        background: var(--surface);
+        border-bottom: 2px solid var(--border);
+    }
+
+    .students-table th {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        padding: 1.5rem 2rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text);
+    }
+
+    .students-table tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        animation: rowReveal 0.5s ease-out backwards;
+    }
+
+    @keyframes rowReveal {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .students-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    .students-table tbody tr:nth-child(2) { animation-delay: 0.15s; }
+    .students-table tbody tr:nth-child(3) { animation-delay: 0.2s; }
+    .students-table tbody tr:nth-child(n+4) { animation-delay: 0.25s; }
+
+    .students-table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(15, 118, 110, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%);
+        transform: scale(1.01);
+    }
+
+    .students-table td {
+        padding: 1.5rem 2rem;
+        font-size: 0.95rem;
+    }
+
+    .student-name {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-weight: 600;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gradient-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .student-email {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+    .students-table tbody tr:hover .student-email {
+        color: var(--primary);
+    }
+
+    .student-age {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .student-joined {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .joined-badge {
+        width: 8px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.5;
+            transform: scale(1.2);
+        }
+    }
+
+    .student-action {
+        text-align: center;
+    }
+
+    .action-btn {
+        background: var(--gradient-1);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .action-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.5s, height 0.5s;
+    }
+
+    .action-btn:hover::before {
+        width: 200px;
+        height: 200px;
+    }
+
+    .action-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(20, 184, 166, 0.25);
+    }
+
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        color: var(--text-light);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state h2 {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .students-footer {
+        padding: 1.5rem 2rem;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        font-size: 0.85rem;
+        color: var(--text-light);
+        animation: slideUp 0.5s ease-out 0.3s both;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .students-table {
+            font-size: 0.85rem;
+        }
+
+        .students-table th,
+        .students-table td {
+            padding: 1rem 0.75rem;
+        }
+
+        .students-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .student-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 0.8rem;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="students-container" id="students">
+    <h1 class="page-title">Our Community</h1>
+    <p class="page-subtitle">Meet the talented learners shaping the future of creative technology.</p>
+
+    {% if students %}
+        <div class="students-wrapper">
+            <div class="students-header">
+                <h2>Active Students</h2>
+                <span class="student-count">{{ students|length }} Members</span>
+            </div>
+
+            <div class="students-list">
+                <table class="students-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Age</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>
+                                    <div class="student-name">
+                                        <div class="student-avatar">
+                                            {{ student.name|first|upper }}
+                                        </div>
+                                        {{ student.name }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="student-email">{{ student.email }}</span>
+                                </td>
+                                <td>
+                                    <span class="student-age">
+                                        📊 {{ student.age }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="student-joined">
+                                        <span class="joined-badge"></span>
+                                        {{ student.joined_at|date:"M d, Y" }}
+                                    </div>
+                                </td>
+                                <td class="student-action">
+                                    <button class="action-btn">View Profile</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="students-footer">
+                📈 Total impact: {{ students|length }} students building amazing projects
+            </div>
+        </div>
+    {% else %}
+        <div class="students-wrapper">
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <h2>No students yet</h2>
+                <p>Be the first to join our community and start your learning journey.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

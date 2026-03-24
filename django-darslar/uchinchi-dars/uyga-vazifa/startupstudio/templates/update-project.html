@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyihani Tahrirlash</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        a.back-btn {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        a.back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+            font-size: 1em;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: 'Arial', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        .checkbox-label {
+            margin: 0;
+            font-weight: normal;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        button,
+        a.btn-cancel {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-submit {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+        .btn-submit:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-cancel {
+            background: #999;
+            color: white;
+            flex: 1;
+            text-align: center;
+        }
+        .btn-cancel:hover {
+            background: #777;
+            transform: translateY(-2px);
+        }
+        .form-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+        .navigation-footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+        .nav-link:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Loyihani Tahrirlash</h1>
+            <a href="{% url 'projects' %}" class="back-btn">← Orqaga</a>
+        </div>
+
+        <div class="form-card">
+            <h2 class="form-title">Loyiha Ma'lumotlarini Yangilang</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="title">📌 Loyiha Nomi:</label>
+                    <input type="text" id="title" name="title" value="{{ pr.title }}" required placeholder="Masalan: E-Sotuvcha Sayti">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">📝 Tavsif:</label>
+                    <textarea id="description" name="description" required placeholder="Loyihaning batafsil tavsifini yozing...">{{ pr.description }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="technology">🛠️ Texnologiya:</label>
+                    <input type="text" id="technology" name="technology" value="{{ pr.technology }}" required placeholder="Masalan: Django, React, PostgreSQL">
+                </div>
+
+                <div class="form-group">
+                    <label for="client">👤 Mijoz:</label>
+                    <input type="text" id="client" name="client" value="{{ pr.client }}" required placeholder="Mijozning nomi">
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">⏱️ Vaqti (kunlarda):</label>
+                    <input type="number" id="duration" name="duration" value="{{ pr.duration }}" required min="1" placeholder="30">
+                </div>
+
+                <div class="form-group">
+                    <label for="completed">✅ Tugatilgan:</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="completed" name="completed" value="on" {% if pr.completed %}checked{% endif %}>
+                        <label for="completed" class="checkbox-label">Loyiha tugatilgan</label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-submit">✓ Saqlash</button>
+                    <a href="{% url 'projects' %}" class="btn-cancel">✕ Bekor Qilish</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="{% url 'projects' %}" class="nav-link">📋 Loyihalar</a>
+            <a href="{% url 'add-project' %}" class="nav-link">➕ Yangı Qo'shish</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add book</title>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        <input name="title" type="text" placeholder="Kitob nomi"><br>
+        <input name="desc" type="text" placeholder="Izoh"><br>
+        <input name="author" type="text" placeholder="Muallif"><br>
+        <input name="isbn" type="text" placeholder="ISBN"><br>
+        <button type="submit">Saqlash</button>
+    </form>
+</body>
+</html>

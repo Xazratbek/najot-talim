@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ crs.title }} - StudioHub{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .detail-container {
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .detail-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(15, 118, 110, 0.12);
+        border: 1px solid var(--border);
+    }
+
+    .detail-header {
+        background: var(--gradient-1);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .detail-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .detail-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .detail-header h2 {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-header p {
+        font-size: 1rem;
+        opacity: 0.95;
+    }
+
+    .detail-content {
+        padding: 3rem 2rem;
+    }
+
+    .detail-info-group {
+        margin-bottom: 2rem;
+        animation: slideInUp 0.6s ease-out backwards;
+    }
+
+    .detail-info-group:nth-child(1) { animation-delay: 0.1s; }
+    .detail-info-group:nth-child(2) { animation-delay: 0.2s; }
+    .detail-info-group:nth-child(3) { animation-delay: 0.3s; }
+    .detail-info-group:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .detail-info-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-info-value {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .price-badge {
+        display: inline-block;
+        background: var(--gradient-2);
+        color: var(--text);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .detail-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .meta-item {
+        text-align: center;
+    }
+
+    .meta-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .meta-label {
+        color: var(--text-light);
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .meta-value {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .detail-actions {
+        display: flex;
+        gap: 1rem;
+        padding: 2rem;
+        animation: slideInUp 0.6s ease-out 0.5s backwards;
+    }
+
+    .btn-edit,
+    .btn-back {
+        flex: 1;
+        padding: 1rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        font-family: 'DM Sans', sans-serif;
+        letter-spacing: 0.3px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-edit {
+        background: var(--gradient-1);
+        color: white;
+        box-shadow: 0 4px 16px rgba(15, 118, 110, 0.3);
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(15, 118, 110, 0.4);
+    }
+
+    .btn-back {
+        background: var(--surface);
+        color: var(--text);
+        border: 2px solid var(--border);
+    }
+
+    .btn-back:hover {
+        background: var(--border);
+    }
+
+    @media (max-width: 768px) {
+        .detail-header {
+            padding: 2rem 1rem;
+        }
+
+        .detail-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .detail-content {
+            padding: 2rem 1rem;
+        }
+
+        .detail-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+        {% if crs %}
+        <div class="detail-wrapper">
+            <div class="detail-header">
+                <div class="detail-header-content">
+                    <h2>{{ crs.title }}</h2>
+                    <p>by {{ crs.instructor }}</p>
+                </div>
+            </div>
+
+            <div class="detail-meta">
+                <div class="meta-item">
+                    <div class="meta-icon">💰</div>
+                    <div class="meta-label">Price</div>
+                    <div class="meta-value">${{ crs.price }}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon">📅</div>
+                    <div class="meta-label">Created</div>
+                    <div class="meta-value">{{ crs.created_at|date:"M d, Y" }}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon">🎓</div>
+                    <div class="meta-label">Instructor</div>
+                    <div class="meta-value">{{ crs.instructor }}</div>
+                </div>
+            </div>
+
+            <div class="detail-content">
+                <div class="detail-info-group">
+                    <div class="detail-info-label">Course Title</div>
+                    <div class="detail-info-value">{{ crs.title }}</div>
+                </div>
+
+                <div class="detail-info-group">
+                    <div class="detail-info-label">Instructor</div>
+                    <div class="detail-info-value">{{ crs.instructor }}</div>
+                </div>
+
+                <div class="detail-info-group">
+                    <div class="detail-info-label">Price</div>
+                    <div class="price-badge">${{ crs.price }}</div>
+                </div>
+
+                <div class="detail-info-group">
+                    <div class="detail-info-label">Course ID</div>
+                    <div class="detail-info-value">#{{ crs.id }}</div>
+                </div>
+            </div>
+
+            <div class="detail-actions">
+                <a href="{% url 'update-course' crs.id %}" class="btn-edit">Edit Course</a>
+                <a href="{% url 'course-list' %}" class="btn-back">Back to Courses</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="detail-wrapper">
+            <div class="detail-content" style="text-align: center; padding: 4rem 2rem;">
+                <h2 style="color: var(--text-light); margin-bottom: 1rem;">Course Not Found</h2>
+                <p style="color: var(--text-light); margin-bottom: 2rem;">The course you're looking for doesn't exist.</p>
+                <a href="{% url 'course-list' %}" class="btn-back" style="display: inline-flex;">Back to Courses</a>
+            </div>
+        </div>
+        {% endif %}
+</div>
+{% endblock %}
