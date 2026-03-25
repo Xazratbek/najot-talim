@@ -1,0 +1,32 @@
+Yechimlar:
+
+1. 
+from datetime import datetime
+current_year = datetime.now().year
+
+books = Book.objects.filter(published_year__gte=current_year-2)
+for book in books:
+    print(book.title,book.published_year)
+
+2.
+book_with_price = Book.objects.all()
+for book in book_with_price:
+    print(f"{book.title}- narxi: {book.price // 100}")
+
+3.
+book_5 = Book.objects.all().order_by("-price")[1:6]
+
+4.
+book_fiction = Book.objects.filter(bookcategories__category__name="Fiction")
+
+5.
+book_price_avg = Book.objects.aggregate(avg_price=Avg("price"))
+
+6. 
+authors = Author.objects.annotate(total_categories=Count("book__bookcategories__category",distinct=True)).filter(total_categories__gt=3)
+
+7.
+categories = Category.objects.annotate(total_book=Count("bookcategories")).filter(total_book=0)
+
+8.
+8-masala ishlanishiga tushunmadim.
