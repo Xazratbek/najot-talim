@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Order Item List{% endblock %}
+{% block page_kicker %}Composition Grid{% endblock %}
+{% block page_title %}Order itemlar ro‘yxati{% endblock %}
+{% block page_subtitle %}Har bir buyurtma ichidagi mahsulotlar, miqdor va narxlar shu yerda jamlangan.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Barcha order itemlar</h2>
+            <p>Buyurtma tarkibini nazorat qilish uchun soddalashtirilgan ro‘yxat.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'orderitem_create' %}" class="btn btn-primary">Yangi order item</a>
+            <a href="{% url 'order_list' %}" class="btn btn-secondary">Orderlarga o‘tish</a>
+        </div>
+    </div>
+
+    {% if order_items %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Order</th>
+                <th>Telefon</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Amallar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order_item in order_items %}
+            <tr>
+                <td><span class="badge">#{{ order_item.id }}</span></td>
+                <td>#{{ order_item.order.id }} - {{ order_item.order.user }}</td>
+                <td>{{ order_item.telefon }}</td>
+                <td>{{ order_item.quantity }}</td>
+                <td>{{ order_item.price }}</td>
+                <td class="actions">
+                    <a href="{% url 'orderitem_detail' order_item.pk %}" class="btn btn-secondary">Detail</a>
+                    <a href="{% url 'orderitem_update' order_item.pk %}" class="btn btn-secondary">Edit</a>
+                    <a href="{% url 'orderitem_delete' order_item.pk %}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        Hozircha order itemlar yo‘q. Order ichiga mahsulot biriktirib ko‘ring.
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

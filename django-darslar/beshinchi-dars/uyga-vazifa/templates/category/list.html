@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Category List{% endblock %}
+{% block page_kicker %}Category Ledger{% endblock %}
+{% block page_title %}Kategoriyalar ro‘yxati{% endblock %}
+{% block page_subtitle %}Katalog strukturasi shu yerda: sodda, o‘qilishi oson va tez tahrirlanuvchi ko‘rinishda.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Barcha kategoriyalar</h2>
+            <p>Har bir kategoriya keyingi mahsulotlar uchun asos bo‘lib xizmat qiladi.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'category_create' %}" class="btn btn-primary">Yangi kategoriya</a>
+        </div>
+    </div>
+
+    {% if categories %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nomi</th>
+                <th>Yaratilgan vaqt</th>
+                <th>Amallar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td><span class="badge badge-cold">#{{ category.id }}</span></td>
+                <td>{{ category.name }}</td>
+                <td>{{ category.created_at|date:"d.m.Y H:i" }}</td>
+                <td class="actions">
+                    <a href="{% url 'category_detail' category.pk %}" class="btn btn-secondary">Detail</a>
+                    <a href="{% url 'category_update' category.pk %}" class="btn btn-secondary">Edit</a>
+                    <a href="{% url 'category_delete' category.pk %}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        Hozircha kategoriya yo‘q. Birinchi kategoriyani yaratib ko‘ring.
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Order List{% endblock %}
+{% block page_kicker %}Order Stream{% endblock %}
+{% block page_title %}Buyurtmalar oqimi{% endblock %}
+{% block page_subtitle %}Status, summa va item sonini bir qarashda ko‘rish uchun mo‘ljallangan nazorat stoli.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Barcha orderlar</h2>
+            <p>Faol buyurtmalarni kuzatish va ularni tez tahrirlash uchun tayyorlangan jadval.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'order_create' %}" class="btn btn-primary">Yangi order</a>
+            <a href="{% url 'orderitem_create' %}" class="btn btn-secondary">Yangi order item</a>
+        </div>
+    </div>
+
+    {% if orders %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Items</th>
+                <th>Amallar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><span class="badge">#{{ order.id }}</span></td>
+                <td>{{ order.user }}</td>
+                <td><span class="badge badge-cold">{{ order.get_status_display }}</span></td>
+                <td>{{ order.total_price }}</td>
+                <td>{{ order.items.count }}</td>
+                <td class="actions">
+                    <a href="{% url 'order_detail' order.pk %}" class="btn btn-secondary">Detail</a>
+                    <a href="{% url 'order_update' order.pk %}" class="btn btn-secondary">Edit</a>
+                    <a href="{% url 'order_delete' order.pk %}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        Hozircha orderlar yo‘q. Birinchi buyurtmani yaratishingiz mumkin.
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

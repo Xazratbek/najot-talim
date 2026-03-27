@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Telefon Update{% endblock %}
+{% block page_kicker %}Device Edit{% endblock %}
+{% block page_title %}Telefonni yangilash{% endblock %}
+{% block page_subtitle %}Narx, rasm yoki texnik parametrlar o‘zgargan bo‘lsa, shu yerda tahrir qiling.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Mahsulot formasi</h2>
+            <p>Mavjud telefon ma’lumotlarini to‘g‘rilash uchun quyidagi maydonlardan foydalaning.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'telefon_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Yangilash</button>
+            <a href="{% url 'telefon_list' %}" class="btn btn-secondary">Bekor qilish</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Telefon Delete{% endblock %}
+{% block page_kicker %}Device Remove{% endblock %}
+{% block page_title %}Telefonni o‘chirish{% endblock %}
+{% block page_subtitle %}Katalogdan mahsulotni o‘chirishdan oldin buyurtmalarda ishlatilgan-yo‘qligini tekshirib chiqing.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>O‘chirish tasdig‘i</h2>
+            <p>Mahsulot kartasi bazadan olib tashlanadi.</p>
+        </div>
+    </div>
+
+    <div class="confirm-box">
+        <div class="stack">
+            <span class="badge">Telefon</span>
+            <h3>{{ telefon.brand }} {{ telefon.name }}</h3>
+            <p class="muted">Narxi: {{ telefon.price }} | Rangi: {{ telefon.color }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="btn-row">
+                <button type="submit" class="btn btn-danger">Ha, o‘chirish</button>
+                <a href="{% url 'telefon_list' %}" class="btn btn-secondary">Bekor qilish</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Telefon List{% endblock %}
+{% block page_kicker %}Device Catalog{% endblock %}
+{% block page_title %}Telefonlar vitrinası{% endblock %}
+{% block page_subtitle %}Katalogdagi barcha qurilmalar texnik tafsilotlari bilan shu sahifada ko‘rinadi.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Barcha telefonlar</h2>
+            <p>Brend, narx va asosiy texnik xususiyatlarni bir qarashda ko‘rish uchun tayyorlangan jadval.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'telefon_create' %}" class="btn btn-primary">Yangi telefon</a>
+        </div>
+    </div>
+
+    {% if telefonlar %}
+    <table>
+        <thead>
+            <tr>
+                <th>Telefon</th>
+                <th>Kategoriya</th>
+                <th>Narx</th>
+                <th>Holat</th>
+                <th>Specs</th>
+                <th>Amallar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for telefon in telefonlar %}
+            <tr>
+                <td>
+                    <div class="stack">
+                        {% if telefon.image %}
+                        <img src="{{ telefon.image.url }}" alt="{{ telefon.name }}" class="thumb">
+                        {% endif %}
+                        <strong>{{ telefon.brand }} {{ telefon.name }}</strong>
+                        <span class="muted">{{ telefon.color }}</span>
+                    </div>
+                </td>
+                <td>{{ telefon.category }}</td>
+                <td>{{ telefon.price }}</td>
+                <td>
+                    {% if telefon.is_available %}
+                    <span class="badge badge-cold">Available</span>
+                    {% else %}
+                    <span class="badge">Unavailable</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="spec-grid">
+                        <div class="spec">
+                            <span>RAM</span>
+                            <strong>{{ telefon.ram }} GB</strong>
+                        </div>
+                        <div class="spec">
+                            <span>Storage</span>
+                            <strong>{{ telefon.storage }} GB</strong>
+                        </div>
+                        <div class="spec">
+                            <span>Battery</span>
+                            <strong>{{ telefon.battery }} mAh</strong>
+                        </div>
+                    </div>
+                </td>
+                <td class="actions">
+                    <a href="{% url 'telefon_detail' telefon.pk %}" class="btn btn-secondary">Detail</a>
+                    <a href="{% url 'telefon_update' telefon.pk %}" class="btn btn-secondary">Edit</a>
+                    <a href="{% url 'telefon_delete' telefon.pk %}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        Telefonlar hali qo‘shilmagan. Birinchi mahsulotni yarating.
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

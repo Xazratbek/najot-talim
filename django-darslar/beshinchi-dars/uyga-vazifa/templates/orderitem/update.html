@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Order Item Update{% endblock %}
+{% block page_kicker %}Line Edit{% endblock %}
+{% block page_title %}Order itemni yangilash{% endblock %}
+{% block page_subtitle %}Miqdor yoki narx o‘zgarsa, buyurtma tarkibini shu sahifada to‘g‘rilang.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Order item #{{ order_item.id }}</h2>
+            <p>Tanlangan order item ma’lumotlarini qayta saqlash uchun forma.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'orderitem_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Yangilash</button>
+            <a href="{% url 'orderitem_list' %}" class="btn btn-secondary">Bekor qilish</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

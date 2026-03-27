@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Category Create{% endblock %}
+{% block page_kicker %}Category{% endblock %}
+{% block page_title %}Yangi kategoriya qo‘shish{% endblock %}
+{% block page_subtitle %}Telefon katalogi uchun bo‘limlarni aniq va tartibli saqlash shu sahifadan boshlanadi.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Kategoriya formasi</h2>
+            <p>Minimal ma’lumot bilan yangi kategoriya qo‘shing.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'category_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Saqlash</button>
+            <a href="{% url 'category_list' %}" class="btn btn-secondary">Bekor qilish</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

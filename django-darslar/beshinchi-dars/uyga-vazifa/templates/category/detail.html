@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Category Detail{% endblock %}
+{% block page_kicker %}Category Detail{% endblock %}
+{% block page_title %}{{ category.name }} kategoriyasi{% endblock %}
+{% block page_subtitle %}Tanlangan kategoriya va unga bog‘langan telefonlar shu sahifada ko‘rinadi.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Kategoriya ma’lumoti</h2>
+            <p>Kategoriya ichidagi mahsulotlar va yaratilgan vaqt bo‘yicha umumiy ko‘rinish.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'category_update' category.pk %}" class="btn btn-secondary">Edit</a>
+            <a href="{% url 'category_delete' category.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'category_list' %}" class="btn btn-secondary">Orqaga</a>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h3>Asosiy ma’lumot</h3>
+            <div class="spec-grid">
+                <div class="spec">
+                    <span>ID</span>
+                    <strong>#{{ category.id }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Nomi</span>
+                    <strong>{{ category.name }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Yaratilgan</span>
+                    <strong>{{ category.created_at|date:"d.m.Y H:i" }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Telefonlar soni</span>
+                    <strong>{{ telefonlar|length }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <h3>Status</h3>
+            <p class="muted">Bu kategoriya katalog strukturasi uchun ishlatiladi. Quyida unga tegishli telefonlar ko‘rsatiladi.</p>
+            <span class="badge badge-cold">Active category</span>
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Shu kategoriyadagi telefonlar</h2>
+            <p>Tanlangan kategoriya bilan bog‘langan barcha mahsulotlar.</p>
+        </div>
+    </div>
+
+    {% if telefonlar %}
+    <table>
+        <thead>
+            <tr>
+                <th>Telefon</th>
+                <th>Narx</th>
+                <th>Holat</th>
+                <th>Amal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for telefon in telefonlar %}
+            <tr>
+                <td>{{ telefon.brand }} {{ telefon.name }}</td>
+                <td>{{ telefon.price }}</td>
+                <td>
+                    {% if telefon.is_available %}
+                    <span class="badge badge-cold">Available</span>
+                    {% else %}
+                    <span class="badge">Unavailable</span>
+                    {% endif %}
+                </td>
+                <td class="actions">
+                    <a href="{% url 'telefon_detail' telefon.pk %}" class="btn btn-secondary">Telefon detail</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        Bu kategoriyaga hali telefon biriktirilmagan.
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

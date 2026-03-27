@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Telefon Detail{% endblock %}
+{% block page_kicker %}Device Detail{% endblock %}
+{% block page_title %}{{ telefon.brand }} {{ telefon.name }}{% endblock %}
+{% block page_subtitle %}Telefonning narxi, kategoriyasi va barcha texnik xususiyatlari bir sahifada jamlandi.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Telefon ma’lumoti</h2>
+            <p>Mahsulot vitrinasidagi to‘liq texnik karta.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'telefon_update' telefon.pk %}" class="btn btn-secondary">Edit</a>
+            <a href="{% url 'telefon_delete' telefon.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'telefon_list' %}" class="btn btn-secondary">Orqaga</a>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card stack">
+            {% if telefon.image %}
+            <img src="{{ telefon.image.url }}" alt="{{ telefon.name }}" class="thumb-large">
+            {% else %}
+            <div class="media-placeholder">No image</div>
+            {% endif %}
+            <span class="badge badge-cold">{{ telefon.category }}</span>
+        </div>
+
+        <div class="detail-card">
+            <h3>Asosiy parametrlar</h3>
+            <div class="spec-grid">
+                <div class="spec">
+                    <span>Brand</span>
+                    <strong>{{ telefon.brand }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Model</span>
+                    <strong>{{ telefon.name }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Narx</span>
+                    <strong>{{ telefon.price }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Rang</span>
+                    <strong>{{ telefon.color }}</strong>
+                </div>
+                <div class="spec">
+                    <span>RAM</span>
+                    <strong>{{ telefon.ram }} GB</strong>
+                </div>
+                <div class="spec">
+                    <span>Storage</span>
+                    <strong>{{ telefon.storage }} GB</strong>
+                </div>
+                <div class="spec">
+                    <span>Battery</span>
+                    <strong>{{ telefon.battery }} mAh</strong>
+                </div>
+                <div class="spec">
+                    <span>Display</span>
+                    <strong>{{ telefon.display_size }} inch</strong>
+                </div>
+                <div class="spec">
+                    <span>Main camera</span>
+                    <strong>{{ telefon.main_camera }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Front camera</span>
+                    <strong>{{ telefon.front_camera }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Holat</span>
+                    <strong>
+                        {% if telefon.is_available %}
+                        Mavjud
+                        {% else %}
+                        Mavjud emas
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="spec">
+                    <span>Yaratilgan</span>
+                    <strong>{{ telefon.created_at|date:"d.m.Y H:i" }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Izoh</h2>
+            <p>Mahsulot tavsifi va qo‘shimcha ma’lumotlar.</p>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        {% if telefon.description %}
+        <p class="muted">{{ telefon.description }}</p>
+        {% else %}
+        <p class="muted">Bu telefon uchun tavsif kiritilmagan.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

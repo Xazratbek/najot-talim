@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Order Detail{% endblock %}
+{% block page_kicker %}Order Detail{% endblock %}
+{% block page_title %}Order #{{ order.id }}{% endblock %}
+{% block page_subtitle %}Tanlangan buyurtmaning user, status va item tarkibi shu yerda ko‘rsatiladi.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Buyurtma ma’lumoti</h2>
+            <p>Orderning umumiy holati va moliyaviy ko‘rinishi.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'order_update' order.pk %}" class="btn btn-secondary">Edit</a>
+            <a href="{% url 'order_delete' order.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'order_list' %}" class="btn btn-secondary">Orqaga</a>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h3>Asosiy ma’lumot</h3>
+            <div class="spec-grid">
+                <div class="spec">
+                    <span>ID</span>
+                    <strong>#{{ order.id }}</strong>
+                </div>
+                <div class="spec">
+                    <span>User</span>
+                    <strong>{{ order.user }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Status</span>
+                    <strong>{{ order.get_status_display }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Total</span>
+                    <strong>{{ order.total_price }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Items soni</span>
+                    <strong>{{ order_items|length }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Yaratilgan</span>
+                    <strong>{{ order.created_at|date:"d.m.Y H:i" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <h3>Signal</h3>
+            <p class="muted">Bu detail sahifa orderni bir qarashda o‘qish uchun tuzilgan: foydalanuvchi, holat, summa va itemlar tarkibi ajratib ko‘rsatiladi.</p>
+            <span class="badge badge-cold">{{ order.get_status_display }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Order tarkibi</h2>
+            <p>Buyurtma ichidagi mahsulotlar ro‘yxati.</p>
+        </div>
+    </div>
+
+    {% if order_items %}
+    <table>
+        <thead>
+            <tr>
+                <th>Telefon</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Amal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>{{ item.telefon }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td class="actions">
+                    <a href="{% url 'orderitem_detail' item.pk %}" class="btn btn-secondary">Order item detail</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        Bu orderga hali mahsulot biriktirilmagan.
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

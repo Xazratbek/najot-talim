@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Order Item Detail{% endblock %}
+{% block page_kicker %}Order Line Detail{% endblock %}
+{% block page_title %}Order Item #{{ order_item.id }}{% endblock %}
+{% block page_subtitle %}Tanlangan buyurtma qatori, unga tegishli order va telefon haqida jamlangan ma’lumotlar.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Order item ma’lumoti</h2>
+            <p>Buyurtma tarkibidagi bitta qator uchun to‘liq detail ko‘rinish.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'orderitem_update' order_item.pk %}" class="btn btn-secondary">Edit</a>
+            <a href="{% url 'orderitem_delete' order_item.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'orderitem_list' %}" class="btn btn-secondary">Orqaga</a>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h3>Line ma’lumoti</h3>
+            <div class="spec-grid">
+                <div class="spec">
+                    <span>ID</span>
+                    <strong>#{{ order_item.id }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Order</span>
+                    <strong>#{{ order_item.order.id }}</strong>
+                </div>
+                <div class="spec">
+                    <span>User</span>
+                    <strong>{{ order_item.order.user }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Telefon</span>
+                    <strong>{{ order_item.telefon }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Quantity</span>
+                    <strong>{{ order_item.quantity }}</strong>
+                </div>
+                <div class="spec">
+                    <span>Price</span>
+                    <strong>{{ order_item.price }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card stack">
+            {% if order_item.telefon.image %}
+            <img src="{{ order_item.telefon.image.url }}" alt="{{ order_item.telefon }}" class="thumb-large">
+            {% else %}
+            <div class="media-placeholder">No image</div>
+            {% endif %}
+            <span class="badge badge-cold">{{ order_item.telefon.category }}</span>
+        </div>
+    </div>
+
+    <div class="detail-card" style="margin-top: 18px;">
+        <h3>Bog‘langan sahifalar</h3>
+        <div class="btn-row">
+            <a href="{% url 'order_detail' order_item.order.pk %}" class="btn btn-secondary">Order detail</a>
+            <a href="{% url 'telefon_detail' order_item.telefon.pk %}" class="btn btn-secondary">Telefon detail</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

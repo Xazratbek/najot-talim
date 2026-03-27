@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Category Update{% endblock %}
+{% block page_kicker %}Category Edit{% endblock %}
+{% block page_title %}Kategoriyani yangilash{% endblock %}
+{% block page_subtitle %}Nomini o‘zgartirish yoki katalog tuzilmasini tozalash uchun shu formadan foydalaning.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>Tahrirlash formasi</h2>
+            <p>Mavjud kategoriyani qayta saqlash uchun maydonlarni yangilang.</p>
+        </div>
+        <div class="btn-row">
+            <a href="{% url 'category_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Yangilash</button>
+            <a href="{% url 'category_list' %}" class="btn btn-secondary">Bekor qilish</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

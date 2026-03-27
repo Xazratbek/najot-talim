@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Order Item Delete{% endblock %}
+{% block page_kicker %}Line Remove{% endblock %}
+{% block page_title %}Order itemni o‘chirish{% endblock %}
+{% block page_subtitle %}Buyurtma tarkibidan mahsulot qatorini olib tashlashdan oldingi tasdiq oynasi.{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2>O‘chirish tasdig‘i</h2>
+            <p>Bu qator o‘chirilgach order tarkibi o‘zgaradi.</p>
+        </div>
+    </div>
+
+    <div class="confirm-box">
+        <div class="stack">
+            <span class="badge">Order Item</span>
+            <h3>#{{ order_item.id }} - {{ order_item.telefon }}</h3>
+            <p class="muted">Quantity: {{ order_item.quantity }} | Price: {{ order_item.price }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="btn-row">
+                <button type="submit" class="btn btn-danger">Ha, o‘chirish</button>
+                <a href="{% url 'orderitem_list' %}" class="btn btn-secondary">Bekor qilish</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
