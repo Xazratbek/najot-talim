@@ -3,14 +3,14 @@
 {% block title %}Order Item Update{% endblock %}
 {% block page_kicker %}Line Edit{% endblock %}
 {% block page_title %}Order itemni yangilash{% endblock %}
-{% block page_subtitle %}Miqdor yoki narx o‘zgarsa, buyurtma tarkibini shu sahifada to‘g‘rilang.{% endblock %}
+{% block page_subtitle %}Miqdor yoki telefon o‘zgarsa, buyurtma tarkibini shu sahifada to‘g‘rilang. Narx avtomatik belgilanadi.{% endblock %}
 
 {% block content %}
 <section class="panel">
     <div class="panel-header">
         <div>
             <h2>Order item #{{ order_item.id }}</h2>
-            <p>Tanlangan order item ma’lumotlarini qayta saqlash uchun forma.</p>
+            <p>Tanlangan order item ma’lumotlarini qayta saqlang. `Price` qo‘lda emas, telefon narxidan olinadi.</p>
         </div>
         <div class="btn-row">
             <a href="{% url 'orderitem_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>

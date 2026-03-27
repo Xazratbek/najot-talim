@@ -3,14 +3,14 @@
 {% block title %}Order Update{% endblock %}
 {% block page_kicker %}Order Edit{% endblock %}
 {% block page_title %}Buyurtmani yangilash{% endblock %}
-{% block page_subtitle %}Status o‘zgarsa yoki summa aniqlashtirilsa, order ma’lumotini shu yerdan qayta saqlang.{% endblock %}
+{% block page_subtitle %}Status o‘zgarsa, order ma’lumotini shu yerdan qayta saqlang. Umumiy summa avtomatik yangilanadi.{% endblock %}
 
 {% block content %}
 <section class="panel">
     <div class="panel-header">
         <div>
             <h2>Order #{{ order.id }}</h2>
-            <p>Joriy buyurtma ma’lumotlarini yangilang.</p>
+            <p>Joriy buyurtma ma’lumotlarini yangilang. `Total price` qo‘lda emas, itemlar orqali hisoblanadi.</p>
         </div>
         <div class="btn-row">
             <a href="{% url 'order_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>

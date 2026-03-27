@@ -3,14 +3,14 @@
 {% block title %}Order Create{% endblock %}
 {% block page_kicker %}Order Intake{% endblock %}
 {% block page_title %}Yangi order ochish{% endblock %}
-{% block page_subtitle %}Mijoz, status va umumiy summani kiriting, keyin mahsulotlarni `Order Item` orqali biriktirasiz.{% endblock %}
+{% block page_subtitle %}Mijoz va statusni kiriting, umumiy summa esa `Order Item` lar asosida avtomatik hisoblanadi.{% endblock %}
 
 {% block content %}
 <section class="panel">
     <div class="panel-header">
         <div>
             <h2>Order formasi</h2>
-            <p>Buyurtma yaratish uchun asosiy maydonlarni to‘ldiring.</p>
+            <p>Buyurtma yaratish uchun asosiy maydonlarni to‘ldiring. `Total price` tizim tomonidan hisoblanadi.</p>
         </div>
         <div class="btn-row">
             <a href="{% url 'order_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>

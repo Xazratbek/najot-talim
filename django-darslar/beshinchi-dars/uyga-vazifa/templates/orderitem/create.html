@@ -3,14 +3,14 @@
 {% block title %}Order Item Create{% endblock %}
 {% block page_kicker %}Order Item{% endblock %}
 {% block page_title %}Buyurtmaga mahsulot biriktirish{% endblock %}
-{% block page_subtitle %}Qaysi telefon, nechta miqdor va qaysi narxda orderga tushishini shu yerda belgilang.{% endblock %}
+{% block page_subtitle %}Qaysi telefon va nechta miqdorda orderga tushishini shu yerda belgilang. Narx telefonning o‘zidan olinadi.{% endblock %}
 
 {% block content %}
 <section class="panel">
     <div class="panel-header">
         <div>
             <h2>Order item formasi</h2>
-            <p>Order tarkibini shakllantirish uchun mahsulot ma’lumotini kiriting.</p>
+            <p>Order tarkibini shakllantiring. `Price` avtomatik ravishda tanlangan telefon narxidan olinadi.</p>
         </div>
         <div class="btn-row">
             <a href="{% url 'orderitem_list' %}" class="btn btn-secondary">Ro‘yxatga qaytish</a>
