@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service detail</title>
+</head>
+<body>
+        <div>
+            <h1>Nomi: {{ service.title }}</h1>
+            <h2>Izoxi: {{ service.description }}</h2>
+            <h2>Narxi: {{ service.price }}</h2>
+            <h2>Category: {{ service.category }}</h2>
+            <h2>Yaratilgan Vaqt: {{ service.created_at }}</h2>
+            <h2>Yangilangan Vaqt: {{ service.updated_at }}</h2>
+        <form action="{% url 'service-delete' service.pk %}" method="post">
+            {% csrf_token %}
+                <button type="submit">Ha, o'chirish</button>
+                <a href="{% url 'service-list' %}">Bekor qilish</a>
+        </form>
+        <a href="{% url 'service-list' %}">Ortga</a>
+    </div>
+</body>
+</html>
+{% endblock content %}

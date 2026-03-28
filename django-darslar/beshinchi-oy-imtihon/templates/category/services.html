@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Products</title>
+</head>
+<body>
+    <a href="{% url 'service-list' %}">Ortga</a>
+    {% for product in category_products %}
+        <div>
+            <h1>Nomi: {{ product.title }}</h1>
+            <h2>Izoxi: {{ product.description }}</h2>
+            <h2>Narxi: {{ product.price }}</h2>
+            <h2>Category: {{ product.category }}</h2>
+            <h2>Yaratilgan Vaqt: {{ product.created_at }}</h2>
+            <h2>Yangilangan Vaqt: {{ product.updated_at }}</h2>
+    </div>
+    <br>
+    <hr>
+    {% endfor %}
+</body>
+</html>

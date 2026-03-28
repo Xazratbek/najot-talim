@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category detail</title>
+</head>
+<body>
+        <a href="{% url 'category-list' %}">Ortga</a>
+        <h2>Nomi: {{ category.name }}</h2>
+        <h2>Izoxi: {{ category.description }}</h2>
+        <h2>Yaratilgan vaqti: {{ category.created_at }}</h2>
+        <h2>Yangilangan vaqti: {{ category.update_at }}</h2>
+        <a href="{% url 'category-list' %}">Ortga</a>
+        <form action="{% url 'category-delete' category.pk %}" method="post">
+            {% csrf_token %}
+                <button type="submit">Ha, o'chirish</button>
+                <a href="{% url 'category-list' %}">Bekor qilish</a>
+        </form>
+        <a href="{% url 'category-list' %}">Ortga</a>
+</body>
+</html>
+{% endblock content %}

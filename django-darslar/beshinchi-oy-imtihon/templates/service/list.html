@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1, initial-scale=1.0">
+    <title>IT-Services</title>
+</head>
+<body>
+    <h1>IT-servislarimiz: </h1>
+        <div>
+        {% for service in services %}
+            <h2>{{ service.title }}</h2>
+            <h2>{{ service.description }}</h2>
+            <h2>{{ service.price }}</h2>
+            <a href="{% url 'service-detail' service.pk %}">Batafsil ma'lumot</a>
+        {% endfor %}
+    </div>
+</body>
+</html>
+{% endblock content %}

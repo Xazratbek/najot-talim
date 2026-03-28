@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories</title>
+</head>
+<body>
+    <h1>Kategoriyalar:</h1><br>
+    {% for category in categories %}
+        <a href="{% url 'category-detail' category.pk %}">Batafsil</a>
+        <a href="{% url 'category-products' category.pk %}">Shu kategoriyaga oid mahsulotlar</a>
+        <h2>Nomi: {{ category.name }}</h2>
+        <h2>Izoxi: {{ category.description }}</h2>
+        <br>
+        <hr>
+    {% endfor %}
+</body>
+</html>
+{% endblock content %}

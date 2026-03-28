@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category update</title>
+</head>
+<body>
+    <a href="{% url 'category-list' %}">Kategoriyalar ro'yxati</a>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Saqlash</button>
+    </form>
+    <a href="{% url 'category-list' %}">Ortga</a>
+</body>
+</html>
+{% endblock content %}
