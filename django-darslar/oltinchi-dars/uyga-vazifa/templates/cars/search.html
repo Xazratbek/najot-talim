@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car detail</title>
+</head>
+<body>
+    <a href="{% url 'cars-list' %}">Cars List</a>
+    <a href="{% url 'category-list' %}">Category List</a>
+    <a href="{% url 'cars-create' %}">Cars create</a>
+    <a href="{% url 'category-create' %}">Category create</a><br><br>
+    <form action="{% url 'search' %}" method="get" role="search">
+    <label for="site-search">Mashina nomi bilan qidirish:</label>
+    <input type="search" id="site-search" name="q" placeholder="Mashina nomini kiriting..." />
+    <button type="submit">Qidirish</button>
+    </form>
+    <br><br><hr>
+    {% for car in cars %}
+        {{ car.model }}
+        {{ car.make }}
+        {{ car.price }}
+        {{ car.category }}
+        {{ car.year }}
+        {{ car.desc }}
+        <img src="{{ car.photo.url }}" alt="{{ car.model }}" width="500" height="250" enctype="multipart/form-data"><br>
+        <a href="{% url 'cars-update' car.id %}">Yangilash</a>
+        <a href="{% url 'cars-delete' car.id %}">O'chirish</a>
+    {% endfor %}
+</body>
+</html>

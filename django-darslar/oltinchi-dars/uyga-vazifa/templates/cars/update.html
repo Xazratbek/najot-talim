@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Update</title>
+</head>
+<body>
+    <a href="{% url 'cars-list' %}">Cars List</a>
+    <a href="{% url 'category-list' %}">Category List</a>
+    <a href="{% url 'cars-create' %}">Cars create</a>
+    <a href="{% url 'category-create' %}">Category create</a><br><br>
+    <form action="{% url 'search' %}" method="get" role="search">
+    <label for="site-search">Mashina nomi bilan qidirish:</label>
+    <input type="search" id="site-search" name="q" placeholder="Mashina nomini kiriting..." />
+    <button type="submit">Qidirish</button>
+    </form>
+    <br><br><hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">O'zgartirish</button>
+    </form>
+</body>
+</html>
