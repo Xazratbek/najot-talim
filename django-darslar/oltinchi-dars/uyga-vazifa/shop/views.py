@@ -173,6 +173,7 @@ class CarDeleteView(View):
 
 class CarsSearchView(View):
     def get(self,request):
+        print(request.GET)
         q = request.GET.get("q","")
         cars = Cars.objects.filter(Q(model__icontains=q) | Q(desc__icontains=q))
         return render(request, "cars/search.html",context={"cars": cars})

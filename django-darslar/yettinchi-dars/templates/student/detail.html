@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student detail</title>
+</head>
+<body>
+    <h2>{{ student.ism }}</h2>
+    <h2>{{ student.familiya }}</h2>
+    <h2>{{ student.yosh }}</h2>
+    <h2>{{ student.phone }}</h2>
+    <a href="{% url 'student-update' student.pk  %}">Yangilash</a>
+    <a href="{% url 'student-delete' student.pk  %}">O'chirish</a>
+    <a href="{% url 'student-list' %}">Ortga</a>
+</body>
+</html>
+{% endblock content %}

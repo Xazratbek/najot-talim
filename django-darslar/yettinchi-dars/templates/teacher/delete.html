@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete teacher</title>
+</head>
+<body>
+    <form action="{% url 'teacher-delete' student.pk %}" method="post">
+        {% csrf_token %}
+        {{ teacher.ism }}-o'qituvchini o'chirmoqchimisiz >?
+        <button type="submit">Ha o'chirilsin</button>
+    </form>
+    <a href="{% url 'teacher-list' %}">Ortga</a>
+</body>
+</html>
+{% endblock content %}

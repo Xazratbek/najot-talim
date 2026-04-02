@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guruh detail</title>
+</head>
+<body>
+    <h2>Guruh nomi: {{ guruh.guruh_nomi }}</h2>
+    <h2>Guruh o'qituvchisi: {{ guruh.oqituvchi.ism }}</h2>
+    <h2>Guruh yo'nalishi: {{ guruh.yonalish }}</h2>
+    <h2>Guruh boshlangan sana: {{ guruh.boshlanish_sanasi }}</h2>
+    <h2>Guruh tugash sanasi: {{ guruh.tugash_sanasi|date:"D d M Y" }}</h2>
+    <a href="{% url 'guruh-update' guruh.pk  %}">Yangilash</a>
+    <a href="{% url 'guruh-delete' guruh.pk  %}">O'chirish</a>
+    <a href="{% url 'guruh-list' %}">Ortga</a>
+    <hr>
+    <hr>
+    <h2>Guruh talabalari: <br></h2>
+    {% for student in group_students %}
+        <a href="{% url 'student-detail' student.student.pk %}">{{ student.student.ism }}
+        {{ student.student.familiya }}<br><br></a>
+    {% endfor %}
+</body>
+</html>
+{% endblock content %}

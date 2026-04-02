@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <a href="{% url 'student-create' %}">Student yaratish</a> ||
+    <a href="{% url 'student-list' %}">Studentlar ro'yxati</a> ||
+
+    <a href="{% url 'teacher-create' %}">Teacher yaratish</a> ||
+    <a href="{% url 'teacher-list' %}">Teacherlar ro'yxati</a> ||
+
+    <a href="{% url 'guruh-create' %}">Guruh yaratish</a> ||
+    <a href="{% url 'guruh-list' %}">Guruhlar ro'yxati</a> ||
+{% block content %}
+{% endblock content %}
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher detail</title>
+</head>
+<body>
+    <h2>{{ teacher.ism }}</h2>
+    <h2>{{ teacher.familiya }}</h2>
+    <h2>{{ teacher.yonalish }}</h2>
+    <h2>{{ teacher.staj }}</h2>
+    <a href="{% url 'teacher-update' teacher.pk  %}">Yangilash</a>
+    <a href="{% url 'teacher-delete' teacher.pk  %}">O'chirish</a>
+    <a href="{% url 'teacher-list' %}">Ortga</a>
+    <h2>Sizning guruhlaringiz: </h2>
+    {% for group in teacher_groups %}
+        <a href="{% url 'guruh-detail' group.pk %}"><h2>{{ group.guruh_nomi }}</h2></a>
+    {% endfor %}
+</body>
+</html>
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guruhlar</title>
+</head>
+<body>
+    {% for guruh in guruhlar %}
+    <br><a href="{% url 'guruh-detail' guruh.pk %}"><h2>Guruh nomi: {{ guruh.id }} {{ guruh.guruh_nomi }}<br><h2>Guruh o'qituvchisi: {{ guruh.oqituvchi.ism }}</h2></h2></a><br><br>
+    {% endfor %}
+</body>
+</html>
+{% endblock content %}

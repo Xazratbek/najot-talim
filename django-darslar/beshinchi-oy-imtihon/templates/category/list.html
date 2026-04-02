@@ -9,32 +9,13 @@
 </head>
 <body>
     <h1>Kategoriyalar:</h1><br>
-    {% comment %} {% for category in categories %}
+     {% for category in categories %}
         <h2>Nomi: {{ category.name }}</h2>
         <a href="{% url 'category-detail' category.pk %}">Batafsil</a>
         <a href="{% url 'category-products' category.pk %}">Shu kategoriyaga oid mahsulotlar</a>
         <br>
         <hr>
-    {% endfor %} {% endcomment %}
-    <!-- Ma'lumotlarni chiqarish -->
-{% for item in page_obj %}
-    <p>{{ item.name }}</p>
-{% endfor %}
-
-<!-- Navigatsiya tugmalari -->
-<div class="pagination">
-    {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo; birinchi</a>
-        <a href="?page={{ page_obj.previous_page_number }}">oldingi</a>
-    {% endif %}
-
-    <span>Sahifa {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">keyingi</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">oxirgi &raquo;</a>
-    {% endif %}
-</div>
+    {% endfor %}
 
 </body>
 </html>
