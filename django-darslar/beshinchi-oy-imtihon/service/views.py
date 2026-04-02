@@ -2,25 +2,30 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .forms import CategoryForm, ServiceForm
 from .models import Service, Category
+from django.views.generic import ListView, CreateView
+from django.core.paginator import Paginator
 
-class CategoryCreateView(View):
-    def get(self, request):
-        form = CategoryForm()
-        return render(request,"category/create.html",context={"form": form})
 
-    def post(self,request):
-        form = CategoryForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return redirect("service-list")
-
-        return render(request,"category/create.html",context={"form": form})
+class CategoryCreateView(CreateView):
+    model = Category
+    template_name = "category/create.html"
+    context_object_name = "form"
+    fields = "__all__"
 
 class CategoryListView(View):
     def get(self, request):
         categories = Category.objects.all()
-        return render(request,"category/list.html",context={"categories": categories})
+        paginator = Paginator(categories, 5)
+        page_number = request.GET.get("page")
+        print(page_number)
+        page_obj = paginator.get_page(page_number)
+
+        return render(request,"category/list.html",context={"categories": categories,"page_obj":page_obj})
+
+class CategoryListView(ListView):
+    model = Category
+    template_name = "category/list.html"
+    context_object_name = "categories"
 
 class CategoryUpdateView(View):
     def get(self, request, pk):

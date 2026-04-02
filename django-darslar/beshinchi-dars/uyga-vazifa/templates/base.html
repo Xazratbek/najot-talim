@@ -546,9 +546,212 @@
                 border-bottom: none;
             }
         }
+        .flash-stack {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            display: grid;
+            gap: 12px;
+            width: min(92vw, 520px);
+            pointer-events: none;
+        }
+
+        .flash-message {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(126, 231, 135, 0.35);
+            background: linear-gradient(135deg, rgba(10, 18, 28, 0.96), rgba(14, 31, 24, 0.92));
+            color: #eaffea;
+            border-radius: 18px;
+            padding: 16px 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(14px);
+            animation: flash-in-out 5s ease forwards;
+        }
+
+        .flash-message::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(126, 231, 135, 0.14), transparent);
+            transform: translateX(-100%);
+            animation: flash-shine 1.2s ease 0.35s;
+        }
+
+        .flash-message strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+
+        .flash-message span {
+            color: rgba(234, 255, 234, 0.82);
+            font-size: 0.95rem;
+        }
+
+        .flash-message.success {
+            border-color: rgba(61, 214, 140, 0.52);
+        }
+
+        .celebration-burst {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 30;
+            overflow: hidden;
+        }
+
+        .celebration-side {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 170px;
+        }
+
+        .celebration-side.left {
+            left: 0;
+        }
+
+        .celebration-side.right {
+            right: 0;
+        }
+
+        .celebration-bubble {
+            --size: 20px;
+            --delay: 0s;
+            --duration: 2.8s;
+            --drift: 120px;
+            --rise: 180px;
+            position: absolute;
+            bottom: -50px;
+            width: var(--size);
+            height: var(--size);
+            border-radius: 999px;
+            opacity: 0;
+            background:
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 28%),
+                radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.22), transparent 45%),
+                var(--bubble-color, linear-gradient(135deg, #7ee787, #38bdf8));
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+                0 10px 25px rgba(56, 189, 248, 0.28);
+        }
+
+        .celebration-side.left .celebration-bubble {
+            animation: bubble-launch-left var(--duration) ease-out var(--delay) forwards;
+        }
+
+        .celebration-side.right .celebration-bubble {
+            animation: bubble-launch-right var(--duration) ease-out var(--delay) forwards;
+        }
+
+        .celebration-bubble:nth-child(1) { left: 10px;  --size: 18px; --delay: 0.05s; --duration: 2.6s; --rise: 220px; --drift: 140px; --bubble-color: linear-gradient(135deg, #7ee787, #34d399); }
+        .celebration-bubble:nth-child(2) { left: 38px;  --size: 26px; --delay: 0.18s; --duration: 3.1s; --rise: 260px; --drift: 170px; --bubble-color: linear-gradient(135deg, #38bdf8, #60a5fa); }
+        .celebration-bubble:nth-child(3) { left: 58px;  --size: 14px; --delay: 0.36s; --duration: 2.4s; --rise: 180px; --drift: 120px; --bubble-color: linear-gradient(135deg, #f59e0b, #f97316); }
+        .celebration-bubble:nth-child(4) { left: 86px;  --size: 22px; --delay: 0.52s; --duration: 3.2s; --rise: 250px; --drift: 155px; --bubble-color: linear-gradient(135deg, #a78bfa, #38bdf8); }
+        .celebration-bubble:nth-child(5) { left: 112px; --size: 16px; --delay: 0.72s; --duration: 2.5s; --rise: 200px; --drift: 130px; --bubble-color: linear-gradient(135deg, #fb7185, #f472b6); }
+        .celebration-bubble:nth-child(6) { left: 18px;  --size: 28px; --delay: 0.9s;  --duration: 3.4s; --rise: 300px; --drift: 190px; --bubble-color: linear-gradient(135deg, #2dd4bf, #22c55e); }
+        .celebration-bubble:nth-child(7) { left: 70px;  --size: 12px; --delay: 1.08s; --duration: 2.3s; --rise: 170px; --drift: 100px; --bubble-color: linear-gradient(135deg, #fde047, #f59e0b); }
+        .celebration-bubble:nth-child(8) { left: 124px; --size: 24px; --delay: 1.22s; --duration: 2.9s; --rise: 240px; --drift: 165px; --bubble-color: linear-gradient(135deg, #22c55e, #06b6d4); }
+        .celebration-bubble:nth-child(9) { left: 46px;  --size: 20px; --delay: 1.38s; --duration: 2.7s; --rise: 210px; --drift: 145px; --bubble-color: linear-gradient(135deg, #c084fc, #818cf8); }
+        .celebration-bubble:nth-child(10){ left: 98px;  --size: 15px; --delay: 1.56s; --duration: 2.45s; --rise: 190px; --drift: 118px; --bubble-color: linear-gradient(135deg, #fb7185, #f59e0b); }
+
+        @keyframes bubble-launch-left {
+            0% {
+                opacity: 0;
+                transform: translate3d(-40px, 0, 0) scale(0.4);
+            }
+            12% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(var(--drift), calc(var(--rise) * -1), 0) scale(1.15);
+            }
+        }
+
+        @keyframes bubble-launch-right {
+            0% {
+                opacity: 0;
+                transform: translate3d(40px, 0, 0) scale(0.4);
+            }
+            12% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(calc(var(--drift) * -1), calc(var(--rise) * -1), 0) scale(1.15);
+            }
+        }
+
+        @keyframes flash-in-out {
+            0% {
+                opacity: 0;
+                transform: translateY(-18px) scale(0.96);
+            }
+            12%, 78% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-12px) scale(0.98);
+            }
+        }
+
+        @keyframes flash-shine {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(140%);
+            }
+        }
+
     </style>
 </head>
 <body>
+    {% if messages %}
+    <div class="flash-stack" aria-live="polite" aria-atomic="true">
+        {% for message in messages %}
+        <div class="flash-message {{ message.tags|default:'info' }}">
+            <strong>{% if 'success' in message.tags %}Muvaffaqiyatli{% else %}Bildirishnoma{% endif %}</strong>
+            <span>{{ message }}</span>
+        </div>
+        {% if 'success' in message.tags %}
+        <div class="celebration-burst" aria-hidden="true">
+            <div class="celebration-side left">
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+            </div>
+            <div class="celebration-side right">
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+                <span class="celebration-bubble"></span>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="shell">
         <header class="topbar">
             <div class="brand">
@@ -560,6 +763,7 @@
                 <a href="{% url 'telefon_list' %}">Telefonlar</a>
                 <a href="{% url 'order_list' %}">Orders</a>
                 <a href="{% url 'orderitem_list' %}">Order Items</a>
+                <a href="{% url 'send-email' %}">Email yuborish</a>
             </nav>
         </header>
 

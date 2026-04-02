@@ -3,11 +3,11 @@ from .views import *
 
 
 urlpatterns = [
-
     path("categories/", CategoryListView.as_view(),name="category-list"),
     path("category/detail/<int:pk>/", CategoryDetailView.as_view(),name="category-detail"),
     path("category/update/<int:pk>/", CategoryUpdateView.as_view(),name="category-update"),
     path("category/delete/<int:pk>/", CategoryDeleteView.as_view(),name="category-delete"),
+    # path("category/create/", categry_creat_view,name="category-create"),
     path("category/create/", CategoryCreateView.as_view(),name="category-create"),
     path("category/products/<int:pk>/", CategoryProducts.as_view(),name="category-products"),
 

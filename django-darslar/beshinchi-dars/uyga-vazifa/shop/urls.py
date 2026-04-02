@@ -1,36 +1,15 @@
 from django.urls import path
 
-from .views import (
-    CategoryCreateView,
-    CategoryDeleteView,
-    CategoryDetailView,
-    CategoryListView,
-    CategoryUpdateView,
-    OrderCreateView,
-    OrderDeleteView,
-    OrderDetailView,
-    OrderItemCreateView,
-    OrderItemDeleteView,
-    OrderItemDetailView,
-    OrderItemListView,
-    OrderItemUpdateView,
-    OrderListView,
-    OrderUpdateView,
-    TelefonCreateView,
-    TelefonDeleteView,
-    TelefonDetailView,
-    TelefonListView,
-    TelefonUpdateView,
-)
+from .views import *
 
 urlpatterns = [
+    path("", TelefonListView.as_view(), name="telefon_list"),
     path("orders/", OrderListView.as_view(), name="order_list"),
     path("categories/", CategoryListView.as_view(), name="category_list"),
     path("categories/create/", CategoryCreateView.as_view(), name="category_create"),
     path("categories/<int:pk>/", CategoryDetailView.as_view(), name="category_detail"),
     path("categories/<int:pk>/update/", CategoryUpdateView.as_view(), name="category_update"),
     path("categories/<int:pk>/delete/", CategoryDeleteView.as_view(), name="category_delete"),
-    path("", TelefonListView.as_view(), name="telefon_list"),
     path("telefonlar/create/", TelefonCreateView.as_view(), name="telefon_create"),
     path("telefonlar/<int:pk>/", TelefonDetailView.as_view(), name="telefon_detail"),
     path("telefonlar/<int:pk>/update/", TelefonUpdateView.as_view(), name="telefon_update"),
@@ -44,4 +23,6 @@ urlpatterns = [
     path("order-items/<int:pk>/", OrderItemDetailView.as_view(), name="orderitem_detail"),
     path("order-items/<int:pk>/update/", OrderItemUpdateView.as_view(), name="orderitem_update"),
     path("order-items/<int:pk>/delete/", OrderItemDeleteView.as_view(), name="orderitem_delete"),
+
+    path("email/",SendEmailView.as_view(),name="send-email")
 ]

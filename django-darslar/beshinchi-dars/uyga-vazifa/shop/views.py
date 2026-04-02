@@ -1,9 +1,25 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-
-from .forms import CategoryForm, OrderForm, OrderItemForm, TelefonForm
+from django.core.mail import send_mail
+from django.contrib import messages
+from .forms import CategoryForm, OrderForm, OrderItemForm, TelefonForm, EmailForm
 from .models import Category, Order, OrderItem, Telefon
 
+class SendEmailView(View):
+    def get(self, request):
+        form = EmailForm()
+        return render(request, "email/email.html", context={"form": form})
+
+    def post(self, request):
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data["subject"]
+            recepient = form.cleaned_data["recepient"]
+            message = form.cleaned_data["message"]
+            send_mail(subject, message, "xazratbek123@gmail.com", [recepient])
+            messages.success(request, "Email muvaffaqiyatli yuborildi!")
+            return redirect("telefon_list")
+        return render(request, "email/email.html",context={"form": form})
 
 class CategoryCreateView(View):
     def get(self, request):
