@@ -1,28 +1,278 @@
 {% extends "base.html" %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guruh detail</title>
-</head>
-<body>
-    <h2>Guruh nomi: {{ guruh.guruh_nomi }}</h2>
-    <h2>Guruh o'qituvchisi: {{ guruh.oqituvchi.ism }}</h2>
-    <h2>Guruh yo'nalishi: {{ guruh.yonalish }}</h2>
-    <h2>Guruh boshlangan sana: {{ guruh.boshlanish_sanasi }}</h2>
-    <h2>Guruh tugash sanasi: {{ guruh.tugash_sanasi|date:"D d M Y" }}</h2>
-    <a href="{% url 'guruh-update' guruh.pk  %}">Yangilash</a>
-    <a href="{% url 'guruh-delete' guruh.pk  %}">O'chirish</a>
-    <a href="{% url 'guruh-list' %}">Ortga</a>
-    <hr>
-    <hr>
-    <h2>Guruh talabalari: <br></h2>
-    {% for student in group_students %}
-        <a href="{% url 'student-detail' student.student.pk %}">{{ student.student.ism }}
-        {{ student.student.familiya }}<br><br></a>
-    {% endfor %}
-</body>
-</html>
+<style>
+    .detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .detail-header {
+        background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(45, 122, 62, 0.05) 100%);
+        padding: 2.5rem;
+        border-radius: 15px;
+        border-left: 5px solid var(--accent);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        margin-bottom: 3rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .group-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+        letter-spacing: -1px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .info-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent);
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 2.5rem 0 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--accent);
+        color: var(--primary);
+    }
+
+    .students-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .student-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid var(--border);
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .student-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(212, 165, 116, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .student-card:hover::before {
+        left: 100%;
+    }
+
+    .student-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 12px 30px rgba(212, 165, 116, 0.2);
+        transform: translateY(-8px);
+    }
+
+    .student-card a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .student-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .student-card:hover .student-name {
+        color: var(--accent);
+    }
+
+    .student-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 2.5rem 0;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(45, 122, 62, 0.3);
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(45, 122, 62, 0.4);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-delete:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-back {
+        background: var(--light);
+        color: var(--primary);
+        border: 2px solid var(--border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-back:hover {
+        background: var(--border);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(212, 165, 116, 0.05) 0%, rgba(45, 122, 62, 0.05) 100%);
+        border-radius: 15px;
+        border: 2px dashed var(--border);
+        color: var(--secondary);
+    }
+
+    @media (max-width: 768px) {
+        .detail-header {
+            padding: 1.5rem;
+        }
+
+        .group-name {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="detail-container">
+    <div class="detail-header">
+        <h1 class="group-name">{{ guruh.guruh_nomi }}</h1>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-label">👨‍🏫 O'qituvchi</div>
+                <div class="info-value">{{ guruh.oqituvchi.ism }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">📚 Yo'nalish</div>
+                <div class="info-value">{{ guruh.yonalish }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">📅 Boshlangan</div>
+                <div class="info-value">{{ guruh.boshlanish_sanasi }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">🏁 Tugash</div>
+                <div class="info-value">{{ guruh.tugash_sanasi|date:"d.m.Y" }}</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{% url 'guruh-update' guruh.pk %}" class="btn btn-edit">✏️ Yangilash</a>
+            <a href="{% url 'guruh-delete' guruh.pk %}" class="btn btn-delete">🗑️ O'chirish</a>
+            <a href="{% url 'guruh-list' %}" class="btn btn-back">← Ortga</a>
+        </div>
+    </div>
+
+    <h2 class="section-title">👥 Guruh Talabalari</h2>
+
+    <div class="students-container">
+        {% for enrollment in group_students %}
+            <div class="student-card">
+                <a href="{% url 'student-detail' enrollment.student.pk %}">
+                    <div class="student-icon">👤</div>
+                    <h3 class="student-name">{{ enrollment.student.ism }} {{ enrollment.student.familiya }}</h3>
+                </a>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <p style="font-size: 1.1rem; font-weight: 500;">Hozircha talaba biriktirilmagan</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
 {% endblock content %}

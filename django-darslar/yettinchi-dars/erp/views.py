@@ -137,7 +137,7 @@ class GuruhDetailView(View):
     def get(self, request, pk):
         guruh = get_object_or_404(Guruh, pk=pk)
         group_students = GroupStudents.objects.filter(guruh__guruh_nomi__icontains=guruh.guruh_nomi).select_related("guruh","student")
-        print(len(group_students))
+
         return render(request, "guruh/detail.html",context={"guruh": guruh,"group_students": group_students})
 
 class GuruhDeleteView(View):

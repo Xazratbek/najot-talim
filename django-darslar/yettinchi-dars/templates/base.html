@@ -3,18 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>ERP System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a472a;
+            --secondary: #2d7a3e;
+            --accent: #d4a574;
+            --light: #f5f1ed;
+            --dark: #0f1419;
+            --text: #1a1a1a;
+            --border: #e0d5c7;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f1ed 0%, #ede8e0 100%);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--light);
+            letter-spacing: -1px;
+        }
+
+        .burger-btn {
+            background: var(--accent);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+        }
+
+        .burger-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+        }
+
+        .burger-btn span {
+            width: 20px;
+            height: 2.5px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .burger-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .burger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--dark) 100%);
+            padding: 3rem 0 2rem;
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            box-shadow: 8px 0 30px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-section {
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+        }
+
+        .menu-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item a {
+            display: block;
+            padding: 1rem 1.2rem;
+            color: var(--light);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item a:hover {
+            background: rgba(212, 165, 116, 0.15);
+            padding-left: 1.8rem;
+        }
+
+        .menu-item a:hover::before {
+            transform: scaleY(1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            padding: 2rem;
+            max-width: 100%;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+
+            .burger-btn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <a href="{% url 'student-create' %}">Student yaratish</a> ||
-    <a href="{% url 'student-list' %}">Studentlar ro'yxati</a> ||
+    <div class="header">
+        <a href="/"><h1 class="header-title">ERP</h1></a>
+        <button class="burger-btn" id="burgerBtn" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
 
-    <a href="{% url 'teacher-create' %}">Teacher yaratish</a> ||
-    <a href="{% url 'teacher-list' %}">Teacherlar ro'yxati</a> ||
+    <div class="overlay" id="overlay"></div>
 
-    <a href="{% url 'guruh-create' %}">Guruh yaratish</a> ||
-    <a href="{% url 'guruh-list' %}">Guruhlar ro'yxati</a> ||
-{% block content %}
-{% endblock content %}
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Talabalar</div>
+                <div class="menu-item"><a href="{% url 'student-create' %}">✚ Talaba qo'shish</a></div>
+                <div class="menu-item"><a href="{% url 'student-list' %}">📋 Talabalar ro'yxati</a></div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">O'qituvchilar</div>
+                <div class="menu-item"><a href="{% url 'teacher-create' %}">✚ O'qituvchi qo'shish</a></div>
+                <div class="menu-item"><a href="{% url 'teacher-list' %}">📋 O'qituvchilar ro'yxati</a></div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Guruhlar</div>
+                <div class="menu-item"><a href="{% url 'guruh-create' %}">✚ Guruh qo'shish</a></div>
+                <div class="menu-item"><a href="{% url 'guruh-list' %}">📋 Guruhlar ro'yxati</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+        {% block content %}{% endblock content %}
+    </main>
+
+    <script>
+        const burgerBtn = document.getElementById('burgerBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mainContent = document.getElementById('mainContent');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-open');
+            burgerBtn.classList.toggle('active');
+        }
+
+        burgerBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking on a link
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                mainContent.classList.remove('sidebar-open');
+                burgerBtn.classList.remove('active');
+            });
+        });
+
+        // Close sidebar on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,20 +1,169 @@
 {% extends "base.html" %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student detail</title>
-</head>
-<body>
-    <h2>{{ student.ism }}</h2>
-    <h2>{{ student.familiya }}</h2>
-    <h2>{{ student.yosh }}</h2>
-    <h2>{{ student.phone }}</h2>
-    <a href="{% url 'student-update' student.pk  %}">Yangilash</a>
-    <a href="{% url 'student-delete' student.pk  %}">O'chirish</a>
-    <a href="{% url 'student-list' %}">Ortga</a>
-</body>
-</html>
+<style>
+    .detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .detail-header {
+        background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(45, 122, 62, 0.05) 100%);
+        padding: 2.5rem;
+        border-radius: 15px;
+        border-left: 5px solid var(--accent);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        margin-bottom: 3rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .student-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+        letter-spacing: -1px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .info-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent);
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 2.5rem 0;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(45, 122, 62, 0.3);
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(45, 122, 62, 0.4);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-delete:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-back {
+        background: var(--light);
+        color: var(--primary);
+        border: 2px solid var(--border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-back:hover {
+        background: var(--border);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .detail-header {
+            padding: 1.5rem;
+        }
+
+        .student-name {
+            font-size: 2rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="detail-container">
+    <div class="detail-header">
+        <h1 class="student-name">{{ student.ism }} {{ student.familiya }}</h1>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-label">🎂 Yosh</div>
+                <div class="info-value">{{ student.yosh }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">📱 Telefon</div>
+                <div class="info-value">{{ student.phone }}</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{% url 'student-update' student.pk %}" class="btn btn-edit">✏️ Yangilash</a>
+            <a href="{% url 'student-delete' student.pk %}" class="btn btn-delete">🗑️ O'chirish</a>
+            <a href="{% url 'student-list' %}" class="btn btn-back">← Ortga</a>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}

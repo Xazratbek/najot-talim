@@ -1,19 +1,179 @@
 {% extends "base.html" %}
-{% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student create</title>
-</head>
-<body>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
 
-        <button type="submit">O'quvchi qo'shish</button>
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .form-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: var(--secondary);
+        font-weight: 500;
+    }
+
+    .form-wrapper {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        border: 2px solid var(--border);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.7rem;
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.9rem 1.2rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 1.2rem;
+        background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        box-shadow: 0 6px 20px rgba(45, 122, 62, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(45, 122, 62, 0.4);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        padding: 1.2rem;
+        background: var(--light);
+        color: var(--primary);
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background: var(--border);
+        transform: translateY(-3px);
+    }
+
+    .form-group.required label::after {
+        content: ' *';
+        color: #e74c3c;
+    }
+
+    @media (max-width: 640px) {
+        .form-container {
+            padding: 1rem;
+        }
+
+        .form-wrapper {
+            padding: 1.5rem;
+        }
+
+        .form-title {
+            font-size: 2rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <h1 class="form-title">✏️ Yangi Talaba</h1>
+        <p class="form-subtitle">Talabaning ma'lumotlarini kiriting</p>
+    </div>
+
+    <form action="" method="post" class="form-wrapper">
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% if field.name != 'csrf_token' %}
+            <div class="form-group {% if field.field.required %}required{% endif %}">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <span style="color: #e74c3c; font-size: 0.85rem; margin-top: 0.3rem;">{{ field.errors.0 }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">➕ Talaba qo'shish</button>
+            <a href="{% url 'student-list' %}" class="btn-cancel">← Bekor qilish</a>
+        </div>
     </form>
-</body>
-</html>
+</div>
 {% endblock content %}

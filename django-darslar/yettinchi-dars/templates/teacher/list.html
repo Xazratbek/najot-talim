@@ -1,16 +1,200 @@
 {% extends "base.html" %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacherlar</title>
-</head>
-<body>
-    {% for teacher in teachers %}
-    <br><a href="{% url 'teacher-detail' teacher.pk %}">{{ teacher.id }} {{ teacher.ism }}</a><br><br><br>
-    {% endfor %}
-</body>
-</html>
+<style>
+    .list-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .list-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(45, 122, 62, 0.3);
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    .btn-add:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(45, 122, 62, 0.4);
+    }
+
+    .teachers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .teacher-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        border: 2px solid var(--border);
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .teacher-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    .teacher-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .teacher-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+        border-color: var(--accent);
+    }
+
+    .teacher-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--secondary), var(--accent));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .teacher-id {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .teacher-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        word-break: break-word;
+    }
+
+    .card-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(26, 71, 42, 0.2);
+    }
+
+    .card-link:hover {
+        transform: translateX(5px);
+        box-shadow: 0 6px 16px rgba(26, 71, 42, 0.3);
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, rgba(212, 165, 116, 0.05) 0%, rgba(45, 122, 62, 0.05) 100%);
+        border-radius: 15px;
+        border: 2px dashed var(--border);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-text {
+        color: var(--secondary);
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .list-header {
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .list-title {
+            font-size: 2rem;
+        }
+
+        .btn-add {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .teachers-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="list-container">
+    <div class="list-header">
+        <h1 class="list-title">👨‍🏫 O'qituvchilar</h1>
+        <a href="{% url 'teacher-create' %}" class="btn-add">✚ Yangi O'qituvchi</a>
+    </div>
+
+    <div class="teachers-grid">
+        {% for teacher in teachers %}
+            <div class="teacher-card">
+                <div class="teacher-avatar">👨‍🎓</div>
+                <div class="teacher-id">#{{ teacher.id }}</div>
+                <h2 class="teacher-name">{{ teacher.ism }} {{ teacher.familiya }}</h2>
+                <a href="{% url 'teacher-detail' teacher.pk %}" class="card-link">Ko'proq ma'lumot →</a>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p class="empty-text">Hozircha o'qituvchi mavjud emas</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}
