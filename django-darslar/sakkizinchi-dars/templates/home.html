@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        Salom {{ user.username }}
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit"><p>Tizimdan chiqish</p></button>
+        </form>
+    {% else %}
+        <a href="{% url 'signup' %}">Ro'yxatdan o'tish</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+</body>
+</html>
