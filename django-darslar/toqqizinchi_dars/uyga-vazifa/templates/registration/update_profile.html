@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Ro'yxatdan o'tish{% endblock title %}
+{% block title %}Profilni tahrirlash{% endblock title %}
 {% block content %}
 <section class="card" style="max-width: 640px; margin: 0 auto;">
-    <h2 class="title">Ro'yxatdan o'tish</h2>
-    <p class="muted">Yangi profil yarating va mahsulot joylashni boshlang.</p>
-    <form action="" method="post" enctype="multipart/form-data">
+    <h2 class="title">Profilni tahrirlash</h2>
+    <p class="muted">Manzil va avatar ma'lumotlarini yangilang.</p>
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}
             <div class="form-field">
@@ -13,7 +13,7 @@
                 {{ field.errors }}
             </div>
         {% endfor %}
-        <button class="btn btn-primary" type="submit">Ro'yxatdan o'tish</button>
+        <button class="btn btn-primary" type="submit">Yangilash</button>
     </form>
 </section>
 {% endblock content %}

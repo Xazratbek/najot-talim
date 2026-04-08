@@ -1,7 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Soat magazin{% endblock title %}
+{% block title %}Bosh sahifa{% endblock title %}
 {% block content %}
-{% for category in kategoriyalar %}
-    <a href="{% url 'watch:category-products' category.pk %}">{{ category.name }}</a>
-{% endfor %}
+<section class="card" style="margin-bottom: 18px;">
+    <h2 class="title">Soatlar vitrinasiga xush kelibsiz</h2>
+    <p class="muted">Kategoriya bo'yicha ko'ring yoki barcha mahsulotlar ro'yxatiga o'ting.</p>
+    <a class="btn btn-warm" href="{% url 'watch:products' %}">Barcha mahsulotlarni ko'rish</a>
+</section>
+
+<section class="card" style="margin-bottom: 18px;">
+    <h3 class="title" style="font-size: 1.1rem;">Kategoriyalar</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for category in kategoriyalar %}
+            <a class="nav-link" href="{% url 'watch:category-products' category.pk %}">
+                {{ category.name }}
+            </a>
+        {% empty %}
+            <p class="muted">Hozircha kategoriya mavjud emas.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% if page_obj %}
+<section class="card">
+    <h3 class="title" style="font-size: 1.1rem;">So'nggi mahsulotlar</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px;">
+        {% for product in page_obj %}
+            <a href="{% url 'watch:product-detail' product.pk %}" style="text-decoration: none; color: inherit;">
+                <article style="border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: #0f1828;">
+                    <h4 style="margin: 0 0 8px;">{{ product.name }}</h4>
+                    <p class="muted" style="margin: 0 0 8px;">{{ product.brand }}</p>
+                    <strong>{{ product.price }} so'm</strong>
+                </article>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 {% endblock content %}

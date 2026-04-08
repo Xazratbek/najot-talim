@@ -1,68 +1,219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mening Saytim{% endblock title %}</title>
+    <title>{% block title %}Watch Atelier{% endblock title %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Oddiy va toza Navbar dizayni */
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        :root {
+            --bg: #0c1018;
+            --bg-soft: #111929;
+            --card: #171f31cc;
+            --text: #e9eefb;
+            --muted: #9ba7c9;
+            --line: #2e3b57;
+            --accent: #6fe8ca;
+            --accent-2: #ffbf69;
+            --danger: #ff6b7a;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            --radius: 20px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            font-family: "Plus Jakarta Sans", sans-serif;
+            background:
+                radial-gradient(circle at 10% 20%, #1c2f52 0%, transparent 35%),
+                radial-gradient(circle at 90% 10%, #3d1f4d 0%, transparent 30%),
+                linear-gradient(145deg, #090d15 0%, #0b1320 55%, #101b2f 100%);
+            min-height: 100vh;
+        }
+
+        .grain::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.15;
+            background-image: radial-gradient(#ffffff 0.4px, transparent 0.4px);
+            background-size: 3px 3px;
+            z-index: -1;
+        }
 
         .navbar {
-            background-color: #333;
-            overflow: hidden;
+            position: sticky;
+            top: 0;
+            z-index: 10;
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
-            height: 60px;
+            gap: 14px;
+            padding: 14px 28px;
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(10px);
+            background: #0e1422c4;
         }
 
-        .navbar a {
-            color: white;
+        .brand {
+            font-family: "Cinzel", serif;
+            font-size: 1.35rem;
+            letter-spacing: 0.08em;
+            margin: 0;
+        }
+
+        .brand a {
+            color: var(--accent);
             text-decoration: none;
-            padding: 14px 20px;
+        }
+
+        .nav-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 8px 14px;
+            transition: 200ms ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(111, 232, 202, 0.15);
+        }
+
+        .badge {
+            color: #071116;
+            background: linear-gradient(120deg, var(--accent), #a8f4e1);
+            border-color: transparent;
+        }
+
+        .danger {
+            border-color: #ff8f9b;
+            color: #ffdce0;
+        }
+
+        .container {
+            width: min(1120px, 92%);
+            margin: 28px auto 48px;
+            animation: riseIn 520ms ease-out;
+        }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .title {
+            margin: 0 0 12px;
+            font-family: "Cinzel", serif;
+            letter-spacing: 0.04em;
+        }
+
+        .muted { color: var(--muted); }
+
+        .form-field { margin-bottom: 14px; }
+        .form-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+            color: #d7e0ff;
+        }
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 11px 12px;
+            color: var(--text);
+            background: #0d1423;
+            font: inherit;
+        }
+        .form-field textarea { min-height: 120px; resize: vertical; }
+
+        .btn {
             display: inline-block;
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 160ms ease;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary {
+            color: #08131f;
+            background: linear-gradient(120deg, var(--accent), #9cf1e0);
+        }
+        .btn-warm {
+            color: #271603;
+            background: linear-gradient(120deg, var(--accent-2), #ffd9a7);
+        }
+        .btn-danger {
+            color: white;
+            background: linear-gradient(120deg, #ff5f73, #ff8fa2);
         }
 
-        .navbar a:hover {
-            background-color: #555;
-            border-radius: 5px;
+        .errorlist {
+            color: #ffd3d9;
+            list-style: none;
+            padding: 0;
+            margin: 6px 0;
+            font-size: 0.9rem;
         }
-
-        .nav-brand { font-weight: bold; font-size: 1.2rem; }
-
-        .nav-links { display: flex; align-items: center; }
-
-        .user-info { color: #4caf50; margin-right: 15px; font-size: 0.9rem; }
-
-        .btn-logout { background-color: #f44336; border-radius: 5px; }
-        .btn-login { background-color: #008CBA; border-radius: 5px; margin-left: 5px; }
     </style>
+    {% block extra_head %}{% endblock extra_head %}
 </head>
-<body>
-
-    <!-- Navbar boshlanishi -->
+<body class="grain">
     <nav class="navbar">
-        <div class="nav-brand">
-            <a href="{% url 'home' %}">Mening Saytim</a>
+        <h1 class="brand"><a href="{% url 'home' %}">Watch Atelier</a></h1>
+
+        <div class="nav-list">
+            <a class="nav-link" href="{% url 'watch:products' %}">Mahsulotlar</a>
+            <a class="nav-link" href="{% url 'watch:my-products' %}">Mening mahsulotlarim</a>
+            <a class="nav-link badge" href="{% url 'watch:product-create' %}">+ Yangi mahsulot</a>
         </div>
 
-        <div class="nav-links">
+        <div class="nav-list">
             {% if user.is_authenticated %}
-                <span class="user-info">Salom, {{ user.username }}!</span>
-                <a href="{% url 'logout' %}" class="btn-logout">Chiqish (Logout)</a>
+                <span class="muted">@{{ user.username }}</span>
+                <a class="nav-link" href="{% url 'password-change' user.pk %}">Parolni o'zgartirish</a>
+                <a class="nav-link danger" href="{% url 'logout' %}">Chiqish</a>
             {% else %}
-                <a href="{% url 'login' %}" class="btn-login">Kirish</a>
-                <a href="{% url 'signup' %}" style="color: #ddd;">Ro'yxatdan o'tish</a>
+                <a class="nav-link" href="{% url 'login' %}">Kirish</a>
+                <a class="nav-link badge" href="{% url 'signup' %}">Ro'yxatdan o'tish</a>
             {% endif %}
         </div>
     </nav>
 
-    <div class="container" style="padding: 20px;">
-        {% block content %}
-        {% endblock content %}
-    </div>
-
+    <main class="container">
+        {% block content %}{% endblock content %}
+    </main>
+    {% block extra_scripts %}{% endblock extra_scripts %}
 </body>
 </html>

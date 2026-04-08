@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Ro'yxatdan o'tish{% endblock title %}
+{% block title %}Mahsulot qo'shis{% endblock title %}
 {% block content %}
-<section class="card" style="max-width: 640px; margin: 0 auto;">
-    <h2 class="title">Ro'yxatdan o'tish</h2>
-    <p class="muted">Yangi profil yarating va mahsulot joylashni boshlang.</p>
+<section class="card">
+    <h2 class="title">Yangi mahsulot qo'shish</h2>
+    <p class="muted">Barcha maydonlarni to'ldiring va rasmlarni bir nechta qilib yuklang.</p>
     <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}
@@ -13,7 +13,7 @@
                 {{ field.errors }}
             </div>
         {% endfor %}
-        <button class="btn btn-primary" type="submit">Ro'yxatdan o'tish</button>
+        <button class="btn btn-primary" type="submit">Mahsulot qo'shish</button>
     </form>
 </section>
 {% endblock content %}

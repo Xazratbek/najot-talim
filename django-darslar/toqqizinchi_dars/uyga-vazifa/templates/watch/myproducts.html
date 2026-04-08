@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Mening mahsulotlarim{% endblock title %}
+{% block content %}
+<section class="card" style="margin-bottom: 18px;">
+    <h2 class="title">Mening mahsulotlarim</h2>
+    <p class="muted">Siz joylagan mahsulotlar soni: {{ products|length }}</p>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+    {% for product in products %}
+        <article class="card" style="padding: 14px;">
+            {% with img=product.images.first %}
+                {% if img and img.image %}
+                    <img src="{{ img.image.url }}" alt="{{ product.name }}" style="width:100%; height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 10px;">
+                {% endif %}
+            {% endwith %}
+            <h3 style="margin: 0 0 8px;">{{ product.name }}</h3>
+            <p class="muted" style="margin: 0 0 6px;">{{ product.brand }}</p>
+            <p style="margin: 0 0 10px;"><strong>{{ product.price }} so'm</strong></p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a class="btn btn-primary" href="{% url 'watch:product-detail' product.pk %}">Ko'rish</a>
+                <a class="btn btn-warm" href="{% url 'watch:product-update' product.pk %}">Tahrirlash</a>
+            </div>
+        </article>
+    {% empty %}
+        <p class="muted">Sizda hozircha mahsulot yo'q. Avval mahsulot yarating.</p>
+    {% endfor %}
+</section>
+{% endblock content %}

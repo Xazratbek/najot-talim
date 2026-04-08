@@ -1,10 +1,28 @@
 {% extends "base.html" %}
 {% block title %}{{ kategoriya.name }}-mahsulotlari{% endblock title %}
 {% block content %}
-{% for mahsulot in mahsulotlar %}
-    {{ mahsulot.name }}
-    {% for image in mahsulot.images.all %}
-        <img src="{{ image.image.url }}" alt="{{ mahsulot.name }}" width="200" height="250">
+<section class="card">
+    <h2 class="title">{{ kategoriya.name }} kategoriyasi</h2>
+    <p class="muted">{{ mahsulotlar|length }} ta mahsulot topildi.</p>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 18px;">
+    {% for mahsulot in mahsulotlar %}
+        <article class="card" style="padding: 14px;">
+            {% with first_image=mahsulot.images.first %}
+                {% if first_image %}
+                    <img src="{{ first_image.image.url }}" alt="{{ mahsulot.name }}" style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 10px;">
+                {% endif %}
+            {% endwith %}
+            <h3 style="margin: 0 0 8px;">{{ mahsulot.name }}</h3>
+            <p class="muted" style="margin: 0 0 8px;">{{ mahsulot.brand }}</p>
+            <strong>{{ mahsulot.price }} so'm</strong>
+            <div style="margin-top: 12px;">
+                <a class="btn btn-primary" href="{% url 'watch:product-detail' mahsulot.pk %}">Batafsil</a>
+            </div>
+        </article>
+    {% empty %}
+        <p class="muted">Bu kategoriyada hozircha mahsulot yo'q.</p>
     {% endfor %}
-{% endfor %}
+</section>
 {% endblock content %}

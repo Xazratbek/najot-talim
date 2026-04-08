@@ -1,9 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock title %}
 {% block content %}
+<section class="card" style="max-width: 540px; margin: 0 auto;">
+    <h2 class="title">Kirish</h2>
+    <p class="muted">Hisobingizga kirish orqali mahsulotlarni boshqaring.</p>
+    {% if error %}
+        <p style="color: #ffd3d9;">{{ error }}</p>
+    {% endif %}
     <form action="" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
+        {% for field in form %}
+            <div class="form-field">
+                {{ field.label_tag }}
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Kirish</button>
     </form>
+    <p class="muted" style="margin-top: 12px;">Hisob yo'qmi? <a class="nav-link" href="{% url 'signup' %}">Ro'yxatdan o'tish</a></p>
+</section>
 {% endblock content %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Mahsulot tafsiloti{% endblock title %}
+{% block content %}
+{% for item in product %}
+    <section class="card" style="margin-bottom: 18px;">
+        <h2 class="title">{{ item.name }}</h2>
+        <p class="muted">{{ item.brand }} | Kategoriya: {{ item.category.name }}</p>
+        <p>{{ item.description|default:"Tavsif kiritilmagan." }}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <span class="nav-link">Narx: {{ item.price }} so'm</span>
+            <span class="nav-link">Soni: {{ item.stock }}</span>
+            <span class="nav-link">Rang: {{ item.color }}</span>
+            <span class="nav-link">Kafolat: {{ item.warranty_months }} oy</span>
+        </div>
+    </section>
+
+    <section class="card" style="margin-bottom: 18px;">
+        <h3 class="title" style="font-size: 1.1rem;">Rasmlar</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+            {% for img in item.images.all %}
+                <img src="{{ img.image.url }}" alt="{{ item.name }}" style="width: 100%; height: 250px; object-fit: cover; border-radius: 14px;">
+            {% empty %}
+                <p class="muted">Mahsulot uchun rasm yuklanmagan.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if user == item.sotuvchi %}
+        <section class="card" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a class="btn btn-warm" href="{% url 'watch:product-update' item.pk %}">Tahrirlash</a>
+            <form action="{% url 'watch:product-delete' item.pk %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">O'chirish</button>
+            </form>
+        </section>
+    {% endif %}
+{% endfor %}
+{% endblock content %}
