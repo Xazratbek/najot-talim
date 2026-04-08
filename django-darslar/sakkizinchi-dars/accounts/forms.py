@@ -2,7 +2,6 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 from django.core.exceptions import ValidationError
 
-
 class CustomUserCreateForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = CustomUser
@@ -44,6 +43,14 @@ class CustomUserCreateForm(UserCreationForm):
             raise ValidationError("Addressda Tashkent bo'lishi majbur")
 
         return address
+
+    def clean_age(self):
+        age = self.cleaned_data["age"]
+        if age < 18:
+            raise ValidationError("Uka yoshiing kichkina ekan")
+
+        return age
+
 
 class CustomUserEditForm(UserChangeForm):
     class Meta(UserChangeForm):

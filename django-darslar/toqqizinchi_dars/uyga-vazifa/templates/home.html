@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Soat magazin{% endblock title %}
+{% block content %}
+{% for category in kategoriyalar %}
+    <a href="{% url 'watch:category-products' category.pk %}">{{ category.name }}</a>
+{% endfor %}
+{% endblock content %}

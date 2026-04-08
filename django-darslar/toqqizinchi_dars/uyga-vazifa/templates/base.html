@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mening Saytim{% endblock title %}</title>
+    <style>
+        /* Oddiy va toza Navbar dizayni */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: 60px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+            display: inline-block;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+            border-radius: 5px;
+        }
+
+        .nav-brand { font-weight: bold; font-size: 1.2rem; }
+
+        .nav-links { display: flex; align-items: center; }
+
+        .user-info { color: #4caf50; margin-right: 15px; font-size: 0.9rem; }
+
+        .btn-logout { background-color: #f44336; border-radius: 5px; }
+        .btn-login { background-color: #008CBA; border-radius: 5px; margin-left: 5px; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar boshlanishi -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{% url 'home' %}">Mening Saytim</a>
+        </div>
+
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <span class="user-info">Salom, {{ user.username }}!</span>
+                <a href="{% url 'logout' %}" class="btn-logout">Chiqish (Logout)</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-login">Kirish</a>
+                <a href="{% url 'signup' %}" style="color: #ddd;">Ro'yxatdan o'tish</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 20px;">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+</body>
+</html>

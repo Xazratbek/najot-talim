@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ kategoriya.name }}-mahsulotlari{% endblock title %}
+{% block content %}
+{% for mahsulot in mahsulotlar %}
+    {{ mahsulot.name }}
+    {% for image in mahsulot.images.all %}
+        <img src="{{ image.image.url }}" alt="{{ mahsulot.name }}" width="200" height="250">
+    {% endfor %}
+{% endfor %}
+{% endblock content %}
