@@ -1,0 +1,6 @@
+media/
+*.sqlite3
+__pycache__/
+migrations/
+templates/img/
+.env
