@@ -1,0 +1,16 @@
+{% if listings %}
+    <div class="listing-grid">
+        {% for listing in listings %}
+            {% include "includes/listing_card.html" %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div>
+            <div class="empty-state__art"><svg width="44" height="44"><use href="#i-folder"></use></svg></div>
+            <h3>Bu yerda sizning e'lonlaringiz joylashadi</h3>
+            <p class="muted">Yangi listing joylang yoki tabni almashtirib ko'ring.</p>
+            <a class="btn btn--accent" href="{% url 'listing:create' %}">E'lon qo'yish</a>
+        </div>
+    </div>
+{% endif %}

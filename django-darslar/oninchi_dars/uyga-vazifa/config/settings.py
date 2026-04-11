@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,25 +9,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g3-otrlu654htc((mp7h=%40ghc=#23qn34t&s)@3-)i8r)1%2'
+SECRET_KEY = 'django-insecure-(ynusu^i+_$q9v93)gb5goxyqov5^vpd((qb8!gq33h-9vxn@$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"]
+
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    #django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #third party apps
+
+    #my apps
     'accounts',
-    'watch',
+    'categories',
+    'chat',
+    'favorites',
+    'listings',
+    'payments',
+    'reviews',
+    'utils',
 ]
 
 MIDDLEWARE = [
@@ -105,7 +119,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-AUTH_USER_MODEL = "accounts.CustomUser"
-LOGIN_URL = "login"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+LOGIN_REDIRECT_URL = 'listing:list'
+LOGOUT_REDIRECT_URL = 'listing:list'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
 MEDIA_URL = "/media/"
-MEDIA_ROOT = str(BASE_DIR.joinpath("media"))
+MEDIA_ROOT = BASE_DIR / "media"

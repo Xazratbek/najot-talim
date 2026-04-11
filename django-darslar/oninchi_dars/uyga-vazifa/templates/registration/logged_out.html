@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Chiqildi{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <section class="auth-showcase">
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4rem;max-width:520px;margin:0;">Hisobdan chiqdingiz, lekin board ochiq qoladi.</h1>
+        <div class="auth-showcase__orb"></div>
+    </section>
+    <section class="auth-card">
+        <h1>Chiqish yakunlandi</h1>
+        <p class="muted">Asosiy sahifaga qayting yoki boshqa hisob bilan kiring.</p>
+        <div class="form-stack">
+            <a class="btn btn--accent btn--block" href="{% url 'listing:list' %}">Asosiy sahifa</a>
+            <a class="btn btn--ghost btn--block" href="{% url 'login' %}">Qayta kirish</a>
+        </div>
+    </section>
+</div>
+{% endblock %}

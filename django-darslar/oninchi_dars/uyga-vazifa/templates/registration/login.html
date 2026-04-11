@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Kirish{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <section class="auth-showcase">
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4.2rem;max-width:540px;margin:0;">Profil, sevimlilar va shaxsiy e'lon oqimiga kiring.</h1>
+        <p class="muted" style="max-width:520px;font-size:1.1rem;">Board ichidagi barcha shaxsiy funksiyalar shu login flow orqali ulanadi.</p>
+        <div class="auth-showcase__orb"></div>
+    </section>
+    <section class="auth-card">
+        <h1>Kirish</h1>
+        <form method="post" class="form-stack">
+            {% csrf_token %}
+            {% include "includes/form_fields.html" with form=form %}
+            <button class="btn btn--accent btn--block" type="submit">Hisobga kirish</button>
+        </form>
+        <div class="helper-row">
+            <span>Hisob yo'qmi?</span>
+            <a href="{% url 'accounts:signup' %}" style="color:#ff8ac9;">Ro'yxatdan o'tish</a>
+        </div>
+    </section>
+</div>
+{% endblock %}

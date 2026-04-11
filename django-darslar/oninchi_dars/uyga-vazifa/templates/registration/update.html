@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Profilni tahrirlash{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <section class="auth-showcase">
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4rem;max-width:540px;margin:0;">Profil ma'lumotlarini yangilang va sotuvchi ko'rinishini kuchaytiring.</h1>
+        <p class="muted" style="max-width:520px;font-size:1.1rem;">Avatar, username va aloqa uchun kerakli ma'lumotlar shu yerda boshqariladi.</p>
+        <div class="auth-showcase__orb"></div>
+    </section>
+    <section class="auth-card">
+        <h1>Profilni yangilash</h1>
+        <form method="post" enctype="multipart/form-data" class="form-stack">
+            {% csrf_token %}
+            {% include "includes/form_fields.html" %}
+            <button class="btn btn--accent btn--block" type="submit">Saqlash</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

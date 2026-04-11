@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Kategoriyalar{% endblock %}
+{% block content %}
+<div class="stack">
+    <section class="section-head">
+        <div>
+            <h2>Barcha kategoriyalar</h2>
+            <p>Asosiy yo'nalishlar va ularning ichki bo'limlari.</p>
+        </div>
+    </section>
+
+    <section class="grid-categories">
+        {% for category in categories %}
+            <a class="category-tile" href="{% url 'category:detail' category.slug %}">
+                <div class="category-tile__title">{{ category.name }}</div>
+                <div class="category-tile__meta">{{ category.categories.count }} sub kategoriya</div>
+                {% if category.icon %}
+                    <img class="category-tile__icon" src="{{ category.icon.url }}" alt="{{ category.name }}">
+                {% endif %}
+            </a>
+        {% endfor %}
+    </section>
+
+    <section class="stack">
+        <div class="section-head">
+            <h2>Ko'p ko'rilgan e'lonlar</h2>
+        </div>
+        <div class="listing-grid">
+            {% for listing in popular_listings %}
+                {% include "includes/listing_card.html" %}
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

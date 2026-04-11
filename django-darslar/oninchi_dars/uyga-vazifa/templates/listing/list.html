@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Asosiy sahifa{% endblock %}
+{% block content %}
+<div class="stack">
+    <section class="hero">
+        <h1>Toshkentda e'lonlar: xarid va sotuv real bozordagidek oqimda</h1>
+        <div class="grid-categories">
+            {% for category in root_categories %}
+                <a class="category-tile" href="{% url 'category:detail' category.slug %}">
+                    <div class="category-tile__title">{{ category.name }}</div>
+                    <div class="category-tile__meta">{{ category.categories.count }} ta yo'nalish</div>
+                    {% if category.icon %}
+                        <img class="category-tile__icon" src="{{ category.icon.url }}" alt="{{ category.name }}">
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="stack">
+        <div class="section-head">
+            <h2>Foydali va qulay</h2>
+        </div>
+        <div class="promo-grid">
+            <article class="promo-card promo-card--magenta">
+                <h3>Oson sotuv, tezroq daromad va faol auditoriya</h3>
+                <span class="promo-card__pill">Ishtirok eting</span>
+                <img class="promo-card__art" src="https://picsum.photos/seed/promo-phone/480/520" alt="">
+            </article>
+            <article class="promo-card promo-card--mint">
+                <h3>Ustalik va qurilish uchun alohida oqim</h3>
+                <span class="promo-card__pill">Katta tanlov</span>
+                <img class="promo-card__art" src="https://picsum.photos/seed/promo-tools/480/520" alt="">
+            </article>
+            <article class="promo-card promo-card--rose">
+                <h3>Tasdiqlangan sotuvchilar va toza listinglar</h3>
+                <span class="promo-card__pill">Yangi tovarlar</span>
+                <img class="promo-card__art" src="https://picsum.photos/seed/promo-shield/480/520" alt="">
+            </article>
+            <article class="promo-card promo-card--violet">
+                <h3>Berib yuborishadi, olib ketishadi, savdo yuradi</h3>
+                <span class="promo-card__pill">Bepul</span>
+                <img class="promo-card__art" src="https://picsum.photos/seed/promo-home/480/520" alt="">
+            </article>
+        </div>
+    </section>
+
+    <section class="stack">
+        <div class="section-head">
+            <div>
+                <h2>Qiziqarli e'lonlar</h2>
+                <p>Seed qilingan realistik ma'lumotlar va rasmlar bilan to'lgan board.</p>
+            </div>
+        </div>
+        <div class="listing-grid">
+            {% for listing in listings %}
+                {% include "includes/listing_card.html" %}
+            {% empty %}
+                <div class="empty-state" style="grid-column:1 / -1;">
+                    <div>
+                        <div class="empty-state__art"><svg width="44" height="44"><use href="#i-folder"></use></svg></div>
+                        <h3>Hozircha listing topilmadi</h3>
+                        <p class="muted">Yangi e'lon qo'shing yoki qidiruvni o'zgartiring.</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

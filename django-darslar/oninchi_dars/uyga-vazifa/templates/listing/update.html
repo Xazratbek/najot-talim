@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}E'lonni tahrirlash{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <section class="auth-showcase">
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4rem;max-width:560px;margin:0;">Mavjud e'lonni yangilang va tasvirini kuchaytiring.</h1>
+        <p class="muted" style="max-width:560px;font-size:1.1rem;">Yangi rasmlar, narx yoki tavsif kiritib, oqimni yangilang.</p>
+        <div class="auth-showcase__orb"></div>
+    </section>
+    <section class="auth-card">
+        <h1>E'lonni tahrirlash</h1>
+        <form method="post" enctype="multipart/form-data" class="form-stack">
+            {% csrf_token %}
+            {% include "includes/form_fields.html" %}
+            <button class="btn btn--accent btn--block" type="submit">Saqlash</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

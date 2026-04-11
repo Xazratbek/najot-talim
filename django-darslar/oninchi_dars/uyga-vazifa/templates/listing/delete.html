@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}E'lonni o'chirish{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <section class="auth-showcase">
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4rem;max-width:560px;margin:0;">E'lonni flowdan olib tashlashni tasdiqlang.</h1>
+        <p class="muted" style="max-width:560px;font-size:1.1rem;">Bu soft delete bo'ladi, listing statusi o'zgartiriladi.</p>
+        <div class="auth-showcase__orb"></div>
+    </section>
+    <section class="auth-card">
+        <h1>{{ object.title }}</h1>
+        <p class="muted">Rostdan ham ushbu e'lonni o'chirmoqchimisiz?</p>
+        <form method="post" class="form-stack">
+            {% csrf_token %}
+            <button class="btn btn--accent btn--block" type="submit">Ha, o'chirish</button>
+            <a class="btn btn--ghost btn--block" href="{% url 'listing:detail' object.uuid %}">Bekor qilish</a>
+        </form>
+    </section>
+</div>
+{% endblock %}

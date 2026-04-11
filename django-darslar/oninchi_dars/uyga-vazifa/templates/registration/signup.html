@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Ro'yxatdan o'tish{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <section class="auth-showcase">
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4rem;max-width:560px;margin:0;">Yangi foydalanuvchi oqimini oching va boardga qo'shiling.</h1>
+        <p class="muted" style="max-width:560px;font-size:1.1rem;">Ro'yxatdan o'tgach profil, e'lon qo'shish va sevimlilar to'liq ishlaydi.</p>
+        <div class="auth-showcase__orb"></div>
+    </section>
+    <section class="auth-card">
+        <h1>Ro'yxatdan o'tish</h1>
+        <form method="post" enctype="multipart/form-data" class="form-stack">
+            {% csrf_token %}
+            {% include "includes/form_fields.html" %}
+            <button class="btn btn--accent btn--block" type="submit">Profil yaratish</button>
+        </form>
+        <div class="helper-row">
+            <span>Allaqachon hisob bormi?</span>
+            <a href="{% url 'login' %}" style="color:#ff8ac9;">Kirish</a>
+        </div>
+    </section>
+</div>
+{% endblock %}
