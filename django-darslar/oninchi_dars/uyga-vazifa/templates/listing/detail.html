@@ -1,88 +1,157 @@
 {% extends "base.html" %}
+{% load static %}
+{% load listing_tags %}
+
 {% block title %}{{ listing.title }}{% endblock %}
+
 {% block content %}
 <div class="stack">
-    <div class="meta-row">
+    <nav class="breadcrumbs">
         <a href="{% url 'listing:list' %}">Asosiy</a>
-        <span>/</span>
-        <a href="{% url 'category:detail' listing.listing_category.slug %}">{{ listing.listing_category.name }}</a>
-        <span>/</span>
-        <span>{{ listing.title }}</span>
-    </div>
+        <svg width="18" height="18"><use href="#i-chevron-right"></use></svg>
+        {% with cat=listing.listing_category %}
+            {% if cat.parent %}
+                <a href="{% url 'category:detail' cat.parent.slug %}">{{ cat.parent.name }}</a>
+                <svg width="18" height="18"><use href="#i-chevron-right"></use></svg>
+            {% endif %}
+            <a href="{% url 'category:detail' cat.slug %}">{{ cat.name }}</a>
+        {% endwith %}
+        <svg width="18" height="18"><use href="#i-chevron-right"></use></svg>
+        <span>{{ listing.title|truncatechars:30 }}</span>
+    </nav>
 
-    <section class="detail-layout">
-        <div class="detail-gallery">
-            <div class="detail-frame detail-hero">
-                {% with main_image=listing.images.all.0 %}
-                    <div class="detail-hero__cover">
-                        {% if main_image %}
-                            <img data-gallery-main src="{{ main_image.image.url }}" alt="{{ listing.title }}">
-                        {% else %}
-                            <img data-gallery-main src="https://picsum.photos/seed/{{ listing.uuid }}/1200/900" alt="{{ listing.title }}">
-                        {% endif %}
-                    </div>
-                {% endwith %}
-
-                <div class="thumb-grid">
-                    {% for image in listing.images.all %}
-                        <button class="gallery-thumb" type="button" data-gallery-thumb="{{ image.image.url }}">
-                            <img src="{{ image.image.url }}" alt="{{ listing.title }}">
-                        </button>
-                    {% endfor %}
-                </div>
+    <section class="detail-grid-new">
+        <div class="detail-gallery-new">
+            <div class="detail-thumbs-new">
+                {% for image in listing.images.all %}
+                    <button class="gallery-thumb-new" type="button" data-gallery-thumb="{{ image.image.url }}">
+                        <img src="{{ image.image.url }}" alt="{{ listing.title }}">
+                    </button>
+                {% endfor %}
             </div>
-
-            <div class="detail-frame detail-body">
-                <div class="price-line">
-                    <strong>{{ listing.price|floatformat:0 }} {{ listing.get_currency_display }}</strong>
-                    <span class="tab-pill">{{ listing.get_condition_display }}</span>
-                </div>
-                <div class="detail-hero__info">
-                    <h1>{{ listing.title }}</h1>
-                    <div class="meta-row">
-                        <span>{{ listing.city }}</span>
-                        <span>{{ listing.created_at|date:"d.m.Y H:i" }}</span>
-                        <span>{{ listing.view_count }} ko'rish</span>
-                    </div>
-                </div>
-                <p class="muted">{{ listing.description }}</p>
-                <div class="meta-row">
-                    <span>Kategoriya: {{ listing.listing_category.name }}</span>
-                    <span>Status: {{ listing.get_status_display }}</span>
-                </div>
-                {% if request.user == listing.user %}
-                    <div class="tab-row">
-                        <a class="btn" href="{% url 'listing:update' listing.uuid %}">
-                            <svg width="18" height="18"><use href="#i-edit"></use></svg>
-                            Tahrirlash
-                        </a>
-                        <a class="btn btn--ghost" href="{% url 'listing:delete' listing.uuid %}">
-                            <svg width="18" height="18"><use href="#i-trash"></use></svg>
-                            O'chirish
-                        </a>
-                    </div>
-                {% endif %}
+            <div class="detail-cover-new">
+                {% with main_image=listing.images.all.0 %}
+                    {% if main_image %}
+                        <img data-gallery-main src="{{ main_image.image.url }}" alt="{{ listing.title }}">
+                    {% else %}
+                        <img data-gallery-main src="https://picsum.photos/seed/{{ listing.uuid }}/1200/900" alt="{{ listing.title }}">
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
 
-        <aside class="detail-side">
-            <div class="detail-panel seller-card">
+        <aside class="detail-info-panel">
+            <div class="detail-info-panel__main">
+                <div class="detail-price-new">
+                    {{ listing.price|human_price }} so'm
+                </div>
+                <h1>{{ listing.title }}</h1>
+                <div class="detail-actions-new">
+                    <button class="favorite-toggle" type="button" data-favorite-url="{% url 'favorites:toggle_favorite' listing.uuid %}" data-login-url="{% url 'login' %}">
+                        <svg width="22" height="22"><use href="#i-heart"></use></svg>
+                    </button>
+                    <button class="btn-icon" type="button" aria-label="Ulashish">
+                        <svg width="22" height="22"><use href="#i-share"></use></svg>
+                    </button>
+                </div>
+                <div class="meta-row" style="font-size: 1rem; gap: 18px;">
+                    <a href="#" style="color: var(--accent-2);">Narxni kuzatish</a>
+
+                </div>
+            </div>
+
+            <div class="detail-info-panel__seller">
                 <div class="seller-row">
                     <img class="avatar-md" src="{{ listing.user.avatar.url }}" alt="{{ listing.user.username }}">
                     <div>
-                        <strong>{{ listing.user.get_full_name|default:listing.user.username }}</strong>
-                        <div class="muted">@{{ listing.user.username }}</div>
+                        <strong style="display: flex; align-items: center; gap: 8px;">
+                            {{ listing.user.get_full_name|default:listing.user.username }}
+                            <svg width="20" height="20" style="color: #45aeff;"><use href="#i-shield-check"></use></svg>
+                        </strong>
+                        <div class="muted">0.0 ⭐ 0 ta sharh</div>
                     </div>
                 </div>
-                <div class="meta-row">
-                    <span>{{ listing.user.phone_number|default:"Telefon yashirilgan" }}</span>
-                    <span>{{ listing.user.user_listings.count }} ta e'lon</span>
-                </div>
-                <a class="btn btn--accent btn--block" href="{% if request.user.is_authenticated %}/chat/{% else %}{% url 'login' %}{% endif %}">Sotuvchi bilan bog'lanish</a>
-                <a class="btn btn--ghost btn--block" href="{% if request.user.is_authenticated %}{% url 'accounts:profile' %}{% else %}{% url 'login' %}{% endif %}">Profilga o'tish</a>
-            </div>
+                <div class="detail-info-panel__buttons">
 
-            <div class="detail-panel">
+                    <a href="{% if request.user.is_authenticated %}{% url 'listing:ask_seller' listing.uuid %}{% else %}{% url 'login' %}{% endif %}" class="btn btn--ghost btn--block">Sotuvchiga yozish</a>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="detail-body-new">
+        <div class="detail-body-new__content">
+            <article class="detail-section">
+                <h2>Xususiyatlar</h2>
+                <dl class="def-list">
+                    <dt>Toifa</dt><dd>{{ listing.listing_category.name }}</dd>
+                    <dt>Holat</dt><dd>{{ listing.get_condition_display }}</dd>
+                    <dt>Shahar</dt><dd>{{ listing.city }}</dd>
+                    <dt>E'lon ID</dt><dd>{{ listing.id }}</dd>
+                </dl>
+            </article>
+
+            <article class="detail-section">
+                <h2>Sotuvchidan so'rang</h2>
+                <form class="ask-seller-form">
+                    <input type="text" placeholder="Salom! Sotib olmoqchiman">
+                    <button class="btn-icon" type="submit" aria-label="Yuborish">
+                        <svg width="22" height="22" style="color: var(--accent); transform: rotate(90deg);"><use href="#i-chevron-right"></use></svg>
+                    </button>
+                </form>
+                <div class="quick-replies">
+                    <button type="button">Sotib olmoqchiman</button>
+                    <button type="button">Haliyam sotasizmi?</button>
+                    <button type="button">Narx kelishiladimi?</button>
+                    <button type="button">Qachon ko'rsam bo'ladi?</button>
+                </div>
+            </article>
+
+            <article class="detail-section">
+                <h2>Tavsif</h2>
+                <div class="prose">
+                    <p>{{ listing.description|linebreaks }}</p>
+                </div>
+            </article>
+
+            <article class="detail-section">
+                <h2>Sharhlar</h2>
+                <div class="stack" style="gap: 1.5rem;">
+                    {% for review in reviews %}
+                        <div class="review-card">
+                            <div class="seller-row">
+                                <img class="avatar-md" src="{{ review.reviewer.avatar.url }}" alt="{{ review.reviewer.username }}">
+                                <div>
+                                    <strong>{{ review.reviewer.get_full_name|default:review.reviewer.username }}</strong>
+                                    <div class="muted">
+                                        {{ review.rating }} ⭐ | {{ review.created_at|date:"d.m.Y" }}
+                                    </div>
+                                </div>
+                            </div>
+                            <p>{{ review.comment|linebreaks }}</p>
+                        </div>
+                    {% empty %}
+                        <p class="muted">Bu sotuvchi uchun hali sharhlar yo'q.</p>
+                    {% endfor %}
+                </div>
+            </article>
+
+             {% if request.user == listing.user %}
+                <div class="tab-row detail-section">
+                    <a class="btn" href="{% url 'listing:update' listing.uuid %}">
+                        <svg width="18" height="18"><use href="#i-edit"></use></svg>
+                        Tahrirlash
+                    </a>
+                    <a class="btn btn--ghost" href="{% url 'listing:delete' listing.uuid %}">
+                        <svg width="18" height="18"><use href="#i-trash"></use></svg>
+                        O'chirish
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <aside class="detail-body-new__aside">
+             <div class="detail-panel">
                 <h3 style="margin-top:0;">Shu bo'limdagi boshqa e'lonlar</h3>
                 <div class="stack" style="gap:14px;">
                     {% for listing in related_listings %}
@@ -94,8 +163,8 @@
                                     {% endif %}
                                 {% endwith %}
                                 <div>
-                                    <strong>{{ listing.title }}</strong>
-                                    <div class="muted">{{ listing.price|floatformat:0 }} {{ listing.get_currency_display }}</div>
+                                    <strong>{{ listing.title|truncatechars:40 }}</strong>
+                                    <div class="muted">{{ listing.price|human_price }} so'm</div>
                                 </div>
                             </a>
                         </div>

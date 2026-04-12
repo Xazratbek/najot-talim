@@ -1,0 +1,32 @@
+1. Sevimlilar (Favorites):
+   * URL: favorites/toggle/<uuid:listing_uuid>/ (e'lonni sevimlilarga qo'shish/olib tashlash uchun).
+   * View: ToggleFavoriteView (AJAX so'rovini qabul qilib, Favorite modelida yozuv yaratadigan yoki o'chiradigan view).
+
+  2. Chat:
+   * URL: /chat/ (barcha chatlar ro'yxati).
+   * URL: /chat/<int:user_id>/ (muayyan foydalanuvchi bilan chat xonasi).
+   * View: ChatListView (barcha dialoglar ro'yxati).
+   * View: ChatDetailView (chat xonasi, xabarlarni ko'rsatish va yuborish).
+
+  3. To'lovlar (Payments):
+   * URL: /payments/ (to'lovlar tarixi yoki premium xizmatlar sahifasi).
+   * View: PaymentsView (to'lovlar bilan bog'liq mantiqni boshqaradigan view).
+
+  4. Sharhlar va qoidalar (Reviews):
+   * URL: /review/ (sayt qoidalari yoki foydalanuvchilar bir-biriga yozgan sharhlar sahifasi).
+   * View: RulesView yoki ReviewsView.
+
+  5. Filtrlash va Qidiruv mantig'i:
+   * View: CategoryDetailView (categories/views.py ichida) – GET parametrlari (q, price_from, price_to va h.k.) orqali kelgan ma'lumotlarga asosan
+     e'lonlar ro'yxatini filtrlash mantiqi.
+   * View: ListingListView (listings/views.py ichida) – Asosiy sahifadagi qidiruv maydonidan kelgan q parametri bo'yicha e'lonlarni qidirish mantiqi.
+
+  6. Sotuvchiga savol yuborish:
+   * URL: listing/<uuid:listing_uuid>/ask/ (e'lon detal sahifasidan xabar yuborish uchun).
+   * View: AskSellerView (yuborilgan xabarni qabul qilib, chat modeliga saqlaydigan view).
+
+  7. Parolni o'zgartirish:
+   * URL: accounts/password/change/ (parolni o'zgartirish sahifasi).
+   * View: Django'ning standart PasswordChangeView'ini ishlatish yoki o'zingiz yozishingiz mumkin.
+
+  Ushbu ro'yxat sizga keyingi qadamlaringizni rejalashtirishda yordam beradi.

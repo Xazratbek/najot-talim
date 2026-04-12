@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .views import AskSellerView
 
 app_name = "listing"
 
@@ -9,4 +10,5 @@ urlpatterns = [
     path("delete/<uuid:uuid>/",ListingDeleteView.as_view(),name="delete"),
     path("create/",ListingCreateView.as_view(),name="create"),
     path("update/<uuid:uuid>/",ListingUpdateView.as_view(),name="update"),
+    path("<uuid:uuid>/ask/", AskSellerView.as_view(),name="ask_seller")
 ]

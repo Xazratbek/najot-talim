@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Mening xabarlarim{% endblock %}
+
+{% block content %}
+<div class="stack">
+    <h1 class="page-title">Xabarlar</h1>
+
+    <div class="chat-list-container">
+        {% for room in chat_rooms %}
+            {% if request.user == room.buyer %}
+                {% with other_user=room.seller %}
+                <a class="chat-list-item" href="{% url 'chat:room_detail' room.pk %}">
+                    <img class="avatar-md" src="{{ other_user.avatar.url }}" alt="{{ other_user.username }}">
+                    <div class="chat-list-item__main">
+                        <div class="chat-list-item__header">
+                            <strong>{{ other_user.get_full_name|default:other_user.username }}</strong>
+                            <span class="muted">{{ room.updated_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <p class="muted" style="margin: 0;">{{ room.chat_listing.title }}</p>
+                    </div>
+                </a>
+                {% endwith %}
+            {% else %}
+                {% with other_user=room.buyer %}
+                <a class="chat-list-item" href="{% url 'chat:room_detail' room.pk %}">
+                    <img class="avatar-md" src="{{ other_user.avatar.url }}" alt="{{ other_user.username }}">
+                    <div class="chat-list-item__main">
+                        <div class="chat-list-item__header">
+                            <strong>{{ other_user.get_full_name|default:other_user.username }}</strong>
+                            <span class="muted">{{ room.updated_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <p class="muted" style="margin: 0;">{{ room.chat_listing.title }}</p>
+                    </div>
+                </a>
+                {% endwith %}
+            {% endif %}
+        {% empty %}
+            <div class="empty-state">
+                <div>
+                    <div class="empty-state__art"><svg width="44" height="44"><use href="#i-message"></use></svg></div>
+                    <h3>Suhbatlar yo'q</h3>
+                    <p class="muted">Sotuvchilarga e'lon sahifasidan yozishni boshlang.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

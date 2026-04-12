@@ -3,73 +3,90 @@
 {% block header_search_action %}{% url 'category:list' %}{{ category.slug }}/{% endblock %}
 {% block content %}
 <div class="stack">
-    <section class="section-head">
-        <div>
-            <h2>{{ category.name }}</h2>
-            <p>{{ listing_count }} ta e'lon topildi.</p>
-        </div>
-    </section>
+    <nav class="breadcrumbs">
+        <a href="{% url 'listing:list' %}">Asosiy</a>
+        <svg width="18" height="18"><use href="#i-chevron-right"></use></svg>
+        {% if category.parent %}
+            <a href="{% url 'category:detail' category.parent.slug %}">{{ category.parent.name }}</a>
+            <svg width="18" height="18"><use href="#i-chevron-right"></use></svg>
+        {% endif %}
+        <span>{{ category.name }}</span>
+    </nav>
 
-    <div class="tab-row">
+    <h1 class="page-title">{{ category.name }} Toshkentda</h1>
+
+    <div class="sub-category-bar">
         {% for sub_category in sub_categories %}
-            <a class="tab-pill" href="{% url 'category:detail' sub_category.slug %}">{{ sub_category.name }}</a>
+            <a class="sub-category-link" href="{% url 'category:detail' sub_category.slug %}">{{ sub_category.name }}</a>
         {% endfor %}
     </div>
 
-    <section class="shell-two-column">
-        <aside class="filter-panel">
-            <h3 style="margin-top:0;">Filterlar</h3>
-            <form class="field-stack" method="get">
-                <label class="field-label">
-                    <span>Qidiruv</span>
-                    <input type="search" name="q" value="{{ current_q }}" placeholder="Nomi, tavsif yoki shahar">
-                </label>
-                <div class="split">
-                    <label class="field-label">
-                        <span>Min narx</span>
-                        <input type="number" name="price_from" value="{{ current_price_from }}" placeholder="0">
-                    </label>
-                    <label class="field-label">
-                        <span>Max narx</span>
-                        <input type="number" name="price_to" value="{{ current_price_to }}" placeholder="1000000">
-                    </label>
-                </div>
-                <label class="field-label">
-                    <span>Valyuta</span>
-                    <select name="currency">
-                        <option value="">Hammasi</option>
-                        <option value="uzs" {% if current_currency == 'uzs' %}selected{% endif %}>So'm</option>
-                        <option value="usd" {% if current_currency == 'usd' %}selected{% endif %}>USD</option>
-                        <option value="eur" {% if current_currency == 'eur' %}selected{% endif %}>Euro</option>
-                    </select>
-                </label>
-                <label class="field-label">
-                    <span>Holati</span>
-                    <select name="condition">
-                        <option value="">Hammasi</option>
-                        <option value="new" {% if current_condition == 'new' %}selected{% endif %}>Yangi</option>
-                        <option value="used" {% if current_condition == 'used' %}selected{% endif %}>B/U</option>
-                    </select>
-                </label>
-                <button class="btn btn--accent btn--block" type="submit">Qo'llash</button>
-            </form>
-        </aside>
-
-        <div class="stack">
-            <div class="listing-grid">
-                {% for listing in category_listings %}
-                    {% include "includes/listing_card.html" %}
-                {% empty %}
-                    <div class="empty-state" style="grid-column:1 / -1;">
-                        <div>
-                            <div class="empty-state__art"><svg width="44" height="44"><use href="#i-search"></use></svg></div>
-                            <h3>Bu bo'limda mos e'lon topilmadi</h3>
-                            <p class="muted">Filterlarni tozalang yoki boshqa subkategoriya tanlang.</p>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+    <div class="filter-bar">
+        <button class="btn" id="filter-toggle" type="button">
+            <svg width="18" height="18" style="margin-right: .5rem;"><path d="M5 12V4H3v8l4 4 4-4V4h-2v8l-2 2-2-2zM15 4h-2v3h2V4zm0 5h-2v3h2v-3zm0 5h-2v3h2v-3zm2-10v3h2V4h-2zm0 5v3h2v-3zm0 5v3h2v-3z" fill="currentColor"/></svg>
+            Filtrlar
+        </button>
+        <div class="filter-pills">
+            <button class="filter-pill">{{ category.name }} <svg width="14" height="14"><use href="#i-close"></use></svg></button>
+            <button class="filter-pill">Sotuvchi <svg width="14" height="14"><use href="#i-chevron-down"></use></svg></button>
+            <button class="filter-pill">Holat <svg width="14" height="14"><use href="#i-chevron-down"></use></svg></button>
         </div>
-    </section>
+    </div>
+
+    <aside id="filter-panel" class="filter-panel-offcanvas">
+        <div class="filter-panel__header">
+            <h3>Filterlar</h3>
+            <button id="filter-close" type="button" class="btn-icon" aria-label="Yopish"><svg width="22" height="22"><use href="#i-close"></use></svg></button>
+        </div>
+        <form class="field-stack" method="get">
+            <label class="field-label">
+                <span>Qidiruv</span>
+                <input type="search" name="q" value="{{ current_q }}" placeholder="Nomi, tavsif yoki shahar">
+            </label>
+            <div class="split">
+                <label class="field-label">
+                    <span>Min narx</span>
+                    <input type="number" name="price_from" value="{{ current_price_from }}" placeholder="0">
+                </label>
+                <label class="field-label">
+                    <span>Max narx</span>
+                    <input type="number" name="price_to" value="{{ current_price_to }}" placeholder="1000000">
+                </label>
+            </div>
+            <label class="field-label">
+                <span>Valyuta</span>
+                <select name="currency">
+                    <option value="">Hammasi</option>
+                    <option value="uzs" {% if current_currency == 'uzs' %}selected{% endif %}>So'm</option>
+                    <option value="usd" {% if current_currency == 'usd' %}selected{% endif %}>USD</option>
+                    <option value="eur" {% if current_currency == 'eur' %}selected{% endif %}>Euro</option>
+                </select>
+            </label>
+            <label class="field-label">
+                <span>Holati</span>
+                <select name="condition">
+                    <option value="">Hammasi</option>
+                    <option value="new" {% if current_condition == 'new' %}selected{% endif %}>Yangi</option>
+                    <option value="used" {% if current_condition == 'used' %}selected{% endif %}>B/U</option>
+                </select>
+            </label>
+            <button class="btn btn--accent btn--block" type="submit">Qo'llash</button>
+        </form>
+    </aside>
+    <div id="filter-overlay" class="overlay"></div>
+
+    <div class="listing-grid">
+        {% for listing in category_listings %}
+            {% include "includes/listing_card.html" %}
+        {% empty %}
+            <div class="empty-state" style="grid-column:1 / -1;">
+                <div>
+                    <div class="empty-state__art"><svg width="44" height="44"><use href="#i-search"></use></svg></div>
+                    <h3>Bu bo'limda mos e'lon topilmadi</h3>
+                    <p class="muted">Filterlarni tozalang yoki boshqa subkategoriya tanlang.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

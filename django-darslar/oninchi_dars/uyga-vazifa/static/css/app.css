@@ -876,3 +876,423 @@ textarea {
     display: none;
   }
 }
+
+/* --- Added for Category Page Redesign --- */
+
+/* Breadcrumbs */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.breadcrumbs a {
+  color: var(--fg);
+}
+.breadcrumbs svg {
+  color: var(--muted);
+}
+
+/* Page Title */
+.page-title {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+}
+
+/* Sub-category Bar */
+.sub-category-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sub-category-link {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--muted);
+  transition: color 180ms ease;
+}
+.sub-category-link:hover {
+  color: var(--fg);
+}
+
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.filter-pills {
+  display: flex;
+  gap: 8px;
+}
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 12px;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+/* Off-canvas Filter Panel */
+.filter-panel-offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(calc(100% - 40px), 420px);
+  height: 100%;
+  background: var(--panel);
+  z-index: 101;
+  transform: translateX(100%);
+  transition: transform 300ms ease;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+}
+.filter-panel-offcanvas.is-open {
+  transform: translateX(0);
+}
+.filter-panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.filter-panel__header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+.btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    cursor: pointer;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms ease, visibility 300ms ease;
+}
+.overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Icon Hover Effect */
+.favorite-toggle:hover {
+  background: rgba(195, 0, 122, 0.85); /* Pink color */
+}
+
+/* --- Added for Detail Page Redesign --- */
+.detail-grid-new {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(340px, 1fr);
+    gap: 26px;
+    align-items: start;
+}
+
+.detail-gallery-new {
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 14px;
+}
+
+.detail-thumbs-new {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+}
+
+.gallery-thumb-new {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    padding: 0;
+    background: var(--panel);
+    cursor: pointer;
+}
+
+.gallery-thumb-new img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detail-cover-new {
+    aspect-ratio: 1;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--panel);
+}
+
+.detail-cover-new img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detail-info-panel {
+    position: sticky;
+    top: 120px;
+    display: grid;
+    gap: 18px;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    background: rgba(17,18,20,.9);
+    padding: 22px;
+}
+
+.detail-info-panel__main,
+.detail-info-panel__seller {
+    display: grid;
+    gap: 16px;
+}
+.detail-info-panel__seller {
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+.detail-info-panel__buttons {
+    display: grid;
+    gap: 10px;
+}
+
+.detail-price-new {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+}
+
+.detail-info-panel h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    line-height: 1.3;
+}
+
+.detail-actions-new {
+    display: flex;
+    gap: 10px;
+}
+
+.detail-actions-new .favorite-toggle {
+    position: static;
+    width: 52px;
+    height: 52px;
+}
+.detail-actions-new .btn-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: var(--panel-soft);
+}
+
+.detail-body-new {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(340px, 1fr);
+    gap: 26px;
+    align-items: start;
+}
+
+.detail-body-new__content {
+    display: grid;
+    gap: 24px;
+}
+
+.detail-section {
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    background: rgba(17,18,20,.6);
+}
+.detail-section h2 {
+    margin-top: 0;
+    font-family: "Space Grotesk", sans-serif;
+}
+
+.def-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 18px;
+}
+.def-list dt {
+    color: var(--muted);
+}
+.def-list dd {
+    margin: 0;
+    font-weight: 700;
+}
+.prose {
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+.ask-seller-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    background: var(--panel-soft);
+    padding: 8px;
+    border-radius: 18px;
+    margin-bottom: 1rem;
+}
+.ask-seller-form input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--fg);
+    padding: 0 12px;
+}
+.ask-seller-form .btn-icon {
+    background: var(--bg-elevated);
+    border-radius: 14px;
+}
+.quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.quick-replies button {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 12px;
+    color: var(--fg);
+    cursor: pointer;
+}
+
+.review-card {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--panel-soft);
+}
+
+.review-card p {
+    margin: 1rem 0 0;
+}
+
+/* --- Added for Chat --- */
+.chat-room-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 180px); /* Adjust based on header/footer height */
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--panel);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+.chat-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+}
+.chat-messages {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.chat-bubble-wrapper {
+    display: flex;
+    justify-content: flex-start;
+}
+.chat-bubble-wrapper.is-self {
+    justify-content: flex-end;
+}
+.chat-bubble {
+    max-width: 70%;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+}
+.chat-bubble-wrapper.is-self .chat-bubble {
+    background: var(--accent);
+    color: white;
+}
+.chat-bubble p {
+    margin: 0;
+}
+.chat-bubble__meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    text-align: right;
+}
+.chat-bubble-wrapper.is-self .chat-bubble__meta {
+    color: rgba(255,255,255,0.7);
+}
+.chat-form-wrapper {
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+}
+.chat-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    background: var(--panel-soft);
+    padding: 8px;
+    border-radius: 18px;
+}
+.chat-form input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--fg);
+    padding: 0 12px;
+}
+.chat-form .btn-icon {
+    background: var(--bg-elevated);
+    border-radius: 14px;
+}
+
+/* --- Added for Chat List --- */
+.chat-list-container {
+    display: grid;
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.chat-list-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: background 180ms ease;
+}
+.chat-list-item:hover {
+    background: var(--bg-elevated);
+    transform: none;
+}
+.chat-list-item__main {
+    display: grid;
+    gap: 0.5rem;
+}
+.chat-list-item__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}

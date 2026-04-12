@@ -1,3 +1,4 @@
+{% load listing_tags %}
 <article class="listing-card">
     <a href="{% url 'listing:detail' listing.uuid %}">
         <div class="listing-card__media">
@@ -8,25 +9,20 @@
                     <img src="https://picsum.photos/seed/{{ listing.uuid }}/900/900" alt="{{ listing.title }}">
                 {% endif %}
             {% endwith %}
-            {% if listing.price > 300000 %}
-                <span class="listing-card__badge">Narx kelishiladi</span>
-            {% endif %}
-            {% if listing.view_count > 800 %}
-                <span class="listing-card__badge--shop" style="top:52px;">Do'kon</span>
-            {% endif %}
+
         </div>
     </a>
     <button
         class="favorite-toggle"
         type="button"
-        data-favorite-url="{% url 'toggle_favorite' listing.uuid %}"
+        data-favorite-url="{% url 'favorites:toggle_favorite' listing.uuid %}"
         data-login-url="{% url 'login' %}"
         aria-label="Sevimlilarga qo'shish"
     >
         <svg width="20" height="20"><use href="#i-heart"></use></svg>
     </button>
     <div class="listing-card__body">
-        <div class="listing-card__price">{{ listing.price|floatformat:0 }} {{ listing.get_currency_display }}</div>
+        <div class="listing-card__price">{{ listing.price|human_price }} so'm</div>
         <a class="listing-card__title" href="{% url 'listing:detail' listing.uuid %}">{{ listing.title }}</a>
         <div class="listing-card__meta">
             <span>{{ listing.city }}</span>

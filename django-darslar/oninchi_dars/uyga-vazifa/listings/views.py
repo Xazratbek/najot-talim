@@ -6,6 +6,11 @@ from .forms import ListingForm
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from categories.models import Category
+from django.views import View
+from chat.models import ChatRoom, Message
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.contrib import messages
 
 class ListingListView(ListView):
     model = Listing
@@ -22,7 +27,7 @@ class ListingListView(ListView):
         )
         q = self.request.GET.get("q", "").strip()
         if q:
-            queryset = queryset.filter(title__icontains=q)
+            queryset = queryset.filter(Q(title__icontains=q) | Q(description__icontains=q) | Q(city__icontains=q))
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -120,3 +125,25 @@ class ListingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         self.object.status = "deleted"
         self.object.save(update_fields=["status"])
         return HttpResponseRedirect(success_url)
+
+
+class AskSellerView(View):
+    def post(self, request, uuid):
+        text = request.POST.get("text","")
+        if not text.strip():
+            messages.warning(request, "Bo'sh xabar yozmang")
+            return redirect(request.META.get('HTTP_REFERER', 'listing:list'))
+
+        listing = Listing.objects.filter(uuid=uuid).select_related("user")
+        if listing.user == request.user:
+            messages.warning("O'zingizni xabaringizga xabar yozish mumkin emas.")
+            return redirect(request.META.get('HTTP_REFERER', 'listing:list'))
+
+        chat_room, created = ChatRoom.objects.get_or_create(chat_listing=listing[0],buyer=self.request.user,defaults={'seller': listing.user})
+
+        if created:
+            Message.objects.create(room=chat_room,sender=request.user,text=text)
+        else:
+            room = ChatRoom.objects.create(chat_listing=listing,buyer=request.user,seller=listing[0].user)
+            Message.objects.create(room=room,sender=request.user,text=text)
+            return redirect('chat:room_detail', room_id=chat_room.id)

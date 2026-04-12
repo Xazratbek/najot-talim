@@ -3,8 +3,8 @@
 {% block content %}
 <div class="auth-layout">
     <section class="auth-showcase">
-        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4rem;max-width:540px;margin:0;">Profil ma'lumotlarini yangilang va sotuvchi ko'rinishini kuchaytiring.</h1>
-        <p class="muted" style="max-width:520px;font-size:1.1rem;">Avatar, username va aloqa uchun kerakli ma'lumotlar shu yerda boshqariladi.</p>
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:4rem;max-width:540px;margin:0;">Profilni tahrirlash</h1>
+        <p class="muted" style="max-width:520px;font-size:1.1rem;">Bu yerda shaxsiy ma'lumotlaringizni o'zgartirishingiz mumkin.</p>
         <div class="auth-showcase__orb"></div>
     </section>
     <section class="auth-card">
@@ -14,6 +14,9 @@
             {% include "includes/form_fields.html" %}
             <button class="btn btn--accent btn--block" type="submit">Saqlash</button>
         </form>
+        <div class="helper-row" style="margin-top: 1rem;">
+            <a href="{% url 'accounts:password_change' %}">Parolni o'zgartirish</a>
+        </div>
     </section>
 </div>
 {% endblock %}

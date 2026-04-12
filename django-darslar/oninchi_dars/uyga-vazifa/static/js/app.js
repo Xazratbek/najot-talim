@@ -41,3 +41,25 @@ document.addEventListener("click", (event) => {
 
   target.src = thumb.dataset.galleryThumb;
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const filterToggle = document.getElementById("filter-toggle");
+    const filterPanel = document.getElementById("filter-panel");
+    const filterClose = document.getElementById("filter-close");
+    const overlay = document.getElementById("filter-overlay");
+
+    if (filterToggle && filterPanel && filterClose && overlay) {
+        filterToggle.addEventListener("click", () => {
+            filterPanel.classList.add("is-open");
+            overlay.classList.add("is-open");
+        });
+
+        const closeFilter = () => {
+            filterPanel.classList.remove("is-open");
+            overlay.classList.remove("is-open");
+        };
+
+        filterClose.addEventListener("click", closeFilter);
+        overlay.addEventListener("click", closeFilter);
+    }
+});

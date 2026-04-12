@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Chat | {{ other_user.username }}{% endblock %}
+
+{% block content %}
+<div class="chat-room-container">
+    <div class="chat-header">
+        <div class="seller-row">
+            <img class="avatar-md" src="{{ other_user.avatar.url }}" alt="{{ other_user.username }}">
+            <div>
+                <strong>{{ other_user.get_full_name|default:other_user.username }}</strong>
+                <div class="muted">E'lon: <a href="{% url 'listing:detail' room.chat_listing.uuid %}">{{ room.chat_listing.title }}</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+        {% for message in messages %}
+            <div class="chat-bubble-wrapper {% if message.sender == request.user %}is-self{% endif %}">
+                <div class="chat-bubble">
+                    <p>{{ message.text|linebreaksbr }}</p>
+                    <div class="chat-bubble__meta">{{ message.created_at|date:"H:i" }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="chat-form-wrapper">
+        <form class="chat-form" method="post" action="{% url 'chat:send_message' room.id %}">
+            {% csrf_token %}
+            <input type="text" name="text" placeholder="Xabar yozing..." autocomplete="off">
+            <button class="btn-icon" type="submit" aria-label="Yuborish">
+                <svg width="22" height="22" style="color: var(--accent); transform: rotate(90deg);"><use href="#i-chevron-right"></use></svg>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
