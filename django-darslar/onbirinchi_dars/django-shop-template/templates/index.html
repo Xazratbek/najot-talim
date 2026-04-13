@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
+    <!-- Slider Area Start Here -->
+    <div class="slider-area">
+        <div class="slider-active owl-carousel">
+            {% for slider in sliders %}
+            <!-- Single Slider Start -->
+            <div class="single-slider" style="background-image: url({{ slider.image.url }})">
+                <div class="container">
+                    <div class="slider-content">
+                        <h3>{{ slider.title }}</h3>
+                        <p>{{ slider.description }}</p>
+                        <a class="slider-btn" href="shop.html">shop now</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Single Slider End -->
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Slider Area End Here -->
+    <!-- Big Banner Start Here -->
+    <div class="big-banner mt-100 pb-85 mt-sm-60 pb-sm-45">
+        <div class="container banner-2">
+            {% for banner in banners %}
+            <div class="banner-box">
+                <div class="col-img">
+                    <a href="{{ banner.url }}"><img src="{{ banner.image.url }}" alt="banner"></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Container End -->
+    </div>
+    <!-- Big Banner End Here -->
+    <!-- Hot Deal Products Start Here -->
+    <div class="hot-deal-products off-white-bg pt-100 pb-90 pt-sm-60 pb-sm-50">
+        <div class="container">
+           <!-- Product Title Start -->
+           <div class="post-title pb-30">
+               <h2>hot deals</h2>
+           </div>
+           <!-- Product Title End -->
+            <!-- Hot Deal Product Activation Start -->
+            <div class="hot-deal-active owl-carousel">
+                {% for product in discount_desc %}
+                <!-- Single Product Start -->
+                <div class="single-product">
+                    <!-- Product Image Start -->
+                    <div class="pro-img">
+                        <a href="{% url 'product_detail' id=product.id %}">
+                            <img class="primary-img" src="{{ product.images.first.photo.url }}" alt="single-product">
+                            <img class="secondary-img" src="{{ product.images.last.photo.url }}" alt="single-product">
+                        </a>
+                        <div class="countdown" data-countdown="2020/03/01"></div>
+                        <a href="#" class="quick_view" data-toggle="modal" data-target="#myModal" title="Quick View"><i class="lnr lnr-magnifier"></i></a>
+                    </div>
+                    <!-- Product Image End -->
+                    <!-- Product Content Start -->
+                    <div class="pro-content">
+                        <div class="pro-info">
+                            <h4><a href="{% url 'product_detail' id=product.id %}">{{ product.title }}</a></h4>
+                            <p><span class="price">${{ product.price }}</span></p>
+                            <div class="label-product l_sale">{{ product.discount }}<span class="symbol-percent">%</span></div>
+                        </div>
+                        <div class="pro-actions">
+                            <div class="actions-primary">
+                                <a href="cart.html" title="Add to Cart"> + Add To Cart</a>
+                            </div>
+                            <div class="actions-secondary">
+                                <a href="compare.html" title="Compare"><i class="lnr lnr-sync"></i> <span>Add To Compare</span></a>
+                                <a href="wishlist.html" title="WishList"><i class="lnr lnr-heart"></i> <span>Add to WishList</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product Content End -->
+                </div>
+                <!-- Single Product End -->
+                {% endfor %}
+            </div>
+            <!-- Hot Deal Product Active End -->
+
+        </div>
+        <!-- Container End -->
+    </div>
+    <!-- Hot Deal Products End Here -->
+    <!-- Product Area Start Here -->
+    <div class="product-area pt-100 pb-100 pt-sm-60 pb-sm-60">
+        <div class="container">
+            <div class="row">
+                <!-- Product Filter Start -->
+                <div class="col-lg-12">
+                    <div class="product-filter">
+                        <div class="product-filter-inner">
+                            <div class="section-title">
+                                <h2>Our Products</h2>
+                            </div>
+                            <div class="product-filter-menu">
+                                <ul>
+                                    <li><a href="#" data-filter="*" class="active">All</a></li>
+                                    <li><a href="#" data-filter=".featured">Featured</a></li>
+                                    <li><a href="#" data-filter=".new">New</a></li>
+                                    <li><a href="#" data-filter=".bestseller">Best Seller</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product Filter End -->
+            </div>
+            <div class="row product-grid">
+                {% for product in new_arrivals %}
+                <!-- Single Product Start -->
+                <div class="col-lg-3 col-md-4 col-sm-6 new">
+                    <div class="single-product">
+                        <!-- Product Image Start -->
+                        <div class="pro-img">
+                            <a href="{% url 'product_detail' id=product.id %}">
+                                <img class="primary-img" src="{{ product.images.first.photo.url }}" alt="single-product">
+                                <img class="secondary-img" src="{{ product.images.last.photo.url }}" alt="single-product">
+                            </a>
+                            <a href="#" class="quick_view" data-toggle="modal" data-target="#myModal" title="Quick View"><i class="lnr lnr-magnifier"></i></a>
+                        </div>
+                        <!-- Product Image End -->
+                        <!-- Product Content Start -->
+                        <div class="pro-content">
+                            <div class="pro-info">
+                                <h4><a href="{% url 'product_detail' id=product.id %}">{{ product.title }}</a></h4>
+                                <p><span class="price">${{ product.price }}</span></p>
+                            </div>
+                            <div class="pro-actions">
+                                <div class="actions-primary">
+                                    <a href="cart.html" title="Add to Cart"> + Add To Cart</a>
+                                </div>
+                                <div class="actions-secondary">
+                                    <a href="compare.html" title="Compare"><i class="lnr lnr-sync"></i> <span>Add To Compare</span></a>
+                                    <a href="wishlist.html" title="WishList"><i class="lnr lnr-heart"></i> <span>Add to WishList</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product Content End -->
+                        <span class="sticker-new">new</span>
+                    </div>
+                </div>
+                <!-- Single Product End -->
+                {% endfor %}
+                {% for product in featured_products %}
+                <!-- Single Product Start -->
+                <div class="col-lg-3 col-md-4 col-sm-6 featured">
+                    <div class="single-product">
+                        <!-- Product Image Start -->
+                        <div class="pro-img">
+                            <a href="{% url 'product_detail' id=product.id %}">
+                                <img class="primary-img" src="{{ product.images.first.photo.url }}" alt="single-product">
+                                <img class="secondary-img" src="{{ product.images.last.photo.url }}" alt="single-product">
+                            </a>
+                            <a href="#" class="quick_view" data-toggle="modal" data-target="#myModal" title="Quick View"><i class="lnr lnr-magnifier"></i></a>
+                        </div>
+                        <!-- Product Image End -->
+                        <!-- Product Content Start -->
+                        <div class="pro-content">
+                            <div class="pro-info">
+                                <h4><a href="{% url 'product_detail' id=product.id %}">{{ product.title }}</a></h4>
+                                <p><span class="price">${{ product.price }}</span></p>
+                            </div>
+                            <div class="pro-actions">
+                                <div class="actions-primary">
+                                    <a href="cart.html" title="Add to Cart"> + Add To Cart</a>
+                                </div>
+                                <div class="actions-secondary">
+                                    <a href="compare.html" title="Compare"><i class="lnr lnr-sync"></i> <span>Add To Compare</span></a>
+                                    <a href="wishlist.html" title="WishList"><i class="lnr lnr-heart"></i> <span>Add to WishList</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product Content End -->
+                    </div>
+                </div>
+                <!-- Single Product End -->
+                {% endfor %}
+                {% for product in category_unique_product %}
+                <!-- Single Product Start -->
+                <div class="col-lg-3 col-md-4 col-sm-6 bestseller">
+                    <div class="single-product">
+                        <!-- Product Image Start -->
+                        <div class="pro-img">
+                            <a href="{% url 'product_detail' id=product.id %}">
+                                <img class="primary-img" src="{{ product.images.first.photo.url }}" alt="single-product">
+                                <img class="secondary-img" src="{{ product.images.last.photo.url }}" alt="single-product">
+                            </a>
+                            <a href="#" class="quick_view" data-toggle="modal" data-target="#myModal" title="Quick View"><i class="lnr lnr-magnifier"></i></a>
+                        </div>
+                        <!-- Product Image End -->
+                        <!-- Product Content Start -->
+                        <div class="pro-content">
+                            <div class="pro-info">
+                                <h4><a href="{% url 'product_detail' id=product.id %}">{{ product.title }}</a></h4>
+                                <p><span class="price">${{ product.price }}</span></p>
+                            </div>
+                            <div class="pro-actions">
+                                <div class="actions-primary">
+                                    <a href="cart.html" title="Add to Cart"> + Add To Cart</a>
+                                </div>
+                                <div class="actions-secondary">
+                                    <a href="compare.html" title="Compare"><i class="lnr lnr-sync"></i> <span>Add To Compare</span></a>
+                                    <a href="wishlist.html" title="WishList"><i class="lnr lnr-heart"></i> <span>Add to WishList</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product Content End -->
+                    </div>
+                </div>
+                <!-- Single Product End -->
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Product Area End Here -->
+    <!-- Latest Blog Area Start Here -->
+    <div class="latest-blog-area pt-100 pb-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Section Title Start -->
+                    <div class="section-title text-center">
+                        <h2>Latest From Our Blog</h2>
+                        <p>Latest news and many other things</p>
+                    </div>
+                    <!-- Section Title End -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="blog-carousel owl-carousel">
+                    {% for post in latest_posts %}
+                    <!-- Single Blog Start -->
+                    <div class="single-blog">
+                        <div class="blog-img">
+                            <a href="single-blog.html"><img src="{{ post.image.url }}" alt="blog-image"></a>
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-title">
+                                <h5 class="post-title"><a href="single-blog.html">{{ post.title }}</a></h5>
+                            </div>
+                            <div class="blog-meta">
+                                <p class="post-date"> <i class="lnr lnr-calendar-full"></i>{{ post.created_at|date:"F d, Y" }}</p>
+                            </div>
+                            <div class="post-content">
+                                <p>{{ post.description }}</p>
+                            </div>
+                            <a class="read-more" href="single-blog.html">Read More <i class="fa fa-angle-double-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- Single Blog End -->
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <!-- Container End -->
+    </div>
+    <!-- Latest Blog Area End Here -->
+    <!-- Brand Banner Area Start Here -->
+    <div class="brand-banner-area pb-100">
+        <div class="container">
+            <!-- Brand Banner Start -->
+            <div class="brand-banner owl-carousel">
+                {% for brand in brands %}
+                <div class="single-brand">
+                    <a href="#"><img class="img" src="{{ brand.logo.url }}" alt="{{ brand.name }}"></a>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Brand Banner End -->
+        </div>
+    </div>
+    <!-- Brand Banner Area End Here -->
+    <!-- Quick View Modal Start -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-lg-5 col-md-5">
+                        <div class="p-details-slider-img">
+                            <div class="p-details-slider-active owl-carousel">
+                                <!-- Single-p-detail-slider Start -->
+                                <div class="single-p-detail-slider">
+                                    <img src="img/products/1.jpg" alt="">
+                                </div>
+                                <!-- Single-p-detail-slider End -->
+                                <!-- Single-p-detail-slider Start -->
+                                <div class="single-p-detail-slider">
+                                    <img src="img/products/2.jpg" alt="">
+                                </div>
+                                <!-- Single-p-detail-slider End -->
+                                <!-- Single-p-detail-slider Start -->
+                                <div class="single-p-detail-slider">
+                                    <img src="img/products/3.jpg" alt="">
+                                </div>
+                                <!-- Single-p-detail-slider End -->
+                                <!-- Single-p-detail-slider Start -->
+                                <div class="single-p-detail-slider">
+                                    <img src="img/products/4.jpg" alt="">
+                                </div>
+                                <!-- Single-p-detail-slider End -->
+                                <!-- Single-p-detail-slider Start -->
+                                <div class="single-p-detail-slider">
+                                    <img src="img/products/5.jpg" alt="">
+                                </div>
+                                <!-- Single-p-detail-slider End -->
+                            </div>
+                        </div>
+                  </div>
+                  <div class="col-lg-7 col-md-7">
+                      <div class="p-details-content">
+                          <h3>Poly Children's Armchair</h3>
+                          <div class="p-details-price-review">
+                              <div class="p-details-price">
+                                <span>$220.00</span>
+                              </div>
+                              <div class="p-details-review">
+                                <a href="#">3 customer reviews</a>
+                              </div>
+                          </div>
+                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                          <div class="p-details-color-size">
+                              <div class="p-details-color">
+                                  <span>Color</span>
+                                  <select>
+                                      <option>Black</option>
+                                      <option>White</option>
+                                      <option>Yellow</option>
+                                      <option>Red</option>
+                                      <option>Green</option>
+                                  </select>
+                              </div>
+                              <div class="p-details-size">
+                                  <span>Size</span>
+                                  <select>
+                                      <option>S</option>
+                                      <option>M</option>
+                                      <option>L</option>
+                                      <option>XL</option>
+                                      <option>XXL</option>
+                                  </select>
+                              </div>
+                          </div>
+                          <div class="p-details-add-to-cart">
+                              <div class="p-details-quantity">
+                                <input title="Quantity" value="1" name="quantity" type="text">
+                              </div>
+                              <button title="Add to Cart" type="submit">Add to Cart</button>
+                          </div>
+                          <div class="p-details-social-sharing">
+                              <div class="p-details-social">
+                                  <a title="Facebook" href="#"><i class="fa fa-facebook"></i></a>
+                                  <a title="Twitter" href="#"><i class="fa fa-twitter"></i></a>
+                                  <a title="Google-plus" href="#"><i class="fa fa-google-plus"></i></a>
+                                  <a title="Pinterest" href="#"><i class="fa fa-pinterest"></i></a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Quick View Modal End -->
+{% endblock %}
