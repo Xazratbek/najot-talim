@@ -13,7 +13,7 @@ class Card(BaseModel):
 
 class CardItem(BaseModel):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name='card_products')
     quantity = models.PositiveIntegerField(default=1)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 

@@ -37,3 +37,8 @@ class SignUpForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['avatar','phone','name','password']

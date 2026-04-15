@@ -175,7 +175,7 @@ h3 {
     max-width: 620px;
 }
 
-.header-select,
+.catalog-trigger,
 .search-field {
     border: 1px solid var(--border);
     background: rgba(255, 255, 255, 0.03);
@@ -183,10 +183,77 @@ h3 {
     min-height: 48px;
 }
 
-.header-select {
-    min-width: 190px;
+.catalog-dropdown {
+    position: relative;
+    min-width: 220px;
+}
+
+.catalog-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     color: var(--fg);
     padding: 0 16px;
+    cursor: pointer;
+}
+
+.catalog-trigger__label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.catalog-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: min(300px, 80vw);
+    padding: 14px;
+    border: 1px solid rgba(247, 240, 222, 0.25);
+    border-radius: 24px;
+    background: rgba(28, 17, 10, 0.98);
+    box-shadow: var(--shadow);
+    display: none;
+    z-index: 30;
+}
+
+.catalog-dropdown.is-open .catalog-menu {
+    display: grid;
+    gap: 8px;
+}
+
+.catalog-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 18px;
+    background: transparent;
+    color: var(--fg);
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.catalog-option i {
+    opacity: 0;
+}
+
+.catalog-option.is-active {
+    background: #2457b8;
+}
+
+.catalog-option.is-active i {
+    opacity: 1;
+}
+
+.catalog-option--sub {
+    padding-left: 34px;
+    color: var(--muted);
 }
 
 .search-field {
@@ -233,6 +300,16 @@ h3 {
 .primary-nav a:hover,
 .nav-button:hover {
     color: var(--fg);
+}
+
+.primary-nav a {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .nav-accent,
@@ -676,6 +753,10 @@ h3 {
     display: block;
     position: relative;
     min-height: 320px;
+}
+
+.product-card__media img {
+    transition: opacity 220ms ease;
 }
 
 .product-card__body {
@@ -1278,6 +1359,10 @@ h3 {
         order: 3;
         width: 100%;
         max-width: none;
+    }
+
+    .catalog-dropdown {
+        min-width: 160px;
     }
 
     .primary-nav {

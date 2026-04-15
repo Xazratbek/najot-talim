@@ -29,14 +29,35 @@
                     </span>
                 </a>
 
-                <form class="header-search" action="{% url 'index' %}" method="get">
+                <form class="header-search" action="{% url 'product-search' %}" method="get">
                     {% if categories %}
-                        <select class="header-select" name="category" aria-label="Kategoriya tanlash">
-                            <option value="">Barcha kataloglar</option>
-                            {% for category in categories %}
-                                <option value="{{ category.title|lower }}" {% if request.GET.category == category.title|lower %}selected{% endif %}>{{ category.title }}</option>
-                            {% endfor %}
-                        </select>
+                        <div class="catalog-dropdown" data-catalog-dropdown>
+                            <input type="hidden" name="category" value="{{ request.GET.category|default:'' }}" data-catalog-input>
+                            <button class="catalog-trigger" type="button" aria-expanded="false" data-catalog-trigger>
+                                <span class="catalog-trigger__label" data-catalog-label>
+                                    {% if request.GET.category %}{{ request.GET.category }}{% else %}Barcha kataloglar{% endif %}
+                                </span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <div class="catalog-menu" data-catalog-menu>
+                                <button class="catalog-option is-active" type="button" data-catalog-option data-value="">
+                                    <i class="bi bi-check-lg"></i>
+                                    <span>Barcha kataloglar</span>
+                                </button>
+                                {% for category in categories %}
+                                    <button class="catalog-option {% if request.GET.category == category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ category.title|lower }}">
+                                        <i class="bi bi-check-lg"></i>
+                                        <span>{{ category.title }}</span>
+                                    </button>
+                                    {% for sub_category in category.sub_category.all %}
+                                        <button class="catalog-option catalog-option--sub {% if request.GET.category == sub_category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ sub_category.title|lower }}">
+                                            <i class="bi bi-check-lg"></i>
+                                            <span>{{ sub_category.title }}</span>
+                                        </button>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     {% endif %}
                     <label class="search-field" for="header-search-input">
                         <i class="bi bi-search"></i>
@@ -53,12 +74,12 @@
                 </button>
 
                 <nav class="primary-nav" id="primary-nav">
-                    <a href="{% url 'index' %}">Bosh sahifa</a>
-                    <a href="{% url 'blog' %}">Blog</a>
-                    <a href="{% url 'wishlist' %}">Wishlist</a>
+                    <a href="{% url 'index' %}" aria-label="Bosh sahifa" title="Bosh sahifa"><i class="bi bi-house-door"></i></a>
+                    <a href="{% url 'blog' %}" aria-label="Blog" title="Blog"><i class="bi bi-grid-1x2"></i></a>
+                    <a href="{% url 'wishlist' %}" aria-label="Wishlist" title="Wishlist"><i class="bi bi-heart"></i></a>
                     {% if request.user.is_authenticated %}
-                        <a href="{% url 'recently' %}">Recently</a>
-                        <a href="{% url 'profile' request.user.id %}">Profil</a>
+                        <a href="{% url 'recently' %}" aria-label="Recently" title="Recently"><i class="bi bi-clock-history"></i></a>
+                        <a href="{% url 'profile' request.user.id %}" aria-label="Profil" title="Profil"><i class="bi bi-person"></i></a>
                         <form action="{% url 'logout' %}" method="post" class="inline-form">
                             {% csrf_token %}
                             <button class="nav-button" type="submit">Chiqish</button>

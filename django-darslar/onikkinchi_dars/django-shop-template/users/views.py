@@ -2,7 +2,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import SignUpForm
+from .forms import SignUpForm, ProfileUpdateForm
 from .models import CustomUser
 
 
@@ -39,3 +39,16 @@ class LoginView(View):
 class ProfileView(View):
     def get(self, request,id):
         return render(request, "profile.html")
+
+class ProfileUpdateView(View):
+    def get(sel, request,id):
+        form = ProfileUpdateForm()
+        return render(request, "registration/profile_update.html",context={"form": form})
+
+    def post(self, request, id):
+        form = ProfileUpdateForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('profile',id=id)
+
+        return render(request, "registration/profile_update.html",context={"form": form})

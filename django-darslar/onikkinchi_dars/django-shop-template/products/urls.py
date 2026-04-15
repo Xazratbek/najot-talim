@@ -1,17 +1,9 @@
 from django.urls import path
-from .views import (
-    IndexView,
-    ProductDetailView,
-    saved,
-    user_saveds,
-    user_recently,
-    comment_create,
-    update_comment,
-    delete_comment,
-)
+from .views import *
 
 urlpatterns = [
     path("",IndexView.as_view(),name="index"),
+    path("search/", ProductSearchView.as_view(), name="product-search"),
     path("product/<uuid:id>/",ProductDetailView.as_view(),name="product_detail"),
     path("product/<uuid:product_id>/comment/create/", comment_create, name="comment-create"),
     path("comment/<uuid:comment_id>/update/", update_comment, name="comment-update"),

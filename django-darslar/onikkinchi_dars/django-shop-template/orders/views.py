@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from users.models import CustomUser
 from .models import Order, OrderItem, Card, CardItem
 
-
 @login_required(login_url='login')
 def add_card(request):
     if request.method == "POST":
@@ -17,12 +16,12 @@ def add_card(request):
         product = get_object_or_404(Product, pk=product_id)
         card, created = Card.objects.get_or_create(user=request.user)
         card_item = CardItem.objects.filter(card=card, product=product).first()
+
         if card_item is None:
             CardItem.objects.create(
             card=card,
             product=product,
             quantity=quantity)
-            print("CardItemga qo'shildi")
             return JsonResponse({'status': 'success', 'message': 'Added successfully'})
 
         if card_item:
@@ -33,6 +32,15 @@ def add_card(request):
 
     return JsonResponse({'status': 'error'}, status=400)
 
+@login_required(login_url='login')
+def decrease_cart_item(request, item_id):
+    quantity = int(request.POST.get('quantity', 1))
+    card = Card.objects.filter(user=request.user)
+    product = get_object_or_404(Product, id=item_id)
+    card_item = CardItem.objects.filter(card=card,product=product).first()
+    card_item.quantity -= quantity
+    card_item.save()
+    return JsonResponse({"status": "success",'message': f"item decreased to -{quantity}"})
 
 @login_required(login_url="login")
 def my_cart(request):
@@ -73,3 +81,26 @@ def remove_cart_item(request, item_id):
 
     item.delete()
     return JsonResponse({'status': 'success'})
+
+
+@login_required(login_url='login')
+def clear_cart(request, card_id):
+    card = Card.objects.get(user=request.user)
+    card_items = CardItem.objects.filter(card=card)
+    for item in card_items:
+        item.delete()
+
+    return JsonResponse({"status": 'success','message': 'Card items cleared'})
+
+@login_required(login_url="login")
+def my_orders(request):
+    done_orders = request.user.orders.filter(status='done').prefetch_related('items','products')
+    cancelled = request.GET.get("cancelled","")
+    if cancelled:
+        cancelled_orders = request.user.orders.filter(status='cancelled').prefetch_related('items','products')
+
+    new = request.GET.get("new","")
+    if new:
+        new_orders = request.user.orders.filter(status='paid').prefetch_related('items','products')
+
+    return render(request,"my_orders.html",context={"done_orders": done_orders,'new_orders': new_orders,'cancelled_orders': cancelled_orders})

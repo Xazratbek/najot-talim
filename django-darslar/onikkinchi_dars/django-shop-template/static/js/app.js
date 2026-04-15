@@ -9,6 +9,37 @@ if (navToggle && primaryNav) {
     });
 }
 
+const catalogDropdown = document.querySelector("[data-catalog-dropdown]");
+if (catalogDropdown) {
+    const trigger = catalogDropdown.querySelector("[data-catalog-trigger]");
+    const input = catalogDropdown.querySelector("[data-catalog-input]");
+    const label = catalogDropdown.querySelector("[data-catalog-label]");
+    const options = catalogDropdown.querySelectorAll("[data-catalog-option]");
+
+    trigger?.addEventListener("click", () => {
+        const isOpen = catalogDropdown.classList.toggle("is-open");
+        trigger.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    options.forEach((option) => {
+        option.addEventListener("click", () => {
+            options.forEach((item) => item.classList.remove("is-active"));
+            option.classList.add("is-active");
+            if (input) input.value = option.dataset.value || "";
+            if (label) label.textContent = option.textContent.trim();
+            catalogDropdown.classList.remove("is-open");
+            trigger?.setAttribute("aria-expanded", "false");
+        });
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!catalogDropdown.contains(event.target)) {
+            catalogDropdown.classList.remove("is-open");
+            trigger?.setAttribute("aria-expanded", "false");
+        }
+    });
+}
+
 const revealItems = document.querySelectorAll(".reveal");
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -201,20 +232,32 @@ document.querySelectorAll("[data-toggle-saved]").forEach((button) => {
     });
 });
 
-const productCards = document.querySelectorAll("[data-product-card]");
-const params = new URLSearchParams(window.location.search);
-const searchQuery = (params.get("q") || "").trim().toLowerCase();
-const selectedCategory = (params.get("category") || "").trim().toLowerCase();
+document.querySelectorAll(".product-media-rotator").forEach((media) => {
+    const image = media.querySelector("img");
+    const images = (media.dataset.images || "").split("||").filter(Boolean);
+    if (!image || images.length < 2) return;
 
-if (productCards.length && (searchQuery || selectedCategory)) {
-    productCards.forEach((card) => {
-        const title = card.dataset.title || "";
-        const category = card.dataset.category || "";
-        const matchesSearch = !searchQuery || title.includes(searchQuery);
-        const matchesCategory = !selectedCategory || category === selectedCategory;
-        card.style.display = matchesSearch && matchesCategory ? "" : "none";
+    let intervalId = null;
+    let currentIndex = 0;
+    const firstImage = images[0];
+
+    media.addEventListener("mouseenter", () => {
+        if (intervalId) return;
+        intervalId = window.setInterval(() => {
+            currentIndex = (currentIndex + 1) % images.length;
+            image.src = images[currentIndex];
+        }, 750);
     });
-}
+
+    media.addEventListener("mouseleave", () => {
+        if (intervalId) {
+            window.clearInterval(intervalId);
+            intervalId = null;
+        }
+        currentIndex = 0;
+        image.src = firstImage;
+    });
+});
 
 if (cartOpenButton) {
     cartOpenButton.addEventListener("click", async () => {

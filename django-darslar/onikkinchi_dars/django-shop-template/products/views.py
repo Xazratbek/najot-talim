@@ -10,9 +10,40 @@ from django.contrib.auth.decorators import login_required
 from users.models import CustomUser
 from orders.models import Order
 from django.http import HttpResponse
+from django.db.models import Q
+from django.core.paginator import Paginator
+
 
 class IndexView(View):
     def get(self, request):
+        queryset = Product.objects.all()
+        page_num = request.GET.get("page",1)
+        paginator = Paginator(queryset, 10)
+        page_obj = paginator.get_page(page_num)
+
+        min_price = request.GET.get("min_price","")
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+
+        max_price = request.GET.get("max_price","")
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+        category = request.GET.get("category","")
+        if category:
+            queryset = queryset.filter(category=category)
+
+        discount = request.GET.get("discount",10)
+        if discount:
+            queryset = queryset.filter(discount=discount)
+
+        newest = request.GET.get("newest","")
+        if newest:
+            queryset = queryset.ordering('-created_at')
+
+        kop_korilgan = request.GET.get("kop_korilgan","")
+        if kop_korilgan:
+            queryset = queryset.prefetch_related("view_product").order_by('-view_product')[:10]
+
         context = {
             'categories': parent_categories(),
             'discount_desc': discount_desc(),
@@ -23,9 +54,31 @@ class IndexView(View):
             'banners': get_banners(),
             'brands': get_brands(),
             'latest_posts': get_latest_posts(),
+            'page_obj': page_obj,
+            'queryset': queryset,
         }
         return render(request,"index.html",context=context)
 
+class ProductSearchView(View):
+    def get(self, request):
+        q = request.GET.get("q", "").strip()
+        category = request.GET.get("category", "").strip()
+
+        q_products = Product.objects.all().select_related("category").prefetch_related("images")
+
+        if q:
+            q_products = q_products.filter(Q(title__icontains=q) | Q(desc__icontains=q))
+
+        if category:
+            q_products = q_products.filter(category__title__iexact=category)
+
+        context = {
+            "q_products": q_products,
+            "query": q,
+            "selected_category": category,
+            "categories": parent_categories(),
+        }
+        return render(request, "search.html", context=context)
 
 class ProductDetailView(View):
     def get(self, request, id):
@@ -40,10 +93,14 @@ class ProductDetailView(View):
         ProductView.objects.create(
             product = product
         )
+        data, created = RecentlyProduct.objects.get_or_create(user=request.user, product=product)
+        if created:
+            RecentlyProduct.objects.create(user=request.user, product=product)
 
         user_comment = None
         if request.user.is_authenticated:
             user_comment = product.comments.filter(user=request.user).first()
+        related_products = Product.objects.filter(category=product.category).exclude(id=product.id)[:9]
 
         context = {
             'product': product,
@@ -51,6 +108,7 @@ class ProductDetailView(View):
             'comments': product_comments(id),
             'product_view_count': product.view_product.count(),
             'user_comment': user_comment,
+            'related_products': related_products
 
         }
         return render(request, "product.html", context=context)
@@ -161,7 +219,6 @@ def saved(request, id):
         saved.delete()
         messages.success(request, 'Olib tashlandi')
         return HttpResponse('Maxsulot olib tashlandi')
-
 
 @login_required()
 def user_saveds(request):

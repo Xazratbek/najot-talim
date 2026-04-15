@@ -15,7 +15,7 @@
         <div class="product-grid reveal-group" data-product-grid>
             {% for product in new_arrivals|slice:":12" %}
                 <article class="product-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}" data-product-card data-title="{{ product.title|lower }}" data-category="{{ product.category.title|lower }}">
-                    <a class="product-card__media" href="{% url 'product_detail' product.id %}">
+                    <a class="product-card__media product-media-rotator" href="{% url 'product_detail' product.id %}" data-images="{% for image in product.images.all %}{{ image.photo.url }}{% if not forloop.last %}||{% endif %}{% endfor %}">
                         {% with primary_image=product.images.first %}
                             {% if primary_image %}
                                 <img src="{{ primary_image.photo.url }}" alt="{{ product.title }}">
@@ -60,7 +60,7 @@
         <div class="product-grid reveal-group">
             {% for product in discount_desc|slice:":8" %}
                 <article class="product-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}" data-product-card data-title="{{ product.title|lower }}" data-category="{{ product.category.title|lower }}">
-                    <a class="product-card__media" href="{% url 'product_detail' product.id %}">
+                    <a class="product-card__media product-media-rotator" href="{% url 'product_detail' product.id %}" data-images="{% for image in product.images.all %}{{ image.photo.url }}{% if not forloop.last %}||{% endif %}{% endfor %}">
                         {% with primary_image=product.images.first %}
                             {% if primary_image %}
                                 <img src="{{ primary_image.photo.url }}" alt="{{ product.title }}">
@@ -105,7 +105,7 @@
         <div class="product-grid reveal-group">
             {% for product in category_unique_product %}
                 <article class="product-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}" data-product-card data-title="{{ product.title|lower }}" data-category="{{ product.category.title|lower }}">
-                    <a class="product-card__media" href="{% url 'product_detail' product.id %}">
+                    <a class="product-card__media product-media-rotator" href="{% url 'product_detail' product.id %}" data-images="{% for image in product.images.all %}{{ image.photo.url }}{% if not forloop.last %}||{% endif %}{% endfor %}">
                         {% with primary_image=product.images.first %}
                             {% if primary_image %}
                                 <img src="{{ primary_image.photo.url }}" alt="{{ product.title }}">

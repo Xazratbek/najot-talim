@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Qidiruv natijalari | TrueMarket{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="page-hero reveal-group">
+            <div class="reveal">
+                <p class="eyebrow">Qidiruv</p>
+                <h1>Natijalar</h1>
+                <p class="lead">
+                    {% if query %}<strong>"{{ query }}"</strong> bo‘yicha{% endif %}
+                    {% if selected_category %} <strong>{{ selected_category }}</strong> kategoriyasida{% endif %}
+                    {{ q_products|length }} ta mahsulot topildi.
+                </p>
+            </div>
+        </div>
+
+        <div class="product-grid reveal-group">
+            {% for product in q_products %}
+                <article class="product-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}">
+                    <a
+                        class="product-card__media product-media-rotator"
+                        href="{% url 'product_detail' product.id %}"
+                        data-images="{% for image in product.images.all %}{{ image.photo.url }}{% if not forloop.last %}||{% endif %}{% endfor %}">
+                        {% with primary_image=product.images.first %}
+                            {% if primary_image %}
+                                <img src="{{ primary_image.photo.url }}" alt="{{ product.title }}">
+                            {% else %}
+                                <div class="placeholder-card compact">Rasm yo‘q</div>
+                            {% endif %}
+                        {% endwith %}
+                        {% if product.discount %}<span class="badge">-{{ product.discount }}%</span>{% endif %}
+                    </a>
+                    <div class="product-card__body">
+                        <p>{{ product.category.title }}</p>
+                        <h3><a href="{% url 'product_detail' product.id %}">{{ product.title }}</a></h3>
+                        <div class="price-row">
+                            <strong>${{ product.final_price }}</strong>
+                            {% if product.discount %}<span>${{ product.price }}</span>{% endif %}
+                        </div>
+                        <div class="card-actions">
+                            <button class="icon-button icon-button-cart" type="button" data-add-to-cart data-product-id="{{ product.id }}" data-quantity="1" aria-label="Savatga qo'shish">
+                                <i class="bi bi-bag-plus"></i>
+                            </button>
+                            <button class="icon-button" type="button" data-toggle-saved data-product-id="{{ product.id }}" aria-label="Wishlistga qo'shish">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <p class="empty-state reveal">Hech qanday mahsulot topilmadi.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
