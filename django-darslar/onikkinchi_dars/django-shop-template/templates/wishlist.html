@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+{% for product in saved_products %}
+                <!-- Single Product Start -->
+                <div class="col-lg-3 col-md-4 col-sm-6 new">
+                    <div class="single-product">
+                        <!-- Product Image Start -->
+                        <div class="pro-img">
+                            <a href="{% url 'product_detail' id=product.product.id %}">
+                                <img class="primary-img" src="{{ product.product.images.first.photo.url }}" alt="single-product">
+                                <img class="secondary-img" src="{{ product.product.images.last.photo.url }}" alt="single-product">
+                            </a>
+                            <a href="#" class="quick_view" data-toggle="modal" data-target="#myModal" title="Quick View"><i class="lnr lnr-magnifier"></i></a>
+                        </div>
+                        <!-- Product Image End -->
+                        <!-- Product Content Start -->
+                        <div class="pro-content">
+                            <div class="pro-info">
+                                <h4><a href="{% url 'product_detail' id=product.product.id %}">{{ product.product.title }}</a></h4>
+                                <p><span class="price">${{ product.product.price }}</span></p>
+                            </div>
+                            <div class="pro-actions">
+                                <div class="actions-primary">
+                                    <a href="cart.html" title="Add to Cart"> + Add To Cart</a>
+                                </div>
+                                <div class="actions-secondary">
+                                    <a href="compare.html" title="Compare"><i class="lnr lnr-sync"></i> <span>Add To Compare</span></a>
+                                    <a href="{% url 'add-to-saved' product.product.id %}" title="WishList"><i class="lnr lnr-heart"></i> <span>Add to WishList</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product Content End -->
+                        <span class="sticker-new">new</span>
+                    </div>
+                </div>
+                <!-- Single Product End -->
+                {% endfor %}
+
+{% endblock content %}
