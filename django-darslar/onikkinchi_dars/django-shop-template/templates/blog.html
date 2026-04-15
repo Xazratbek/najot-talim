@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Blog | TrueMarket{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container reveal-group">
+        <div class="page-hero reveal">
+            <p class="eyebrow">Blog</p>
+            <h1>Yangiliklar va foydali maqolalar</h1>
+            <p class="lead">So‘nggi postlarni ko‘rib chiqing.</p>
+        </div>
+        <div class="blog-river">
+            {% for post in posts %}
+                <article class="blog-river__item reveal {% cycle '' 'delay-1' 'delay-2' %}">
+                    <a class="blog-river__image" href="{% url 'blog-detail' post.id %}">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    </a>
+                    <div class="blog-river__body">
+                        <p>{{ post.created_at|date:"d M Y" }}</p>
+                        <h2><a href="{% url 'blog-detail' post.id %}">{{ post.title }}</a></h2>
+                        <a class="text-link" href="{% url 'blog-detail' post.id %}">To‘liq o‘qish</a>
+                    </div>
+                </article>
+            {% empty %}
+                <p class="empty-state reveal">Blog postlar hali qo‘shilmagan.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

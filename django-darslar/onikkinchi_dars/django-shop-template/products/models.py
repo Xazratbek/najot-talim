@@ -3,6 +3,7 @@ from users.models import CustomUser
 from shared.models import BaseModel
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from decimal import Decimal
 
 class Category(BaseModel):
     title = models.CharField(max_length=120)
@@ -24,7 +25,7 @@ class Product(BaseModel):
     @property
     def final_price(self):
         if self.discount:
-            return self.price * ((100 - self.discount)/100)
+            return self.price * (Decimal(100) - Decimal(self.discount)) / Decimal(100)
         return self.price
 
     def __str__(self):

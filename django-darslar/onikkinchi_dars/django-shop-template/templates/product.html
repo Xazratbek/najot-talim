@@ -1,88 +1,195 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends "base.html" %}
 
-{% block title %}
-    {{ product.title }}
-{% endblock %}
+{% block title %}{{ product.title }} | TrueMarket{% endblock %}
 
 {% block content %}
-    <!-- Breadcrumb Start -->
-    <div class="breadcrumb-area mt-30">
-        <div class="container">
-            <div class="breadcrumb">
-                <ul class="d-flex align-items-center">
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="shop.html">Shop</a></li>
-                    <li class="active"><a href="product.html">{{ product.title }}</a></li>
-                </ul>
+<section class="section">
+    <div class="container product-detail-grid reveal-group">
+        <div class="product-gallery reveal">
+            {% with hero=product.images.first %}
+                <div class="product-hero">
+                    {% if hero %}
+                        <img src="{{ hero.photo.url }}" alt="{{ product.title }}">
+                    {% else %}
+                        <div class="placeholder-card">Mahsulot rasmi mavjud emas</div>
+                    {% endif %}
+                </div>
+            {% endwith %}
+
+            <div class="thumb-grid">
+                {% for image in product.images.all %}
+                    <article class="thumb-tile {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}">
+                        <img src="{{ image.photo.url }}" alt="{{ product.title }} {{ forloop.counter }}">
+                    </article>
+                {% empty %}
+                    <div class="thumb-tile empty">Galereya bo‘sh</div>
+                {% endfor %}
             </div>
         </div>
-        <!-- Container End -->
+
+        <div class="product-summary reveal delay-1">
+            <p class="eyebrow">{{ product.category.title }}</p>
+            <h1>{{ product.title }}</h1>
+            <div class="price-row large">
+                <strong>${{ product.final_price }}</strong>
+                {% if product.discount %}
+                    <span>${{ product.price }}</span>
+                    <b class="badge">-{{ product.discount }}%</b>
+                {% endif %}
+            </div>
+            <p class="lead">{{ product.desc }}</p>
+
+            <div class="meta-grid">
+                <article>
+                    <span>Ko‘rishlar</span>
+                    <strong>{{ product_view_count }}</strong>
+                </article>
+                <article>
+                    <span>Sharhlar</span>
+                    <strong>{{ comments|length }}</strong>
+                </article>
+                <article>
+                    <span>Sotuvchi</span>
+                    <strong>{{ product.user.username }}</strong>
+                </article>
+            </div>
+
+            <div class="hero-actions">
+                <div class="quantity-box">
+                    <label for="product-quantity">Soni</label>
+                    <input id="product-quantity" type="number" min="1" value="1" data-product-quantity>
+                </div>
+                <button
+                    class="icon-button icon-button-large icon-button-cart"
+                    type="button"
+                    data-add-to-cart
+                    data-product-id="{{ product.id }}"
+                    data-quantity-source="[data-product-quantity]"
+                    aria-label="Savatga qo'shish">
+                    <i class="bi bi-bag-plus"></i>
+                </button>
+                <button
+                    class="icon-button icon-button-large"
+                    type="button"
+                    data-toggle-saved
+                    data-product-id="{{ product.id }}"
+                    aria-label="Wishlistga qo‘shish">
+                    <i class="bi bi-heart"></i>
+                </button>
+                <a class="button button-secondary" href="{% url 'index' %}">Katalogga qaytish</a>
+            </div>
+
+            <div class="detail-panel">
+                <h2>Mahsulot eslatmasi</h2>
+                <p>
+                    Mahsulot ko‘rilganda recently bo‘limiga tushadi. Savat, wishlist va sharhlar shu sahifadan boshqariladi.
+                </p>
+            </div>
+        </div>
     </div>
-    <!-- Breadcrumb End -->
-    <!-- Product Thumbnail Start -->
-    <div class="main-product-thumbnail ptb-100 ptb-sm-60">
-        <div class="container">
-            <div class="thumb-bg">
-                <div class="row">
-                    <!-- Main Thumbnail Image Start -->
-                    <div class="col-lg-5 mb-all-40">
-                        <!-- Thumbnail Large Image start -->
-                        <div class="tab-content">
-                            {% for image in product.images.all %}
-                                <div id="thumb{{ forloop.counter }}" class="tab-pane fade {% if forloop.first %}show active{% endif %}">
-                                    <a data-fancybox="images" href="{{ image.photo.url }}"><img src="{{ image.photo.url }}" alt="product-view"></a>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <!-- Thumbnail Large Image End -->
-                        <!-- Thumbnail Image End -->
-                        <div class="product-thumbnail mt-15">
-                            <div class="thumb-menu owl-carousel nav tabs-area" role="tablist">
-                                {% for image in product.images.all %}
-                                    <a class="{% if forloop.first %}active{% endif %}" data-toggle="tab" href="#thumb{{ forloop.counter }}"><img src="{{ image.photo.url }}" alt="product-thumbnail"></a>
+</section>
+
+<section class="section section-dark">
+    <div class="container">
+        <div class="section-heading reveal-group">
+            <div class="reveal">
+                <p class="eyebrow">Comments</p>
+                <h2>Foydalanuvchi mulohazalari</h2>
+            </div>
+        </div>
+
+        {% if request.user.is_authenticated %}
+            <div class="comment-form-shell reveal-group">
+                {% if user_comment %}
+                    <form method="post" action="{% url 'comment-update' user_comment.id %}" class="comment-form reveal">
+                        {% csrf_token %}
+                        <div class="comment-form__top">
+                            <h3>Sharhingizni yangilang</h3>
+                            <div class="star-rating">
+                                {% for number in "12345" %}
+                                    <input type="radio" id="rate-update-{{ forloop.revcounter }}" name="rate" value="{{ forloop.revcounter }}" {% if user_comment.rate == forloop.revcounter %}checked{% endif %}>
+                                    <label for="rate-update-{{ forloop.revcounter }}" aria-label="{{ forloop.revcounter }} yulduz">
+                                        <i class="bi bi-star-fill"></i>
+                                    </label>
                                 {% endfor %}
                             </div>
                         </div>
-                        <!-- Thumbnail image end -->
+                        <textarea name="text" rows="4" placeholder="Mahsulot haqidagi fikringiz">{{ user_comment.text }}</textarea>
+                        <div class="comment-form__actions">
+                            <button class="button button-primary" type="submit">Yangilash</button>
+                        </div>
+                    </form>
+                    <div class="comment-form__actions comment-form__actions--inline">
+                            <form method="post" action="{% url 'comment-delete' user_comment.id %}">
+                                {% csrf_token %}
+                                <button class="button button-ghost" type="submit">O‘chirish</button>
+                            </form>
                     </div>
-                    <!-- Main Thumbnail Image End -->
-                    <!-- Thumbnail Description Start -->
-                    <div class="col-lg-7">
-                        <div class="thubnail-desc fix">
-                            <h3 class="product-header">{{ product.title }}</h3>
-                            <div class="pro-price mtb-30">
-                                <p class="d-flex align-items-center"><span class="price">${{ product.price }}</span></p>
-                            </div>
-                            <p class="mb-20 pro-desc-details">{{ product.description }} {{ product.id }}</p>
-                            <div class="box-quantity d-flex hot-product2">
-                                <form action="#">
-                                    <input class="quantity mr-15" type="number" min="1" value="1">
-                                </form>
-                                <div class="pro-actions">
-                                    <div class="actions-primary">
-                                        <a href="cart.html" title="" data-original-title="Add to Cart"> + Add To Cart</a>
-                                    </div>
-                                    <div class="actions-secondary">
-                                        <a href="compare.html" title="" data-original-title="Compare"><i class="lnr lnr-sync"></i> <span>Add To Compare</span></a>
-                                        <form action="{% url 'add-to-saved' product.id %}" method="post">
-                                            {% csrf_token %}
-                                           <button type="submit"><i class="lnr lnr-heart">Add to Wishlist</i><span></span></button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pro-ref mt-20">
-                                <p><span class="in-stock"><i class="ion-checkmark-round"></i> IN STOCK</span></p>
+                {% else %}
+                    <form method="post" action="{% url 'comment-create' product.id %}" class="comment-form reveal">
+                        {% csrf_token %}
+                        <div class="comment-form__top">
+                            <h3>Sharh qoldiring</h3>
+                            <div class="star-rating">
+                                {% for number in "12345" %}
+                                    <input type="radio" id="rate-create-{{ forloop.revcounter }}" name="rate" value="{{ forloop.revcounter }}" {% if forloop.first %}checked{% endif %}>
+                                    <label for="rate-create-{{ forloop.revcounter }}" aria-label="{{ forloop.revcounter }} yulduz">
+                                        <i class="bi bi-star-fill"></i>
+                                    </label>
+                                {% endfor %}
                             </div>
                         </div>
+                        <textarea name="text" rows="4" placeholder="Mahsulot haqidagi fikringiz"></textarea>
+                        <div class="comment-form__actions">
+                            <button class="button button-primary" type="submit">Sharh yuborish</button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="empty-state reveal">Sharh qoldirish uchun hisobga kiring.</p>
+        {% endif %}
+
+        <div class="comment-grid reveal-group">
+            {% for comment in comments %}
+                <article class="comment-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}">
+                    <div class="comment-card__top">
+                        <strong>{{ comment.user.username }}</strong>
+                        <span>{{ comment.created_at|date:"d M Y" }}</span>
                     </div>
-                    <!-- Thumbnail Description End -->
-                </div>
-                <!-- Row End -->
+                    <div class="rating-row">
+                        {% for _ in "12345" %}
+                            <i class="bi {% if forloop.counter <= comment.rate %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                        {% endfor %}
+                    </div>
+                    <p>{{ comment.text|default:"Foydalanuvchi matn qoldirmagan." }}</p>
+                </article>
+            {% empty %}
+                <p class="empty-state reveal">Bu mahsulot uchun sharh qoldirilmagan.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-heading reveal-group">
+            <div class="reveal">
+                <p class="eyebrow">Categories</p>
+                <h2>Boshqa yo‘nalishlar</h2>
             </div>
         </div>
-        <!-- Container End -->
+        <div class="category-cloud reveal-group">
+            {% for category in categories %}
+                <article class="category-chip reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}">
+                    <span>{{ forloop.counter|stringformat:"02d" }}</span>
+                    <strong>{{ category.title }}</strong>
+                    <small>{% if category.id == product.category.id %}Joriy kategoriya{% else %}Ko‘rib chiqish uchun{% endif %}</small>
+                </article>
+            {% empty %}
+                <p class="empty-state reveal">Kategoriya ma'lumotlari topilmadi.</p>
+            {% endfor %}
+        </div>
     </div>
-    <!-- Product Thumbnail End -->
+</section>
 {% endblock %}

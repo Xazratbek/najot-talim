@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .service import parent_categories, discount_desc, category_unique_product,new_arrivals, featured_products
 from home.service import get_sliders, get_banners, get_brands
@@ -10,8 +10,6 @@ from django.contrib.auth.decorators import login_required
 from users.models import CustomUser
 from orders.models import Order
 from django.http import HttpResponse
-
-
 
 class IndexView(View):
     def get(self, request):
@@ -33,20 +31,26 @@ class ProductDetailView(View):
     def get(self, request, id):
         product = Product.objects.get(id=id)
 
-        # RecentlyProduct.objects.get_or_create(
-        #     user=request.user,
-        #     product = product
-        # )
+        if request.user.is_authenticated:
+            RecentlyProduct.objects.get_or_create(
+                user=request.user,
+                product=product
+            )
 
         ProductView.objects.create(
             product = product
         )
 
+        user_comment = None
+        if request.user.is_authenticated:
+            user_comment = product.comments.filter(user=request.user).first()
+
         context = {
             'product': product,
             'categories': parent_categories(),
             'comments': product_comments(id),
-            'product_view_count': product.view_product.count()
+            'product_view_count': product.view_product.count(),
+            'user_comment': user_comment,
 
         }
         return render(request, "product.html", context=context)
@@ -56,14 +60,23 @@ class ProductDetailView(View):
 def comment_create(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     user = request.user
-    text = request.POST.get('text', None)
-    rate = request.POST.get('rate', 1)
+    if request.method != "POST":
+        return redirect('product_detail', id=product.id)
 
-    # client = user.orders.filter(status='done').select_related('items', 'products')
+    text = request.POST.get('text', '').strip()
 
+    try:
+        rate = int(request.POST.get('rate', 1))
+    except (TypeError, ValueError):
+        rate = 1
 
-    if not (rate >= 1 and rate <= 5):
+    if not (1 <= rate <= 5):
         messages.warning(request, 'Siz rate ni 1-5 oraligida berishingiz kerak')
+        return redirect('product_detail', id=product.id)
+
+    if Comment.objects.filter(product=product, user=user).exists():
+        messages.warning(request, 'Siz bu mahsulot uchun avval izoh qoldirgansiz')
+        return redirect('product_detail', id=product.id)
 
     Comment.objects.create(
         product=product,
@@ -72,17 +85,30 @@ def comment_create(request, product_id):
         rate=rate
     )
 
-    messages.warning(request, 'Izohingiz qoldirildi')
+    messages.success(request, 'Izohingiz qoldirildi')
+    return redirect('product_detail', id=product.id)
 
 
 @login_required()
 def update_comment(request, comment_id):
     comment = Comment.objects.filter(pk=comment_id).first()
-    if comment.user == request.user:
-        text = request.POST.get('text', None)
-        rate = request.POST.get('rate', 1)
+    if comment is None:
+        messages.warning(request, 'Comment topilmadi')
+        return redirect('index')
 
-        # comment.update(text=text, rate=rate)
+    if request.method != "POST":
+        return redirect('product_detail', id=comment.product.id)
+
+    if comment.user == request.user:
+        text = request.POST.get('text', '').strip()
+        try:
+            rate = int(request.POST.get('rate', 1))
+        except (TypeError, ValueError):
+            rate = 1
+
+        if not (1 <= rate <= 5):
+            messages.warning(request, 'Siz rate ni 1-5 oraligida berishingiz kerak')
+            return redirect('product_detail', id=comment.product.id)
 
         comment.text = text
         comment.rate = rate
@@ -91,20 +117,30 @@ def update_comment(request, comment_id):
         messages.success(request, 'Comment ozgartirildi')
     else:
         messages.warning(request, 'Bu commentni ozgartirolmaysiz')
+    return redirect('product_detail', id=comment.product.id)
 
-@login_required()
+@login_required(login_url='login')
 def delete_comment(request, comment_id):
     comment = Comment.objects.filter(pk=comment_id).first()
+    if comment is None:
+        messages.warning(request, 'Comment topilmadi')
+        return redirect('index')
+
+    product_id = comment.product.id
+    if request.method != "POST":
+        return redirect('product_detail', id=product_id)
+
     if comment.user == request.user:
         comment.delete()
         messages.success(request, 'Comment ochirildi')
     else:
         messages.warning(request, 'Bu commentni ochirolmaysiz')
+    return redirect('product_detail', id=product_id)
 
 @login_required()
 def my_comments(request):
     comments = Comment.objects.filter(user=request.user)
-    return render(request, '#', {'comments': comments})
+    return render(request, 'recently.html', {'recently_products': [], 'comments': comments})
 
 
 def product_comments(product_id):
@@ -118,13 +154,11 @@ def saved(request, id):
     saved, created = Saved.objects.get_or_create(user=request.user, product=product)
 
     if created:
-        print("Maxsulot qo'shildi: ")
         messages.success(request, 'maxsulot qoshildi')
         return HttpResponse('Maxsulot qo\'shildi')
 
     if not created:
         saved.delete()
-        print("Maxsulot olib tashlandi")
         messages.success(request, 'Olib tashlandi')
         return HttpResponse('Maxsulot olib tashlandi')
 

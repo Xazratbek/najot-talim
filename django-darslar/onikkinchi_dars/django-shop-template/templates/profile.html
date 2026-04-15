@@ -1,42 +1,41 @@
 {% extends "base.html" %}
+
+{% block title %}Profil | TrueMarket{% endblock %}
+
 {% block content %}
-{% if user.is_authenticated %}
-<div class="hot-deal-active owl-carousel">
-                {% for product in user.products.all %}
-                <!-- Single Product Start -->
-                <div class="single-product">
-                    <!-- Product Image Start -->
-                    <div class="pro-img">
-                        <a href="{% url 'product_detail' id=product.id %}">
-                            <img class="primary-img" src="{{ product.images.first.photo.url }}" alt="single-product">
-                            <img class="secondary-img" src="{{ product.images.last.photo.url }}" alt="single-product">
-                        </a>
-                        <div class="countdown" data-countdown="2020/03/01"></div>
-                        <a href="#" class="quick_view" data-toggle="modal" data-target="#myModal" title="Quick View"><i class="lnr lnr-magnifier"></i></a>
-                    </div>
-                    <!-- Product Image End -->
-                    <!-- Product Content Start -->
-                    <div class="pro-content">
-                        <div class="pro-info">
-                            <h4><a href="{% url 'product_detail' id=product.id %}">{{ product.title }}</a></h4>
-                            <p><span class="price">${{ product.price }}</span></p>
-                            <div class="label-product l_sale">{{ product.discount }}<span class="symbol-percent">%</span></div>
-                        </div>
-                        <div class="pro-actions">
-                            <div class="actions-primary">
-                                <a href="cart.html" title="Add to Cart"> + Add To Cart</a>
-                            </div>
-                            <div class="actions-secondary">
-                                <a href="compare.html" title="Compare"><i class="lnr lnr-sync"></i> <span>Add To Compare</span></a>
-                                <a href="wishlist.html" title="WishList"><i class="lnr lnr-heart"></i> <span>Add to WishList</span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Product Content End -->
-                </div>
-                <!-- Single Product End -->
-                {% endfor %}
+<section class="section">
+    <div class="container profile-shell reveal-group">
+        <div class="profile-card reveal">
+            <div class="profile-card__avatar">
+                {% if request.user.is_authenticated and request.user.photo %}
+                    <img src="{{ request.user.photo.url }}" alt="{{ request.user.username }}">
+                {% else %}
+                    <div class="placeholder-card compact">No user</div>
+                {% endif %}
             </div>
-{% endif %}
-{{ user.username }}
-{% endblock content %}
+            <div class="profile-card__body">
+                <p class="eyebrow">Account Overview</p>
+                <h1>{% if request.user.is_authenticated %}{{ request.user.get_full_name|default:request.user.username }}{% else %}Mehmon foydalanuvchi{% endif %}</h1>
+                <div class="profile-meta">
+                    <article>
+                        <span>Username</span>
+                        <strong>{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}-{% endif %}</strong>
+                    </article>
+                    <article>
+                        <span>Email</span>
+                        <strong>{% if request.user.is_authenticated %}{{ request.user.email|default:"-" }}{% else %}-{% endif %}</strong>
+                    </article>
+                    <article>
+                        <span>Telefon</span>
+                        <strong>{% if request.user.is_authenticated %}{{ request.user.phone_number|default:"-" }}{% else %}-{% endif %}</strong>
+                    </article>
+                </div>
+                <div class="hero-actions">
+                    <a class="button button-primary" href="{% url 'wishlist' %}">Wishlist</a>
+                    <a class="button button-secondary" href="{% url 'index' %}">Bosh sahifa</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,530 +1,152 @@
 {% load static %}
-<!doctype html>
-<html class="no-js" lang="en">
-
+<!DOCTYPE html>
+<html lang="uz">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}Truemart{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Favicons -->
-    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-    <!-- Fontawesome css -->
-    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
-    <!-- Ionicons css -->
-    <link rel="stylesheet" href="{% static 'css/ionicons.min.css' %}">
-    <!-- linearicons css -->
-    <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
-    <!-- Nice select css -->
-    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}">
-    <!-- Jquery fancybox css -->
-    <link rel="stylesheet" href="{% static 'css/jquery.fancybox.css' %}">
-    <!-- Jquery ui price slider css -->
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
-    <!-- Meanmenu css -->
-    <link rel="stylesheet" href="{% static 'css/meanmenu.min.css' %}">
-    <!-- Nivo slider css -->
-    <link rel="stylesheet" href="{% static 'css/nivo-slider.css' %}">
-    <!-- Owl carousel css -->
-    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
-    <!-- Bootstrap css -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <!-- Custom css -->
-    <link rel="stylesheet" href="{% static 'css/default.css' %}">
-    <!-- Main css -->
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <!-- Responsive css -->
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-
-    <!-- Modernizer js -->
-    <script src="{% static 'js/vendor/modernizr-3.5.0.min.js' %}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TrueMarket{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}TrueMarket mahsulotlari, kategoriyalari va blog sahifalari.{% endblock %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Commissioner:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
+<body data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}">
+    <div class="site-shell">
+        <div class="ambient ambient-one"></div>
+        <div class="ambient ambient-two"></div>
+        <div class="grid-glow"></div>
 
-<body>
-    <!-- Main Wrapper Start Here -->
-    <div class="wrapper">
-        <!-- Header Area Start Here -->
-        <header class="header-area">
-            <!-- Header Top Start Here -->
-            <div class="header-top-area">
-                <div class="container">
-                    <!-- Header Top Start -->
-                    <div class="header-top">
-                        <ul>
-                            <li><a href="#">Free Shipping on order over $99</a></li>
-                            <li><a href="#">Shopping Cart</a></li>
-                            <li><a href="checkout.html">Checkout</a></li>
-                        </ul>
-                        <ul>
-                            <li><span>Language</span> <a href="#">English<i class="lnr lnr-chevron-down"></i></a>
-                                <!-- Dropdown Start -->
-                                <ul class="ht-dropdown">
-                                    <li><a href="#"><img src="{% static 'img/header/1.jpg' %}" alt="language-selector">English</a></li>
-                                    <li><a href="#"><img src="{% static 'img/header/2.jpg' %}" alt="language-selector">Francis</a></li>
-                                </ul>
-                                <!-- Dropdown End -->
-                            </li>
-                            <li><span>Currency</span><a href="#"> USD $ <i class="lnr lnr-chevron-down"></i></a>
-                                <!-- Dropdown Start -->
-                                <ul class="ht-dropdown">
-                                    <li><a href="#">&#36; USD</a></li>
-                                    <li><a href="#"> € Euro</a></li>
-                                    <li><a href="#">&#163; Pound Sterling</a></li>
-                                </ul>
-                                <!-- Dropdown End -->
-                            </li>
-                            <li><a href="#">My Account<i class="lnr lnr-chevron-down"></i></a>
-                                <!-- Dropdown Start -->
-                                <ul class="ht-dropdown">
-                                    {% if user.is_authenticated %}
-                                    <li><a href="{% url "wishlist" %}">Wishlist</a></li>
-                                    <!-- Yashirin forma -->
-                                    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                                        {% csrf_token %}
-                                    </form>
+        <header class="site-header">
+            <div class="container header-bar">
+                <a class="brand" href="{% url 'index' %}">
+                    <span class="brand-mark"><i class="bi bi-bag-heart-fill"></i></span>
+                    <span>
+                        <strong>TrueMarket</strong>
+                        <small>Online store</small>
+                    </span>
+                </a>
 
-                                    <!-- Havola -->
-                                    <li>
-                                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Logout
-                                        </a>
-                                    </li>
+                <form class="header-search" action="{% url 'index' %}" method="get">
+                    {% if categories %}
+                        <select class="header-select" name="category" aria-label="Kategoriya tanlash">
+                            <option value="">Barcha kataloglar</option>
+                            {% for category in categories %}
+                                <option value="{{ category.title|lower }}" {% if request.GET.category == category.title|lower %}selected{% endif %}>{{ category.title }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                    <label class="search-field" for="header-search-input">
+                        <i class="bi bi-search"></i>
+                        <input id="header-search-input" type="search" name="q" value="{{ request.GET.q }}" placeholder="Mahsulot qidirish">
+                    </label>
+                    <button class="header-search__submit" type="submit" aria-label="Qidirish">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </form>
 
-                                    {% else %}
-                                    <li><a href="{% url "login" %}">Login</a></li>
-                                    <li><a href="{% url "signup" %}">Register</a></li>
-                                    {% endif %}
-                                </ul>
-                                <!-- Dropdown End -->
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- Header Top End -->
-                </div>
-                <!-- Container End -->
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <nav class="primary-nav" id="primary-nav">
+                    <a href="{% url 'index' %}">Bosh sahifa</a>
+                    <a href="{% url 'blog' %}">Blog</a>
+                    <a href="{% url 'wishlist' %}">Wishlist</a>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'recently' %}">Recently</a>
+                        <a href="{% url 'profile' request.user.id %}">Profil</a>
+                        <form action="{% url 'logout' %}" method="post" class="inline-form">
+                            {% csrf_token %}
+                            <button class="nav-button" type="submit">Chiqish</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}">Kirish</a>
+                        <a class="nav-accent" href="{% url 'signup' %}">A'zo bo'lish</a>
+                    {% endif %}
+                </nav>
             </div>
-            <!-- Header Top End Here -->
-            <!-- Header Middle Start Here -->
-            <div class="header-middle ptb-15">
-                <div class="container">
-                    <div class="row align-items-center no-gutters">
-                        <div class="col-lg-3 col-md-12">
-                            <div class="logo mb-all-30">
-                                <a href="/"><img src="{% static 'img/logo/logo.png' %}" alt="logo-image"></a>
-                            </div>
-                        </div>
-                        <!-- Categorie Search Box Start Here -->
-                        <div class="col-lg-5 col-md-8 ml-auto mr-auto col-10">
-                            <div class="categorie-search-box">
-                                <form action="#">
-                                    <div class="form-group">
-                                        <select class="bootstrap-select" name="poscats">
-                                            <option value="0">All categories</option>
-                                            <option value="2">Arrivals</option>
-                                            <option value="3">Cameras</option>
-                                            <option value="4">Cords and Cables</option>
-                                            <option value="5">gps accessories</option>
-                                            <option value="6">Microphones</option>
-                                            <option value="7">Wireless Transmitters</option>
-                                            <option value="8">GamePad</option>
-                                            <option value="9">cube lifestyle hd</option>
-                                            <option value="10">Bags</option>
-                                            <option value="11">Bottoms</option>
-                                            <option value="12">Shirts</option>
-                                            <option value="13">Tailored</option>
-                                            <option value="14">Home &amp; Kitchen</option>
-                                            <option value="15">Large Appliances</option>
-                                            <option value="16">Armchairs</option>
-                                            <option value="17">Bunk Bed</option>
-                                            <option value="18">Mattress</option>
-                                            <option value="19">Sideboard</option>
-                                            <option value="20">Small Appliances</option>
-                                            <option value="21">Bootees Bags</option>
-                                            <option value="22">Jackets</option>
-                                            <option value="23">Shelf</option>
-                                            <option value="24">Shoes</option>
-                                            <option value="25">Phones &amp; Tablets</option>
-                                            <option value="26">Tablet</option>
-                                            <option value="27">phones</option>
-                                        </select>
-                                    </div>
-                                    <input type="text" name="search" placeholder="I’m shopping for...">
-                                    <button><i class="lnr lnr-magnifier"></i></button>
-                                </form>
-                            </div>
-                        </div>
-                        <!-- Categorie Search Box End Here -->
-                        <!-- Cart Box Start Here -->
-                        <div class="col-lg-4 col-md-12">
-                            <div class="cart-box mt-all-30">
-                                <ul class="d-flex justify-content-lg-end justify-content-center align-items-center">
-                                    <li><a href="#"><i class="lnr lnr-cart"></i><span class="my-cart"><span class="total-pro">2</span><span>cart</span></span></a>
-                                        <ul class="ht-dropdown cart-box-width">
-                                            <li>
-                                                <!-- Cart Box Start -->
-                                                <div class="single-cart-box">
-                                                    <div class="cart-img">
-                                                        <a href="#"><img src="{% static 'img/products/1.jpg' %}" alt="cart-image"></a>
-                                                        <span class="pro-quantity">1X</span>
-                                                    </div>
-                                                    <div class="cart-content">
-                                                        <h6><a href="product.html">Printed Summer Red </a></h6>
-                                                        <span class="cart-price">27.45</span>
-                                                        <span>Size: S</span>
-                                                        <span>Color: Yellow</span>
-                                                    </div>
-                                                    <a class="del-icone" href="#"><i class="ion-close"></i></a>
-                                                </div>
-                                                <!-- Cart Box End -->
-                                                <!-- Cart Box Start -->
-                                                <div class="single-cart-box">
-                                                    <div class="cart-img">
-                                                        <a href="#"><img src="{% static 'img/products/2.jpg' %}" alt="cart-image"></a>
-                                                        <span class="pro-quantity">1X</span>
-                                                    </div>
-                                                    <div class="cart-content">
-                                                        <h6><a href="product.html">Printed Round Neck</a></h6>
-                                                        <span class="cart-price">45.00</span>
-                                                        <span>Size: XL</span>
-                                                        <span>Color: Green</span>
-                                                    </div>
-                                                    <a class="del-icone" href="#"><i class="ion-close"></i></a>
-                                                </div>
-                                                <!-- Cart Box End -->
-                                                <!-- Cart Footer Inner Start -->
-                                                <div class="cart-footer">
-                                                   <ul class="price-content">
-                                                       <li>Subtotal <span>$57.95</span></li>
-                                                       <li>Shipping <span>$7.00</span></li>
-                                                       <li>Taxes <span>$0.00</span></li>
-                                                       <li>Total <span>$64.95</span></li>
-                                                   </ul>
-                                                    <div class="cart-actions text-center">
-                                                        <a class="cart-checkout" href="checkout.html">Checkout</a>
-                                                    </div>
-                                                </div>
-                                                <!-- Cart Footer Inner End -->
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="{% url 'wishlist' %}"><i class="lnr lnr-heart"></i><span class="my-cart"><span>Wish</span><span>list - {{ user.saved_products.count }}</span></span></a>
-                                    </li>
-                                    {% if user.is_authenticated %}
-                                    <li><a href="{% url 'profile' user.id %}"><i class="lnr lnr-user"></i><span class="my-cart"><span>Salom <strong>{{ user.username }}</strong></a></li>
-                                    {% else %}
-                                    <li><a href="{% url 'signup' %}"><i class="lnr lnr-user"></i><span class="my-cart"><span> <strong>Sign in</strong> Or</span><span> Sign up</span></span></a></li>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- Cart Box End Here -->
-                    </div>
-                    <!-- Row End -->
-                </div>
-                <!-- Container End -->
-            </div>
-            <!-- Header Middle End Here -->
-            <!-- Header Bottom Start Here -->
-            <div class="header-bottom  header-sticky">
-                <div class="container">
-                    <div class="row align-items-center">
-                         <div class="col-xl-3 col-lg-4 col-md-6 vertical-menu d-none d-lg-block">
-                            <span class="categorie-title">Shop by Categories </span>
-                        </div>
-                        <div class="col-xl-9 col-lg-8 col-md-12 ">
-                            <nav class="d-none d-lg-block">
-                                <ul class="header-bottom-list d-flex">
-                                        <!-- Home Version Dropdown End -->
-                                    </li>
-                                    <li><a href="shop.html">shop<i class="fa fa-angle-down"></i></a>
-                                        <!-- Home Version Dropdown Start -->
-                                        <ul class="ht-dropdown dropdown-style-two">
-                                            <li><a href="product.html">product details</a></li>
-                                            <li><a href="compare.html">compare</a></li>
-                                            <li><a href="cart.html">cart</a></li>
-                                            <li><a href="checkout.html">checkout</a></li>
-                                            <li><a href="{% url 'wishlist' %}">wishlist</a></li>
-                                        </ul>
-                                        <!-- Home Version Dropdown End -->
-                                    </li>
-                                    <li><a href="blog.html">blog<i class="fa fa-angle-down"></i></a>
-                                        <!-- Home Version Dropdown Start -->
-                                        <ul class="ht-dropdown dropdown-style-two">
-                                            <li><a href="single-blog.html">blog details</a></li>
-                                        </ul>
-                                        <!-- Home Version Dropdown End -->
-                                    </li>
-                                    <li><a href="#">pages<i class="fa fa-angle-down"></i></a>
-                                        <!-- Home Version Dropdown Start -->
-                                        <ul class="ht-dropdown dropdown-style-two">
-                                            <li><a href="contact.html">contact us</a></li>
-                                            <li><a href="{% url 'signup' %}">register</a></li>
-                                            <li><a href="{% url 'login' %}">sign in</a></li>
-                                            <li><a href="forgot-password.html">forgot password</a></li>
-                                            <li><a href="404.html">404</a></li>
-                                        </ul>
-                                        <!-- Home Version Dropdown End -->
-                                    </li>
-                                    <li><a href="about.html">About us</a></li>
-                                    <li><a href="contact.html">contact us</a></li>
-                                </ul>
-                            </nav>
-                            <div class="mobile-menu d-block d-lg-none">
-                                <nav>
-                                        <li><a href="shop.html">shop</a>
-                                            <!-- Mobile Menu Dropdown Start -->
-                                            <ul>
-                                                <li><a href="product.html">product details</a></li>
-                                                <li><a href="compare.html">compare</a></li>
-                                                <li><a href="cart.html">cart</a></li>
-                                                <li><a href="checkout.html">checkout</a></li>
-                                                <li><a href="{% url 'wishlist' %}">wishlist</a></li>
-                                            </ul>
-                                            <!-- Mobile Menu Dropdown End -->
-                                        </li>
-                                        <li><a href="blog.html">Blog</a>
-                                            <!-- Mobile Menu Dropdown Start -->
-                                            <ul>
-                                                <li><a href="single-blog.html">blog details</a></li>
-                                            </ul>
-                                            <!-- Mobile Menu Dropdown End -->
-                                        </li>
-                                        <li><a href="#">pages</a>
-                                            <!-- Mobile Menu Dropdown Start -->
-                                            <ul>
-                                                <li><a href="{% url 'signup' %}">register</a></li>
-                                                <li><a href="{% url 'login' %}">sign in</a></li>
-                                                <li><a href="forgot-password.html">forgot password</a></li>
-                                                <li><a href="404.html">404</a></li>
-                                            </ul>
-                                            <!-- Mobile Menu Dropdown End -->
-                                        </li>
-                                        <li><a href="about.html">about us</a></li>
-                                        <li><a href="contact.html">contact us</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Row End -->
-                </div>
-                <!-- Container End -->
-            </div>
-            <!-- Header Bottom End Here -->
-            <!-- Mobile Vertical Menu Start Here -->
-            <div class="container d-block d-lg-none">
-                <div class="vertical-menu mt-30">
-                    <span class="categorie-title mobile-categorei-menu">Shop by Categories</span>
-                    <nav>
-                        <div id="cate-mobile-toggle" class="category-menu sidebar-menu sidbar-style mobile-categorei-menu-list menu-hidden ">
-                            <ul>
-                                <li class="has-sub"><a href="#">Automotive & Motorcycle </a>
-                                    <ul class="category-sub">
-                                        <li class="has-sub"><a href="shop.html">Office chair</a>
-                                            <ul class="category-sub">
-                                                <li><a href="shop.html">Bibendum Cursus</a></li>
-                                                <li><a href="shop.html">Dignissim Turpis</a></li>
-                                                <li><a href="shop.html">Dining room</a></li>
-                                                <li><a href="shop.html">Dining room</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="has-sub"><a href="shop.html">Purus Lacus</a>
-                                            <ul class="category-sub">
-                                                <li><a href="shop.html">Magna Pellentesq</a></li>
-                                                <li><a href="shop.html">Molestie Tortor</a></li>
-                                                <li><a href="shop.html">Vehicula Element</a></li>
-                                                <li><a href="shop.html">Sagittis Blandit</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="shop.html">gps accessories</a></li>
-                                        <li><a href="shop.html">Microphones</a></li>
-                                        <li><a href="shop.html">Wireless Transmitters</a></li>
-                                    </ul>
-                                    <!-- category submenu end-->
-                                </li>
-                                <li class="has-sub"><a href="#">Sports & Outdoors</a>
-                                    <ul class="category-sub">
-                                        <li class="menu-tile">Cameras</li>
-                                        <li><a href="shop.html">Cords and Cables</a></li>
-                                        <li><a href="shop.html">gps accessories</a></li>
-                                        <li><a href="shop.html">Microphones</a></li>
-                                        <li><a href="shop.html">Wireless Transmitters</a></li>
-                                    </ul>
-                                    <!-- category submenu end-->
-                                </li>
-                                <li class="has-sub"><a href="#">Home & Kitchen</a>
-                                    <ul class="category-sub">
-                                        <li><a href="shop.html">kithen one</a></li>
-                                        <li><a href="shop.html">kithen two</a></li>
-                                        <li><a href="shop.html">kithen three</a></li>
-                                        <li><a href="shop.html">kithen four</a></li>
-                                    </ul>
-                                    <!-- category submenu end-->
-                                </li>
-                                <li class="has-sub"><a href="#">Phones & Tablets</a>
-                                    <ul class="category-sub">
-                                        <li><a href="shop.html">phone one</a></li>
-                                        <li><a href="shop.html">Tablet two</a></li>
-                                        <li><a href="shop.html">Tablet three</a></li>
-                                        <li><a href="shop.html">phone four</a></li>
-                                    </ul>
-                                    <!-- category submenu end-->
-                                </li>
-                                <li class="has-sub"><a href="#">TV & Video</a>
-                                    <ul class="category-sub">
-                                        <li><a href="shop.html">smart tv</a></li>
-                                        <li><a href="shop.html">real video</a></li>
-                                        <li><a href="shop.html">Microphones</a></li>
-                                        <li><a href="shop.html">Wireless Transmitters</a></li>
-                                    </ul>
-                                    <!-- category submenu end-->
-                                </li>
-                                <li><a href="#">Beauty</a> </li>
-                                <li><a href="#">Sport & tourisim</a></li>
-                                <li><a href="#">Meat & Seafood</a></li>
-                            </ul>
-                        </div>
-                        <!-- category-menu-end -->
-                    </nav>
-                </div>
-            </div>
-            <!-- Mobile Vertical Menu Start End -->
         </header>
-        <!-- Header Area End Here -->
-        {% block content %}{% endblock %}
-        <!-- Footer Area Start Here -->
-        <footer class="footer-area">
-            <!-- Footer Top Start -->
-            <div class="footer-top">
-                <div class="container">
-                    <div class="row">
-                        <!-- Single Footer Start -->
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-                            <div class="single-footer">
-                                <h3>Contact Us</h3>
-                                <div class="footer-contact">
-                                    <p><label>Address:</label>Your address goes here</p>
-                                    <p><label>Phone:</label><a href="#">(800) 123 456 789</a></p>
-                                    <p><label>Email:</label><a href="#">support@hastech.company</a></p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Single Footer Start -->
-                        <!-- Single Footer Start -->
-                        <div class="col-lg-2 col-md-3 col-sm-6">
-                            <div class="single-footer">
-                                <h3>Information</h3>
-                                <ul class="footer-list">
-                                    <li><a href="about.html">About Us</a></li>
-                                    <li><a href="#">Delivery Information</a></li>
-                                    <li><a href="#">Privacy & Policy</a></li>
-                                    <li><a href="terms-conditions.html">Terms & Conditions</a></li>
-                                    <li><a href="#">Manufactures</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- Single Footer Start -->
-                        <!-- Single Footer Start -->
-                        <div class="col-lg-2 col-md-3 col-sm-6">
-                            <div class="single-footer">
-                                {% if user.is_authenticated %}
-                                <h3>My Account</h3>
-                                <ul class="footer-list">
-                                    <li><a href="cart.html">My Cart</a></li>
-                                    <li><a href="{% url 'wishlist' %}">Wishlist</a></li>
-                                </ul>
+
+        {% if messages %}
+            <div class="toast-stack" aria-live="polite" aria-atomic="true">
+                {% for message in messages %}
+                    <div class="toast toast-{{ message.tags|default:'info' }}" data-toast>
+                        <div class="toast__content">
+                            <strong>
+                                {% if message.tags == 'success' %}
+                                    Muvaffaqiyat
+                                {% elif message.tags == 'warning' %}
+                                    Ogohlantirish
+                                {% elif message.tags == 'error' %}
+                                    Xatolik
                                 {% else %}
-                                    <li><a href="{% url "login" %}">Login</a></li>
-                                    <li><a href="{% url "signup" %}">SignUp</a></li>
+                                    Xabar
                                 {% endif %}
-                            </div>
+                            </strong>
+                            <p>{{ message }}</p>
                         </div>
-                        <!-- Single Footer Start -->
-                        <!-- Single Footer Start -->
-                        <div class="col-lg-4">
-                            <div class="single-footer">
-                                <h3>Stay Connected</h3>
-                                <p>Get E-mail updates about our latest shop and special offers.</p>
-                                <!-- Newsletter Form -->
-                                <form action="#" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="popup-subscribe-form validate" target="_blank" novalidate>
-                                   <div id="mc_embed_signup_scroll">
-                                      <div id="mc-form" class="mc-form subscribe-form" >
-                                        <input id="mc-email" type="email" autocomplete="off" placeholder="Enter your email here" />
-                                        <button  id="mc-submit">Subscribe</button>
-                                      </div>
-                                   </div>
-                                </form>
-                                <div class="social-media">
-                                    <a class="facebook" href="#"><i class="fa fa-facebook"></i></a>
-                                    <a class="twitter" href="#"><i class="fa fa-twitter"></i></a>
-                                    <a class="pinterest" href="#"><i class="fa fa-pinterest"></i></a>
-                                    <a class="google" href="#"><i class="fa fa-google-plus"></i></a>
-                                    <a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Single Footer Start -->
+                        <button class="toast__close" type="button" aria-label="Yopish" data-toast-close>
+                            <i class="bi bi-x-lg"></i>
+                        </button>
                     </div>
-                    <!-- Row End -->
-                </div>
-                <!-- Container End -->
+                {% endfor %}
             </div>
-            <!-- Footer Top End -->
-            <!-- Footer Bottom Start -->
-            <div class="footer-bottom">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="copyright-text">
-                                <p>Copyright © 2020 <a href="https://hasthemes.com/" target="_blank">HasThemes</a>. All Rights Reserved.</p>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="payment-img">
-                                <img src="{% static 'img/payment/1.png' %}" alt="payment-img">
-                            </div>
-                        </div>
+        {% endif %}
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        {% if request.user.is_authenticated %}
+            <button class="cart-fab" type="button" data-cart-open>
+                <i class="bi bi-bag-check"></i>
+                <span>Savat</span>
+                <b data-cart-count>0</b>
+            </button>
+
+            <aside class="cart-drawer" data-cart-drawer aria-hidden="true">
+                <div class="cart-drawer__header">
+                    <div>
+                        <p class="eyebrow">My Cart</p>
+                        <h3>Tanlangan mahsulotlar</h3>
                     </div>
-                    <!-- Row End -->
+                    <button type="button" class="cart-close" data-cart-close>
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
-                <!-- Container End -->
+                <div class="cart-drawer__items" data-cart-items>
+                    <p class="empty-state">Savat yuklanmoqda...</p>
+                </div>
+            </aside>
+            <div class="drawer-backdrop" data-cart-backdrop></div>
+        {% endif %}
+
+        <footer class="site-footer">
+            <div class="container footer-grid">
+                <div>
+                    <p class="eyebrow">TRUEMARKET</p>
+                    <h2>Mahsulotlar, kategoriyalar va blog postlari.</h2>
+                </div>
+                <div class="footer-links">
+                    <a href="{% url 'index' %}">Katalog</a>
+                    <a href="{% url 'blog' %}">Blog</a>
+                    <a href="{% url 'wishlist' %}">Saqlanganlar</a>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'recently' %}">Yaqinda ko'rilganlar</a>
+                        <a href="{% url 'profile' request.user.id %}">Kabinet</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Hisobga kirish</a>
+                    {% endif %}
+                </div>
             </div>
-            <!-- Footer Bottom End -->
         </footer>
-        <!-- Footer Area End Here -->
     </div>
-    <!-- Main Wrapper End Here -->
 
-    <!-- jquery 3.2.1 -->
-    <script src="{% static 'js/vendor/jquery-3.2.1.min.js' %}"></script>
-    <!-- popper js -->
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <!-- bootstrap js -->
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <!-- carousel js -->
-    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
-    <!-- scrollup js -->
-    <script src="{% static 'js/jquery.scrollUp.js' %}"></script>
-    <!-- Niceselect js -->
-    <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
-    <!-- meanmenu js -->
-    <script src="{% static 'js/jquery.meanmenu.min.js' %}"></script>
-    <!-- Nivo slider js -->
-    <script src="{% static 'js/jquery.nivo.slider.js' %}"></script>
-    <!-- magnific-popup js -->
-    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
-    <!-- countdown js -->
-    <script src="{% static 'js/jquery.countdown.min.js' %}"></script>
-    <!-- wow js -->
-    <script src="{% static 'js/wow.min.js' %}"></script>
-    <!-- jQuery-ui js -->
-    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
-    <!-- ajax-mail js -->
-    <script src="{% static 'js/ajax-mail.js' %}"></script>
-    <!-- plugins js -->
-    <script src="{% static 'js/plugins.js' %}"></script>
-    <!-- main js -->
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 </body>
-
 </html>

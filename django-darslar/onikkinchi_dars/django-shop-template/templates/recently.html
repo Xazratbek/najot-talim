@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Yaqinda ko'rilganlar | TrueMarket{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="page-hero reveal-group">
+            <div class="reveal">
+                <p class="eyebrow">Recently Seen</p>
+                <h1>Yaqinda ko‘rilgan mahsulotlar</h1>
+                <p class="lead">Agar route ulansa, bu sahifa `RecentlyProduct` modelidan foydalanishga tayyor.</p>
+            </div>
+        </div>
+        <div class="product-grid reveal-group">
+            {% for item in recently_products %}
+                <article class="product-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}">
+                    <a class="product-card__media" href="{% url 'product_detail' item.product.id %}">
+                        {% with primary_image=item.product.images.first %}
+                            {% if primary_image %}
+                                <img src="{{ primary_image.photo.url }}" alt="{{ item.product.title }}">
+                            {% else %}
+                                <div class="placeholder-card compact">Rasm yo‘q</div>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                    <div class="product-card__body">
+                        <p>{{ item.product.category.title }}</p>
+                        <h3><a href="{% url 'product_detail' item.product.id %}">{{ item.product.title }}</a></h3>
+                        <div class="price-row">
+                            <strong>${{ item.product.final_price }}</strong>
+                            {% if item.product.discount %}<span>${{ item.product.price }}</span>{% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <p class="empty-state reveal">Yaqinda ko‘rilgan mahsulotlar yo‘q.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

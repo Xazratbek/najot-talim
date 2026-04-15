@@ -1,8 +1,41 @@
 {% extends "base.html" %}
+
+{% block title %}Ro'yxatdan o'tish | TrueMarket{% endblock %}
+
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Ro'yxatdan o'tish</button>
-</form>
-{% endblock content %}
+<section class="section">
+    <div class="container auth-shell reveal-group">
+        <div class="auth-panel wide reveal">
+            <p class="eyebrow">Join TrueMarket</p>
+            <h1>Yangi foydalanuvchi</h1>
+            <p class="lead">Mavjud `SignUpForm` maydonlari asosida hisob ochish formasi qayta ishlangan.</p>
+
+            <form method="post" enctype="multipart/form-data" class="auth-form auth-grid">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="field-wrap">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="field-help">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.errors %}
+                            <small class="field-error">{{ field.errors|striptags }}</small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                    <div class="field-error full">{{ form.non_field_errors|striptags }}</div>
+                {% endif %}
+                <button class="button button-primary auth-submit full" type="submit">Hisob yaratish</button>
+            </form>
+        </div>
+
+        <div class="auth-aside reveal delay-1">
+            <h2>Vizual do‘kon, real ma'lumotlar</h2>
+            <p>Profil rasmi, telefon va foydalanuvchi ma'lumotlari bilan hisob to‘liq tayyor bo‘ladi.</p>
+            <a class="text-link" href="{% url 'login' %}">Menda allaqachon hisob bor</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
