@@ -5,10 +5,7 @@ from home.service import get_sliders, get_banners, get_brands
 from blog.service import get_latest_posts
 from django.contrib import messages
 from .models import Comment, Saved, RecentlyProduct, ProductView, Product
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from users.models import CustomUser
-from orders.models import Order
 from django.http import HttpResponse
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
@@ -118,8 +115,7 @@ class ProductDetailView(View):
         }
         return render(request, "product.html", context=context)
 
-
-@login_required()
+@login_required(login_url='login')
 def comment_create(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     user = request.user
@@ -148,7 +144,7 @@ def comment_create(request, product_id):
     return redirect('product_detail', id=product.id)
 
 
-@login_required()
+@login_required(login_url='login')
 def update_comment(request, comment_id):
     comment = Comment.objects.filter(pk=comment_id).first()
     if comment is None:
@@ -193,10 +189,10 @@ def delete_comment(request, comment_id):
         comment.delete()
         messages.success(request, 'Comment ochirildi')
     else:
-        messages.warning(request, 'Bu commentni ochirolmaysiz')
+        messages.warning(request, 'Bu commentni ochirolmaysiz, ruxsat yo\'q')
     return redirect('product_detail', id=product_id)
 
-@login_required()
+@login_required(login_url='login')
 def my_comments(request):
     comments = Comment.objects.filter(user=request.user)
     return render(request, 'recently.html', {'recently_products': [], 'comments': comments})
@@ -219,12 +215,12 @@ def saved(request, id):
         messages.success(request, 'Olib tashlandi')
         return HttpResponse('Maxsulot olib tashlandi')
 
-@login_required()
+@login_required(login_url='login')
 def user_saveds(request):
     saved_products = request.user.saved_products.all().select_related('product')
     return render(request, 'wishlist.html', {'saved_products': saved_products})
 
-@login_required()
+@login_required(login_url='login')
 def user_recently(request):
     recently_products = request.user.recently_products.all().select_related('product')
     return render(request, 'recently.html', {'recently_products': recently_products})

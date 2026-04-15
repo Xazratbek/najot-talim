@@ -1,12 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.views import View
-from django.contrib import messages
 from products.models import Product
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from users.models import CustomUser
-from .models import Order, OrderItem, Card, CardItem
+from .models import Order, Card, CardItem
 
 @login_required(login_url='login')
 def add_card(request):
@@ -80,13 +76,7 @@ def remove_cart_item(request, item_id):
         return JsonResponse({'status': 'error'}, status=400)
 
     card = Card.objects.filter(user=request.user).first()
-    if card is None:
-        return JsonResponse({'status': 'error'}, status=404)
-
     item = card.items.filter(id=item_id).first()
-    if item is None:
-        return JsonResponse({'status': 'error'}, status=404)
-
     item.delete()
     return JsonResponse({'status': 'success'})
 

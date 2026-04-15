@@ -3,8 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import SignUpForm, ProfileUpdateForm
-from .models import CustomUser
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class SignUpView(View):
     def get(self, request):
@@ -36,11 +35,11 @@ class LoginView(View):
         return render(request,"registration/login.html",{"form": form}, )
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin,View):
     def get(self, request,id):
         return render(request, "profile.html")
 
-class ProfileUpdateView(View):
+class ProfileUpdateView(LoginRequiredMixin,View):
     def get(sel, request,id):
         form = ProfileUpdateForm(instance=request.user)
         return render(request, "registration/profile_update.html",context={"form": form})
