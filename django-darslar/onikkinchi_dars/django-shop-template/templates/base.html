@@ -31,7 +31,7 @@
 
                 <form class="header-search" action="{% url 'product-search' %}" method="get">
                     {% if categories %}
-                        <div class="catalog-dropdown" data-catalog-dropdown>
+                        <div class="catalog-dropdown" data-catalog-dropdown data-submit-on-select="true">
                             <input type="hidden" name="category" value="{{ request.GET.category|default:'' }}" data-catalog-input>
                             <button class="catalog-trigger" type="button" aria-expanded="false" data-catalog-trigger>
                                 <span class="catalog-trigger__label" data-catalog-label>
@@ -40,21 +40,30 @@
                                 <i class="bi bi-chevron-down"></i>
                             </button>
                             <div class="catalog-menu" data-catalog-menu>
-                                <button class="catalog-option is-active" type="button" data-catalog-option data-value="">
+                                <button class="catalog-option {% if not request.GET.category %}is-active{% endif %}" type="button" data-catalog-option data-value="">
                                     <i class="bi bi-check-lg"></i>
                                     <span>Barcha kataloglar</span>
                                 </button>
                                 {% for category in categories %}
-                                    <button class="catalog-option {% if request.GET.category == category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ category.title|lower }}">
-                                        <i class="bi bi-check-lg"></i>
-                                        <span>{{ category.title }}</span>
-                                    </button>
-                                    {% for sub_category in category.sub_category.all %}
-                                        <button class="catalog-option catalog-option--sub {% if request.GET.category == sub_category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ sub_category.title|lower }}">
+                                    <div class="catalog-item {% if category.sub_category.all %}catalog-item--group{% endif %}">
+                                        <button class="catalog-option {% if request.GET.category == category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ category.title|lower }}">
                                             <i class="bi bi-check-lg"></i>
-                                            <span>{{ sub_category.title }}</span>
+                                            <span>{{ category.title }}</span>
+                                            {% if category.sub_category.all %}
+                                                <b><i class="bi bi-chevron-right"></i></b>
+                                            {% endif %}
                                         </button>
-                                    {% endfor %}
+                                        {% if category.sub_category.all %}
+                                            <div class="catalog-submenu">
+                                                {% for sub_category in category.sub_category.all %}
+                                                    <button class="catalog-option catalog-option--sub {% if request.GET.category == sub_category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ sub_category.title|lower }}">
+                                                        <i class="bi bi-check-lg"></i>
+                                                        <span>{{ sub_category.title }}</span>
+                                                    </button>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -135,9 +144,14 @@
                         <p class="eyebrow">My Cart</p>
                         <h3>Tanlangan mahsulotlar</h3>
                     </div>
-                    <button type="button" class="cart-close" data-cart-close>
-                        <i class="bi bi-x-lg"></i>
-                    </button>
+                    <div class="cart-drawer__actions">
+                        <button type="button" class="cart-clear" data-clear-cart title="Savatni tozalash">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                        <button type="button" class="cart-close" data-cart-close>
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="cart-drawer__items" data-cart-items>
                     <p class="empty-state">Savat yuklanmoqda...</p>

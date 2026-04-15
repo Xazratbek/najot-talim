@@ -9,8 +9,7 @@ if (navToggle && primaryNav) {
     });
 }
 
-const catalogDropdown = document.querySelector("[data-catalog-dropdown]");
-if (catalogDropdown) {
+document.querySelectorAll("[data-catalog-dropdown]").forEach((catalogDropdown) => {
     const trigger = catalogDropdown.querySelector("[data-catalog-trigger]");
     const input = catalogDropdown.querySelector("[data-catalog-input]");
     const label = catalogDropdown.querySelector("[data-catalog-label]");
@@ -26,9 +25,14 @@ if (catalogDropdown) {
             options.forEach((item) => item.classList.remove("is-active"));
             option.classList.add("is-active");
             if (input) input.value = option.dataset.value || "";
-            if (label) label.textContent = option.textContent.trim();
+            const optionText = option.querySelector("span")?.textContent?.trim() || option.textContent.trim();
+            if (label) label.textContent = optionText;
             catalogDropdown.classList.remove("is-open");
             trigger?.setAttribute("aria-expanded", "false");
+
+            if (catalogDropdown.dataset.submitOnSelect === "true") {
+                catalogDropdown.closest("form")?.submit();
+            }
         });
     });
 
@@ -38,7 +42,7 @@ if (catalogDropdown) {
             trigger?.setAttribute("aria-expanded", "false");
         }
     });
-}
+});
 
 const revealItems = document.querySelectorAll(".reveal");
 const revealObserver = new IntersectionObserver((entries) => {
@@ -92,6 +96,7 @@ const cartOpenButton = document.querySelector("[data-cart-open]");
 const cartCloseButton = document.querySelector("[data-cart-close]");
 const cartItemsNode = document.querySelector("[data-cart-items]");
 const cartCountNode = document.querySelector("[data-cart-count]");
+const clearCartButton = document.querySelector("[data-clear-cart]");
 
 function openCart() {
     if (!cartDrawer || !cartBackdrop) return;
@@ -124,23 +129,42 @@ async function loadCart() {
 
         if (!data.cart_items || !data.cart_items.length) {
             cartItemsNode.innerHTML = '<p class="empty-state">Savat hozircha bo‘sh.</p>';
+            if (clearCartButton) {
+                clearCartButton.dataset.cardId = "";
+                clearCartButton.disabled = true;
+            }
             return;
+        }
+
+        if (clearCartButton) {
+            clearCartButton.dataset.cardId = data.cart_items[0].card_id || "";
+            clearCartButton.disabled = false;
         }
 
         cartItemsNode.innerHTML = data.cart_items.map((item) => `
             <article class="cart-line">
                 ${item.image ? `<img src="${item.image}" alt="${item.title}">` : '<div class="placeholder-card compact">No image</div>'}
                 <div>
-                    <button class="cart-line__remove" type="button" data-remove-cart-item="${item.id}" aria-label="O'chirish">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                    <strong>${item.title}</strong>
-                    <p>Miqdor: ${item.quantity}</p>
+                    <div class="cart-line__top">
+                        <strong>${item.title}</strong>
+                        <button class="cart-line__remove" type="button" data-remove-cart-item="${item.id}" aria-label="O'chirish">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div class="cart-line__qty">
+                        <button type="button" data-decrease-cart-item="${item.id}" aria-label="Kamaytirish">
+                            <i class="bi bi-dash-lg"></i>
+                        </button>
+                        <span>${item.quantity}</span>
+                        <button type="button" data-increase-cart-item="${item.product_id}" aria-label="Ko'paytirish">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
                     <span>$${item.price}</span>
                 </div>
             </article>
         `).join("");
-        bindCartRemoveButtons();
+        bindCartDrawerButtons();
     } catch (error) {
         cartItemsNode.innerHTML = '<p class="empty-state">Savatni yuklab bo‘lmadi.</p>';
     }
@@ -163,6 +187,59 @@ function bindCartRemoveButtons() {
     document.querySelectorAll("[data-remove-cart-item]").forEach((button) => {
         button.addEventListener("click", () => {
             removeCartItem(button.dataset.removeCartItem);
+        });
+    });
+}
+
+async function decreaseCartItem(itemId) {
+    const formData = new FormData();
+    formData.append("quantity", "1");
+
+    const response = await fetch(`/orders/decrease/${itemId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken") || "",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        body: formData,
+    });
+
+    if (!response.ok) return;
+    await loadCart();
+}
+
+async function increaseCartItem(productId) {
+    if (!productId) return;
+    await addToCart(productId, 1);
+}
+
+async function clearCart(cardId) {
+    if (!cardId) return;
+
+    const response = await fetch(`/orders/clear/${cardId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken") || "",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    });
+
+    if (!response.ok) return;
+    await loadCart();
+}
+
+function bindCartDrawerButtons() {
+    bindCartRemoveButtons();
+
+    document.querySelectorAll("[data-decrease-cart-item]").forEach((button) => {
+        button.addEventListener("click", () => {
+            decreaseCartItem(button.dataset.decreaseCartItem);
+        });
+    });
+
+    document.querySelectorAll("[data-increase-cart-item]").forEach((button) => {
+        button.addEventListener("click", () => {
+            increaseCartItem(button.dataset.increaseCartItem);
         });
     });
 }
@@ -274,6 +351,12 @@ if (cartBackdrop) {
     cartBackdrop.addEventListener("click", closeCart);
 }
 
+if (clearCartButton) {
+    clearCartButton.addEventListener("click", () => {
+        clearCart(clearCartButton.dataset.cardId);
+    });
+}
+
 if (isAuthenticated) {
     loadCart();
 }
@@ -299,4 +382,20 @@ document.querySelectorAll("[data-toast]").forEach((toast) => {
             dismissToast(toast);
         });
     }
+});
+
+document.querySelectorAll("[data-sort-target]").forEach((radio) => {
+    radio.addEventListener("change", () => {
+        document.querySelectorAll("[data-sort-input]").forEach((input) => {
+            input.value = "";
+        });
+
+        if (radio.checked) {
+            const target = radio.dataset.sortTarget;
+            const hiddenInput = document.querySelector(`[data-sort-input="${target}"]`);
+            if (hiddenInput) {
+                hiddenInput.value = "1";
+            }
+        }
+    });
 });

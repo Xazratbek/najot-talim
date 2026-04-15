@@ -80,10 +80,8 @@
             </div>
 
             <div class="detail-panel">
-                <h2>Mahsulot eslatmasi</h2>
-                <p>
-                    Mahsulot ko‘rilganda recently bo‘limiga tushadi. Savat, wishlist va sharhlar shu sahifadan boshqariladi.
-                </p>
+                <h2>Mahsulot tavsifi</h2>
+                <p>{{ product.desc }}</p>
             </div>
         </div>
     </div>
@@ -166,6 +164,51 @@
                 </article>
             {% empty %}
                 <p class="empty-state reveal">Bu mahsulot uchun sharh qoldirilmagan.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-heading reveal-group">
+            <div class="reveal">
+                <p class="eyebrow">Related</p>
+                <h2>O‘xshash mahsulotlar</h2>
+            </div>
+        </div>
+        <div class="product-grid reveal-group">
+            {% for related in related_products %}
+                <article class="product-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}">
+                    <a class="product-card__media product-media-rotator" href="{% url 'product_detail' related.id %}" data-images="{% for image in related.images.all %}{{ image.photo.url }}{% if not forloop.last %}||{% endif %}{% endfor %}">
+                        {% with primary_image=related.images.first %}
+                            {% if primary_image %}
+                                <img src="{{ primary_image.photo.url }}" alt="{{ related.title }}">
+                            {% else %}
+                                <div class="placeholder-card compact">Rasm yo‘q</div>
+                            {% endif %}
+                        {% endwith %}
+                        {% if related.discount %}<span class="badge">-{{ related.discount }}%</span>{% endif %}
+                    </a>
+                    <div class="product-card__body">
+                        <p>{{ related.category.title }}</p>
+                        <h3><a href="{% url 'product_detail' related.id %}">{{ related.title }}</a></h3>
+                        <div class="price-row">
+                            <strong>${{ related.final_price }}</strong>
+                            {% if related.discount %}<span>${{ related.price }}</span>{% endif %}
+                        </div>
+                        <div class="card-actions">
+                            <button class="icon-button icon-button-cart" type="button" data-add-to-cart data-product-id="{{ related.id }}" data-quantity="1" aria-label="Savatga qo'shish">
+                                <i class="bi bi-bag-plus"></i>
+                            </button>
+                            <button class="icon-button" type="button" data-toggle-saved data-product-id="{{ related.id }}" aria-label="Wishlistga qo'shish">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <p class="empty-state reveal">O‘xshash mahsulot topilmadi.</p>
             {% endfor %}
         </div>
     </div>

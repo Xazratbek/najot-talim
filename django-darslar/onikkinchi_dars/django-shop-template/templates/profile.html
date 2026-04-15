@@ -31,8 +31,8 @@
                     </article>
                 </div>
                 <div class="hero-actions">
-                    <a class="button button-primary" href="{% url 'wishlist' %}">Wishlist</a>
-                    <a class="button button-secondary" href="{% url 'index' %}">Bosh sahifa</a>
+                    <a class="button button-primary" href="{% url 'profile-update' request.user.id %}">Profilni tahrirlash</a>
+                    <a class="button button-secondary" href="{% url 'my-orders' %}">Buyurtmalarim</a>
                 </div>
             </div>
         </div>

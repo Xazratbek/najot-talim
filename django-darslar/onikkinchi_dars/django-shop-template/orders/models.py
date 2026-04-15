@@ -42,7 +42,7 @@ class Order(BaseModel):
 
     @property
     def finished_price(self):
-        return sum(i.total_price for i in self.items)
+        return sum(i.total_price for i in self.items.all())
 
     def __str__(self):
         return self.user.username

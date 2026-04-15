@@ -7,13 +7,100 @@
     <div class="container">
         <div class="section-heading reveal-group">
             <div class="reveal">
-                <p class="eyebrow">Mahsulotlar</p>
-                <h2>So‘nggi mahsulotlar</h2>
+                <p class="eyebrow">Katalog</p>
+                <h2>Mahsulotlar ro‘yxati</h2>
             </div>
-            <p class="section-copy reveal delay-1">{{ new_arrivals|length }} ta mahsulot mavjud</p>
+            <p class="section-copy reveal delay-1">{{ page_obj.paginator.count }} ta mahsulot mavjud</p>
         </div>
-        <div class="product-grid reveal-group" data-product-grid>
-            {% for product in new_arrivals|slice:":12" %}
+        <div class="catalog-layout">
+            <aside class="filter-panel reveal">
+                <form method="get" class="filter-form">
+                    <div class="filter-block">
+                        <span class="filter-label">Narx oralig‘i</span>
+                        <div class="range-fields">
+                            <input type="number" name="min_price" placeholder="Min" value="{{ request.GET.min_price }}">
+                            <input type="number" name="max_price" placeholder="Max" value="{{ request.GET.max_price }}">
+                        </div>
+                    </div>
+
+                    <div class="filter-block">
+                        <span class="filter-label">Kategoriya</span>
+                        <div class="filter-dropdown" data-catalog-dropdown>
+                            <input type="hidden" name="category" value="{{ request.GET.category|default:'' }}" data-catalog-input>
+                            <button class="filter-dropdown__trigger" type="button" aria-expanded="false" data-catalog-trigger>
+                                <span data-catalog-label>
+                                    {% if request.GET.category %}{{ request.GET.category }}{% else %}Barchasi{% endif %}
+                                </span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <div class="filter-dropdown__menu catalog-menu" data-catalog-menu>
+                                <button class="catalog-option {% if not request.GET.category %}is-active{% endif %}" type="button" data-catalog-option data-value="">
+                                    <i class="bi bi-check-lg"></i>
+                                    <span>Barchasi</span>
+                                </button>
+                                {% for category in categories %}
+                                    <div class="catalog-item {% if category.sub_category.all %}catalog-item--group{% endif %}">
+                                        <button class="catalog-option {% if request.GET.category == category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ category.title|lower }}">
+                                            <i class="bi bi-check-lg"></i>
+                                            <span>{{ category.title }}</span>
+                                            {% if category.sub_category.all %}
+                                                <b><i class="bi bi-chevron-right"></i></b>
+                                            {% endif %}
+                                        </button>
+                                        {% if category.sub_category.all %}
+                                            <div class="catalog-submenu">
+                                                {% for sub_category in category.sub_category.all %}
+                                                    <button class="catalog-option catalog-option--sub {% if request.GET.category == sub_category.title|lower %}is-active{% endif %}" type="button" data-catalog-option data-value="{{ sub_category.title|lower }}">
+                                                        <i class="bi bi-check-lg"></i>
+                                                        <span>{{ sub_category.title }}</span>
+                                                    </button>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-block">
+                        <span class="filter-label">Filtrlar</span>
+                        <label class="switch-row">
+                            <input type="checkbox" name="discount" value="1" {% if request.GET.discount %}checked{% endif %}>
+                            <span>Faqat chegirmadagilar</span>
+                        </label>
+                    </div>
+
+                    <div class="filter-block">
+                        <span class="filter-label">Saralash</span>
+                        <div class="filter-tags">
+                            <label class="filter-tag">
+                                <input type="radio" name="sort_mode" value="newest" {% if request.GET.newest %}checked{% endif %} data-sort-target="newest">
+                                <span>Yangi</span>
+                            </label>
+                            <label class="filter-tag">
+                                <input type="radio" name="sort_mode" value="kop_korilgan" {% if request.GET.kop_korilgan %}checked{% endif %} data-sort-target="kop_korilgan">
+                                <span>Ko‘p ko‘rilgan</span>
+                            </label>
+                            <label class="filter-tag">
+                                <input type="radio" name="sort_mode" value="" {% if not request.GET.newest and not request.GET.kop_korilgan %}checked{% endif %}>
+                                <span>Default</span>
+                            </label>
+                        </div>
+                        <input type="hidden" name="newest" value="{{ request.GET.newest }}" data-sort-input="newest">
+                        <input type="hidden" name="kop_korilgan" value="{{ request.GET.kop_korilgan }}" data-sort-input="kop_korilgan">
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="button button-primary" type="submit">Qo‘llash</button>
+                        <a class="button button-secondary" href="{% url 'index' %}">Tozalash</a>
+                    </div>
+                </form>
+            </aside>
+
+            <div class="catalog-results">
+                <div class="product-grid reveal-group" data-product-grid>
+                    {% for product in page_obj %}
                 <article class="product-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}" data-product-card data-title="{{ product.title|lower }}" data-category="{{ product.category.title|lower }}">
                     <a class="product-card__media product-media-rotator" href="{% url 'product_detail' product.id %}" data-images="{% for image in product.images.all %}{{ image.photo.url }}{% if not forloop.last %}||{% endif %}{% endfor %}">
                         {% with primary_image=product.images.first %}
@@ -42,9 +129,27 @@
                         </div>
                     </div>
                 </article>
-            {% empty %}
-                <p class="empty-state reveal">Mahsulotlar topilmadi.</p>
-            {% endfor %}
+                    {% empty %}
+                        <p class="empty-state reveal">Mahsulotlar topilmadi.</p>
+                    {% endfor %}
+                </div>
+
+                {% if page_obj.paginator.num_pages > 1 %}
+                    <div class="pagination reveal">
+                        {% if page_obj.has_previous %}
+                            <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.discount %}&discount={{ request.GET.discount }}{% endif %}{% if request.GET.newest %}&newest=1{% endif %}{% if request.GET.kop_korilgan %}&kop_korilgan=1{% endif %}">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                        {% endif %}
+                        <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                        {% if page_obj.has_next %}
+                            <a class="pagination-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.discount %}&discount={{ request.GET.discount }}{% endif %}{% if request.GET.newest %}&newest=1{% endif %}{% if request.GET.kop_korilgan %}&kop_korilgan=1{% endif %}">
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </section>
@@ -120,6 +225,14 @@
                         <div class="price-row">
                             <strong>${{ product.final_price }}</strong>
                             {% if product.discount %}<span>${{ product.price }}</span>{% endif %}
+                        </div>
+                        <div class="card-actions">
+                            <button class="icon-button icon-button-cart" type="button" data-add-to-cart data-product-id="{{ product.id }}" data-quantity="1" aria-label="Savatga qo'shish">
+                                <i class="bi bi-bag-plus"></i>
+                            </button>
+                            <button class="icon-button" type="button" data-toggle-saved data-product-id="{{ product.id }}" aria-label="Wishlistga qo'shish">
+                                <i class="bi bi-heart"></i>
+                            </button>
                         </div>
                     </div>
                 </article>

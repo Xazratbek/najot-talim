@@ -1,0 +1,45 @@
+<div class="orders-grid reveal-group">
+    {% for order in orders %}
+        <article class="order-card reveal {% cycle '' 'delay-1' 'delay-2' 'delay-3' %}">
+            <div class="order-card__header">
+                <div>
+                    <p class="eyebrow">Order</p>
+                    <h3>#{{ order.id|truncatechars:8 }}</h3>
+                </div>
+                <span class="status-pill status-pill--{{ badge }}">
+                    {% if badge == "done" %}Tugallangan{% elif badge == "cancelled" %}Bekor qilingan{% else %}To‘langan{% endif %}
+                </span>
+            </div>
+            <div class="order-card__meta">
+                <span>Manzil</span>
+                <strong>{{ order.address }}</strong>
+            </div>
+            <div class="order-items">
+                {% for item in order.items.all %}
+                    <div class="order-item">
+                        {% with image=item.product.images.first %}
+                            {% if image %}
+                                <img src="{{ image.photo.url }}" alt="{{ item.product.title }}">
+                            {% else %}
+                                <div class="placeholder-card compact">No image</div>
+                            {% endif %}
+                        {% endwith %}
+                        <div>
+                            <strong>{{ item.product.title|default:"O‘chirilgan mahsulot" }}</strong>
+                            <p>{{ item.quantity }} dona</p>
+                        </div>
+                        <span>${{ item.total_price }}</span>
+                    </div>
+                {% empty %}
+                    <p class="empty-state">Bu buyurtmada mahsulot yo‘q.</p>
+                {% endfor %}
+            </div>
+            <div class="order-card__footer">
+                <span>Jami</span>
+                <strong>${{ order.finished_price }}</strong>
+            </div>
+        </article>
+    {% empty %}
+        <p class="empty-state reveal">{{ title }} topilmadi.</p>
+    {% endfor %}
+</div>

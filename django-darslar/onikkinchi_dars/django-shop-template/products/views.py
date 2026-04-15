@@ -10,39 +10,45 @@ from django.contrib.auth.decorators import login_required
 from users.models import CustomUser
 from orders.models import Order
 from django.http import HttpResponse
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.paginator import Paginator
+from decimal import Decimal
 
 
 class IndexView(View):
     def get(self, request):
-        queryset = Product.objects.all()
-        page_num = request.GET.get("page",1)
-        paginator = Paginator(queryset, 10)
-        page_obj = paginator.get_page(page_num)
+        queryset = Product.objects.all().select_related("category", "user").prefetch_related("images").order_by("-created_at")
 
         min_price = request.GET.get("min_price","")
         if min_price:
-            queryset = queryset.filter(price__gte=min_price)
+            queryset = queryset.filter(price__gte=(Decimal(min_price)))
 
         max_price = request.GET.get("max_price","")
         if max_price:
-            queryset = queryset.filter(price__lte=max_price)
-        category = request.GET.get("category","")
-        if category:
-            queryset = queryset.filter(category=category)
+            queryset = queryset.filter(price__lte=(Decimal(max_price)))
 
-        discount = request.GET.get("discount",10)
+        category = request.GET.get("category","").strip()
+        if category:
+            queryset = queryset.filter(
+                Q(category__title__iexact=category) |
+                Q(category__parent__title__iexact=category)
+            )
+
+        discount = request.GET.get("discount","")
         if discount:
-            queryset = queryset.filter(discount=discount)
+            queryset = queryset.filter(discount__isnull=False)
 
         newest = request.GET.get("newest","")
         if newest:
-            queryset = queryset.ordering('-created_at')
+            queryset = queryset.order_by('-created_at')
 
         kop_korilgan = request.GET.get("kop_korilgan","")
         if kop_korilgan:
-            queryset = queryset.prefetch_related("view_product").order_by('-view_product')[:10]
+            queryset = queryset.annotate(view_count=Count("view_product")).order_by("-view_count", "-created_at")
+
+        page_num = request.GET.get("page",1)
+        paginator = Paginator(queryset, 12)
+        page_obj = paginator.get_page(page_num)
 
         context = {
             'categories': parent_categories(),
@@ -70,7 +76,10 @@ class ProductSearchView(View):
             q_products = q_products.filter(Q(title__icontains=q) | Q(desc__icontains=q))
 
         if category:
-            q_products = q_products.filter(category__title__iexact=category)
+            q_products = q_products.filter(
+                Q(category__title__iexact=category) |
+                Q(category__parent__title__iexact=category)
+            )
 
         context = {
             "q_products": q_products,
@@ -89,17 +98,13 @@ class ProductDetailView(View):
                 user=request.user,
                 product=product
             )
+            user_comment = product.comments.filter(user=request.user).first()
+        else:
+            user_comment = None
 
         ProductView.objects.create(
             product = product
         )
-        data, created = RecentlyProduct.objects.get_or_create(user=request.user, product=product)
-        if created:
-            RecentlyProduct.objects.create(user=request.user, product=product)
-
-        user_comment = None
-        if request.user.is_authenticated:
-            user_comment = product.comments.filter(user=request.user).first()
         related_products = Product.objects.filter(category=product.category).exclude(id=product.id)[:9]
 
         context = {
@@ -122,11 +127,7 @@ def comment_create(request, product_id):
         return redirect('product_detail', id=product.id)
 
     text = request.POST.get('text', '').strip()
-
-    try:
-        rate = int(request.POST.get('rate', 1))
-    except (TypeError, ValueError):
-        rate = 1
+    rate = int(request.POST.get('rate', 1))
 
     if not (1 <= rate <= 5):
         messages.warning(request, 'Siz rate ni 1-5 oraligida berishingiz kerak')
@@ -200,11 +201,9 @@ def my_comments(request):
     comments = Comment.objects.filter(user=request.user)
     return render(request, 'recently.html', {'recently_products': [], 'comments': comments})
 
-
 def product_comments(product_id):
     comments = Comment.objects.filter(product=product_id)
     return comments
-
 
 @login_required(login_url='login')
 def saved(request, id):

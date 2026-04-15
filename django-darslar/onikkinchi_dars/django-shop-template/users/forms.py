@@ -39,6 +39,20 @@ class SignUpForm(forms.ModelForm):
         return user
 
 class ProfileUpdateForm(forms.ModelForm):
+    new_password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={'placeholder': 'Yangi parol'}),
+        label="Yangi parol"
+    )
+
     class Meta:
         model = CustomUser
-        fields = ['avatar','phone','name','password']
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'username', 'photo']
+
+        widgets = {
+            'first_name': forms.TextInput(attrs={'placeholder': 'Ism'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Familiya'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
+            'phone_number': forms.TextInput(attrs={'placeholder': '+998 ...'}),
+            'username': forms.TextInput(attrs={'placeholder': 'Username'}),
+        }

@@ -34,11 +34,17 @@ def add_card(request):
 
 @login_required(login_url='login')
 def decrease_cart_item(request, item_id):
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=400)
+
     quantity = int(request.POST.get('quantity', 1))
-    card = Card.objects.filter(user=request.user)
-    product = get_object_or_404(Product, id=item_id)
-    card_item = CardItem.objects.filter(card=card,product=product).first()
+    card = Card.objects.filter(user=request.user).first()
+    card_item = get_object_or_404(CardItem, id=item_id, card=card)
     card_item.quantity -= quantity
+    if card_item.quantity <= 0:
+        card_item.delete()
+        return JsonResponse({"status": "success",'message': "item removed"})
+
     card_item.save()
     return JsonResponse({"status": "success",'message': f"item decreased to -{quantity}"})
 
@@ -53,6 +59,8 @@ def my_cart(request):
         for item in cart_items:
             data.append({
                 "id": item.id,
+                "product_id": item.product.id if item.product else None,
+                "card_id": str(card.id),
                 "title": item.product.title if item.product else "Deleted product",
                 "price": float(item.total_price),
                 "quantity": item.quantity,
@@ -85,6 +93,9 @@ def remove_cart_item(request, item_id):
 
 @login_required(login_url='login')
 def clear_cart(request, card_id):
+    if request.method != "POST":
+        return JsonResponse({"status": "error"}, status=400)
+
     card = Card.objects.get(user=request.user)
     card_items = CardItem.objects.filter(card=card)
     for item in card_items:
@@ -94,13 +105,16 @@ def clear_cart(request, card_id):
 
 @login_required(login_url="login")
 def my_orders(request):
-    done_orders = request.user.orders.filter(status='done').prefetch_related('items','products')
+    done_orders = request.user.orders.filter(status='done').prefetch_related('items__product')
+    new_orders = Order.objects.none()
+    cancelled_orders = Order.objects.none()
+
     cancelled = request.GET.get("cancelled","")
     if cancelled:
-        cancelled_orders = request.user.orders.filter(status='cancelled').prefetch_related('items','products')
+        cancelled_orders = request.user.orders.filter(status='cancelled').prefetch_related('items__product')
 
     new = request.GET.get("new","")
     if new:
-        new_orders = request.user.orders.filter(status='paid').prefetch_related('items','products')
+        new_orders = request.user.orders.filter(status='paid').prefetch_related('items__product')
 
     return render(request,"my_orders.html",context={"done_orders": done_orders,'new_orders': new_orders,'cancelled_orders': cancelled_orders})

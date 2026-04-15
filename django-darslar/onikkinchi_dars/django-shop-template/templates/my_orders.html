@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Buyurtmalarim | TrueMarket{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container reveal-group">
+        <div class="page-hero reveal">
+            <p class="eyebrow">My Orders</p>
+            <h1>Buyurtmalar holati</h1>
+            <p class="lead">To‘langan, bekor qilingan va yakunlangan buyurtmalar shu yerda ko‘rinadi.</p>
+        </div>
+
+        <div class="orders-toolbar reveal delay-1">
+            <a class="filter-chip {% if not request.GET.new and not request.GET.cancelled %}is-active{% endif %}" href="{% url 'my-orders' %}">
+                <i class="bi bi-check2-circle"></i>
+                <span>Tugallangan</span>
+            </a>
+            <a class="filter-chip {% if request.GET.new %}is-active{% endif %}" href="{% url 'my-orders' %}?new=1">
+                <i class="bi bi-credit-card-2-front"></i>
+                <span>To‘langan</span>
+            </a>
+            <a class="filter-chip {% if request.GET.cancelled %}is-active{% endif %}" href="{% url 'my-orders' %}?cancelled=1">
+                <i class="bi bi-x-circle"></i>
+                <span>Bekor qilingan</span>
+            </a>
+        </div>
+
+        {% if request.GET.new %}
+            {% with orders=new_orders title="To‘langan buyurtmalar" badge="paid" %}
+                {% include "partials/order_list.html" %}
+            {% endwith %}
+        {% elif request.GET.cancelled %}
+            {% with orders=cancelled_orders title="Bekor qilingan buyurtmalar" badge="cancelled" %}
+                {% include "partials/order_list.html" %}
+            {% endwith %}
+        {% else %}
+            {% with orders=done_orders title="Tugallangan buyurtmalar" badge="done" %}
+                {% include "partials/order_list.html" %}
+            {% endwith %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

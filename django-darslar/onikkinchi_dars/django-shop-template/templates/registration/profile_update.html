@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Profilni yangilash | TrueMarket{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container profile-update-shell reveal-group">
+        <div class="panel reveal">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Profile Update</p>
+                    <h1>Profil ma'lumotlarini yangilash</h1>
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="profile-update-form">
+                {% csrf_token %}
+                <div class="form-grid">
+                    {% for field in form %}
+                        <label class="field-group">
+                            <span>{{ field.label }}</span>
+                            {{ field }}
+                            {% if field.errors %}
+                                <small class="field-error">{{ field.errors|join:", " }}</small>
+                            {% endif %}
+                        </label>
+                    {% endfor %}
+                </div>
+                <div class="hero-actions">
+                    <button class="button button-primary" type="submit">Saqlash</button>
+                    <a class="button button-secondary" href="{% url 'profile' request.user.id %}">Orqaga</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

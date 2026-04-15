@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.views import View
@@ -42,13 +42,19 @@ class ProfileView(View):
 
 class ProfileUpdateView(View):
     def get(sel, request,id):
-        form = ProfileUpdateForm()
+        form = ProfileUpdateForm(instance=request.user)
         return render(request, "registration/profile_update.html",context={"form": form})
 
     def post(self, request, id):
-        form = ProfileUpdateForm(request.POST, request.FILES)
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            new_password = form.cleaned_data.get("new_password")
+            if new_password:
+                user.set_password(new_password)
+            user.save()
+            if new_password:
+                update_session_auth_hash(request, user)
             return redirect('profile',id=id)
 
         return render(request, "registration/profile_update.html",context={"form": form})
