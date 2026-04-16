@@ -83,3 +83,16 @@ class ProductView(BaseModel):
 
     def __str__(self):
         return f"{self.product.title}"
+
+
+class Promocode(BaseModel):
+    code = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=6, decimal_places=2)
+    min_amount = models.DecimalField(max_digits=6, decimal_places=2)
+    expire_date = models.DateTimeField()
+    count = models.PositiveBigIntegerField(default=1)
+    
+    def __str__(self):
+        return self.code
+    
+    

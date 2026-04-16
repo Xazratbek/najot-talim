@@ -107,6 +107,14 @@ def create_order(request):
         
         for i in card.items.all():
             OrderItem.objects.create(order=order, product=i.product, quantity=i.quantity, total_price=i.total_price)
+        
+        
+        if order.finished_price > request.user.balance.amount:
+            return JsonResponse({'status': 400, 'message': 'Afsuski pulingiz yetmaydi'})
+        
+        
+        cash = request.user.balance.amount - order.finished_price
+        cash.save()
             
         data = []
         for item in order.items:
@@ -121,10 +129,17 @@ def create_order(request):
             })
         
         return JsonResponse({'status': 201, 'message': 'zakaz yaratildi', 'finish_price': order.finished_price, 'items':data})
-        
-        
 
 
+@login_required(login_url="login")
+def cancelled_order(request, order_id):
+    status = request.POST.get('status', 'cancel')
+    order = Order.objects.filter(user=request.user, id=order_id).first()
+    order.status = status
+    order.save()
+    
+    return JsonResponse({'status': 200, 'message': f'{order.id} orderi bekor qilindi'})
+ 
 
 @login_required(login_url="login")
 def my_orders(request):
