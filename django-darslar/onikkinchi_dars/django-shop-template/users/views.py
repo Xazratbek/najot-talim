@@ -1,9 +1,12 @@
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.views import View
 from .forms import SignUpForm, ProfileUpdateForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Cash
+from django.http import JsonResponse
 
 class SignUpView(View):
     def get(self, request):
@@ -57,3 +60,17 @@ class ProfileUpdateView(LoginRequiredMixin,View):
             return redirect('profile',id=id)
 
         return render(request, "registration/profile_update.html",context={"form": form})
+
+@login_required(login_url="login")
+def add_cash(request):
+    if request.method == "POST":
+        amount = request.POST.get('amount')
+        
+        cash = Cash.objects.filter(user=request.user).first()
+        cash.ammount += amount
+        cash.save()
+        
+    return JsonResponse({'status': 200, 'message':'Muvaffaqiyatli pul otkazildi', 'amount': cash.ammount})
+
+
+

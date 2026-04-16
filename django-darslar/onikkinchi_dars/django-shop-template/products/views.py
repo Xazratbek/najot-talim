@@ -227,5 +227,3 @@ def user_recently(request):
 
 
 
-def test():
-    pass
