@@ -156,8 +156,40 @@
                 <div class="cart-drawer__items" data-cart-items>
                     <p class="empty-state">Savat yuklanmoqda...</p>
                 </div>
+                <div class="cart-drawer__footer">
+                    <button type="button" class="button button-primary cart-checkout-button" data-open-checkout disabled>
+                        <i class="bi bi-bag-check"></i>
+                        <span>Buyurtma berish</span>
+                    </button>
+                </div>
             </aside>
             <div class="drawer-backdrop" data-cart-backdrop></div>
+
+            <div class="checkout-modal" data-checkout-modal aria-hidden="true">
+                <div class="checkout-modal__dialog">
+                    <div class="checkout-modal__header">
+                        <div>
+                            <p class="eyebrow">Checkout</p>
+                            <h3>Yetkazib berish manzili</h3>
+                        </div>
+                        <button type="button" class="cart-close" data-close-checkout>
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <form class="checkout-form" data-checkout-form>
+                        <label class="field-group">
+                            <span>Manzil</span>
+                            <textarea name="address" rows="5" placeholder="Buyurtma yetkaziladigan manzilni yozing" required></textarea>
+                        </label>
+                        <div class="checkout-form__actions">
+                            <button type="button" class="button button-secondary" data-close-checkout>Bekor qilish</button>
+                            <button type="submit" class="button button-primary" data-checkout-submit>
+                                <span>Buyurtmani yaratish</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         {% endif %}
 
         <footer class="site-footer">

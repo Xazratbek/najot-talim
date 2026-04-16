@@ -97,6 +97,49 @@ const cartCloseButton = document.querySelector("[data-cart-close]");
 const cartItemsNode = document.querySelector("[data-cart-items]");
 const cartCountNode = document.querySelector("[data-cart-count]");
 const clearCartButton = document.querySelector("[data-clear-cart]");
+const checkoutOpenButton = document.querySelector("[data-open-checkout]");
+const checkoutModal = document.querySelector("[data-checkout-modal]");
+const checkoutForm = document.querySelector("[data-checkout-form]");
+const checkoutSubmitButton = document.querySelector("[data-checkout-submit]");
+const cashModal = document.querySelector("[data-cash-modal]");
+const cashForm = document.querySelector("[data-cash-form]");
+const cashSubmitButton = document.querySelector("[data-cash-submit]");
+const balanceAmountNode = document.querySelector("[data-balance-amount]");
+
+function formatSensitiveValue(type, value, hidden = true) {
+    const raw = String(value || "");
+
+    if (!raw) {
+        return type === "card" ? "**** **** **** ****" : "***";
+    }
+
+    if (!hidden) {
+        if (type === "card") {
+            return raw.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim();
+        }
+        return raw;
+    }
+
+    if (type === "card") {
+        const digits = raw.replace(/\D/g, "");
+        const last = digits.slice(-4);
+        return `**** **** **** ${last || "****"}`;
+    }
+
+    return "***";
+}
+
+function openCashModal() {
+    if (!cashModal) return;
+    cashModal.classList.add("is-open");
+    cashModal.setAttribute("aria-hidden", "false");
+}
+
+function closeCashModal() {
+    if (!cashModal) return;
+    cashModal.classList.remove("is-open");
+    cashModal.setAttribute("aria-hidden", "true");
+}
 
 function openCart() {
     if (!cartDrawer || !cartBackdrop) return;
@@ -110,6 +153,18 @@ function closeCart() {
     cartDrawer.classList.remove("is-open");
     cartBackdrop.classList.remove("is-visible");
     cartDrawer.setAttribute("aria-hidden", "true");
+}
+
+function openCheckout() {
+    if (!checkoutModal) return;
+    checkoutModal.classList.add("is-open");
+    checkoutModal.setAttribute("aria-hidden", "false");
+}
+
+function closeCheckout() {
+    if (!checkoutModal) return;
+    checkoutModal.classList.remove("is-open");
+    checkoutModal.setAttribute("aria-hidden", "true");
 }
 
 async function loadCart() {
@@ -133,12 +188,19 @@ async function loadCart() {
                 clearCartButton.dataset.cardId = "";
                 clearCartButton.disabled = true;
             }
+            if (checkoutOpenButton) {
+                checkoutOpenButton.disabled = true;
+            }
             return;
         }
 
         if (clearCartButton) {
             clearCartButton.dataset.cardId = data.cart_items[0].card_id || "";
             clearCartButton.disabled = false;
+        }
+        if (checkoutOpenButton) {
+            checkoutOpenButton.dataset.cardId = data.cart_items[0].card_id || "";
+            checkoutOpenButton.disabled = false;
         }
 
         cartItemsNode.innerHTML = data.cart_items.map((item) => `
@@ -226,6 +288,37 @@ async function clearCart(cardId) {
 
     if (!response.ok) return;
     await loadCart();
+}
+
+async function createOrder(address, cardId) {
+    const formData = new FormData();
+    formData.append("address", address);
+
+    const response = await fetch("/orders/create_order/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken") || "",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        body: formData,
+    });
+
+    let data = null;
+    try {
+        data = await response.json();
+    } catch (error) {
+        data = null;
+    }
+
+    if (!response.ok || !data || String(data.status).startsWith("4")) {
+        throw new Error(data?.message || "Buyurtma yaratib bo'lmadi.");
+    }
+
+    if (cardId) {
+        await clearCart(cardId);
+    }
+
+    return data;
 }
 
 function bindCartDrawerButtons() {
@@ -356,6 +449,161 @@ if (clearCartButton) {
         clearCart(clearCartButton.dataset.cardId);
     });
 }
+
+if (checkoutOpenButton) {
+    checkoutOpenButton.addEventListener("click", () => {
+        openCheckout();
+    });
+}
+
+document.querySelectorAll("[data-close-checkout]").forEach((button) => {
+    button.addEventListener("click", closeCheckout);
+});
+
+if (checkoutModal) {
+    checkoutModal.addEventListener("click", (event) => {
+        if (event.target === checkoutModal) {
+            closeCheckout();
+        }
+    });
+}
+
+if (checkoutForm) {
+    checkoutForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const address = checkoutForm.elements.address?.value?.trim();
+        const cardId = checkoutOpenButton?.dataset.cardId || clearCartButton?.dataset.cardId || "";
+
+        if (!address) {
+            if (checkoutSubmitButton) {
+                setButtonState(checkoutSubmitButton, "Manzil kiriting");
+            }
+            return;
+        }
+
+        if (checkoutSubmitButton) {
+            checkoutSubmitButton.disabled = true;
+            checkoutSubmitButton.dataset.originalText = checkoutSubmitButton.textContent.trim();
+            checkoutSubmitButton.textContent = "Yuborilmoqda...";
+        }
+
+        try {
+            await createOrder(address, cardId);
+            checkoutForm.reset();
+            closeCheckout();
+            closeCart();
+            await loadCart();
+            window.location.href = "/orders/my_orders/?new=1";
+        } catch (error) {
+            if (checkoutSubmitButton) {
+                checkoutSubmitButton.textContent = error.message || "Xatolik";
+                window.setTimeout(() => {
+                    checkoutSubmitButton.textContent = checkoutSubmitButton.dataset.originalText || "Buyurtmani yaratish";
+                }, 1800);
+            }
+        } finally {
+            if (checkoutSubmitButton) {
+                checkoutSubmitButton.disabled = false;
+            }
+        }
+    });
+}
+
+document.querySelectorAll("[data-open-cash-modal]").forEach((button) => {
+    button.addEventListener("click", openCashModal);
+});
+
+document.querySelectorAll("[data-close-cash-modal]").forEach((button) => {
+    button.addEventListener("click", closeCashModal);
+});
+
+if (cashModal) {
+    cashModal.addEventListener("click", (event) => {
+        if (event.target === cashModal) {
+            closeCashModal();
+        }
+    });
+}
+
+if (cashForm) {
+    cashForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const endpoint = cashForm.dataset.endpoint;
+        const amount = cashForm.elements.amount?.value?.trim();
+
+        if (!amount) {
+            return;
+        }
+
+        if (cashSubmitButton) {
+            cashSubmitButton.disabled = true;
+            cashSubmitButton.dataset.originalText = cashSubmitButton.textContent.trim();
+            cashSubmitButton.textContent = "Yuborilmoqda...";
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append("amount", amount);
+
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken") || "",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || String(data.status).startsWith("4")) {
+                throw new Error(data.message || "Balansni to‘ldirib bo‘lmadi.");
+            }
+
+            const nextAmount = data.amount ?? data.ammount ?? amount;
+            if (balanceAmountNode) {
+                balanceAmountNode.textContent = `$${nextAmount}`;
+            }
+
+            cashForm.reset();
+            closeCashModal();
+        } catch (error) {
+            if (cashSubmitButton) {
+                cashSubmitButton.textContent = error.message || "Xatolik";
+                window.setTimeout(() => {
+                    cashSubmitButton.textContent = cashSubmitButton.dataset.originalText || "To‘ldirish";
+                }, 1800);
+            }
+        } finally {
+            if (cashSubmitButton) {
+                cashSubmitButton.disabled = false;
+            }
+        }
+    });
+}
+
+document.querySelectorAll("[data-toggle-sensitive]").forEach((button) => {
+    const container = button.closest(".bank-card__number, .bank-card__secure");
+    const valueNode = container?.querySelector("[data-sensitive-value]");
+    const icon = button.querySelector("i");
+
+    if (!valueNode) return;
+
+    const type = valueNode.dataset.sensitiveType || "card";
+    valueNode.textContent = formatSensitiveValue(type, valueNode.dataset.sensitiveValue, true);
+
+    button.addEventListener("click", () => {
+        const isVisible = button.dataset.visible === "true";
+        const nextVisible = !isVisible;
+        button.dataset.visible = String(nextVisible);
+        valueNode.textContent = formatSensitiveValue(type, valueNode.dataset.sensitiveValue, !nextVisible);
+        if (icon) {
+            icon.className = nextVisible ? "bi bi-eye-slash" : "bi bi-eye";
+        }
+    });
+});
 
 if (isAuthenticated) {
     loadCart();

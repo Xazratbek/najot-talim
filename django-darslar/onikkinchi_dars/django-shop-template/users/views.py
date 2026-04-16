@@ -40,7 +40,13 @@ class LoginView(View):
 
 class ProfileView(LoginRequiredMixin,View):
     def get(self, request,id):
-        return render(request, "profile.html")
+        cash = Cash.objects.filter(user=request.user).first()
+        context = {}
+        context['card_number'] = cash.card_number
+        context['card_date'] = cash.card_date
+        context['cvv'] = cash.cvv
+        context['amount'] = cash.amount
+        return render(request, "profile.html",context=context)
 
 class ProfileUpdateView(LoginRequiredMixin,View):
     def get(sel, request,id):
@@ -65,12 +71,9 @@ class ProfileUpdateView(LoginRequiredMixin,View):
 def add_cash(request):
     if request.method == "POST":
         amount = request.POST.get('amount')
-        
+
         cash = Cash.objects.filter(user=request.user).first()
         cash.ammount += amount
         cash.save()
-        
+
     return JsonResponse({'status': 200, 'message':'Muvaffaqiyatli pul otkazildi', 'amount': cash.ammount})
-
-
-

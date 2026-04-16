@@ -15,10 +15,7 @@ class Cash(BaseModel):
     card_number = models.PositiveIntegerField()
     card_date = models.DateField()
     cvv = models.PositiveIntegerField(null=True, blank=True)
-    ammount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    
+    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+
     def __str__(self):
         return self.user.username
-
-
-

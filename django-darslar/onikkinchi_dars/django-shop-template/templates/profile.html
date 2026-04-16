@@ -36,6 +36,79 @@
                 </div>
             </div>
         </div>
+
+        <div class="wallet-grid reveal-group">
+            <article class="wallet-card reveal">
+                <div class="wallet-card__head">
+                    <div>
+                        <p class="eyebrow">Balance</p>
+                        <h2>Hisob balansi</h2>
+                    </div>
+                    <button type="button" class="button button-primary button-small" data-open-cash-modal>
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Balansni to‘ldirish</span>
+                    </button>
+                </div>
+                <div class="wallet-balance">
+                    <span>Joriy balans</span>
+                    <strong data-balance-amount>${{ amount|default:request.user.balance.amount|default:"0.00" }}</strong>
+                </div>
+            </article>
+
+            <article class="bank-card reveal delay-1">
+                <div class="bank-card__top">
+                    <span class="bank-chip"></span>
+                    <p>TrueMarket Wallet</p>
+                </div>
+                <div class="bank-card__number">
+                    <span data-sensitive-value="{{ card_number|default:'0000000000000000' }}" data-sensitive-type="card">**** **** **** ****</span>
+                    <button type="button" class="sensitive-toggle" data-toggle-sensitive aria-label="Karta raqamini ko‘rish">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <div class="bank-card__meta">
+                    <article>
+                        <span>Amal qilish muddati</span>
+                        <strong>{{ card_date|date:"m / y"|default:"-- / --" }}</strong>
+                    </article>
+                    <article>
+                        <span>CVV</span>
+                        <div class="bank-card__secure">
+                            <strong data-sensitive-value="{{ cvv|default:'000' }}" data-sensitive-type="cvv">***</strong>
+                            <button type="button" class="sensitive-toggle" data-toggle-sensitive aria-label="CVVni ko‘rish">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </article>
+        </div>
     </div>
 </section>
+
+<div class="cash-modal" data-cash-modal aria-hidden="true">
+    <div class="cash-modal__dialog">
+        <div class="cash-modal__header">
+            <div>
+                <p class="eyebrow">Top Up</p>
+                <h3>Balansni to‘ldirish</h3>
+            </div>
+            <button type="button" class="cart-close" data-close-cash-modal>
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <form class="cash-form" data-cash-form data-endpoint="{% url 'add-cash' %}">
+            <label class="field-group">
+                <span>Miqdor</span>
+                <input type="number" name="amount" min="1" step="0.01" placeholder="Masalan: 150000" required>
+            </label>
+            <div class="checkout-form__actions">
+                <button type="button" class="button button-secondary" data-close-cash-modal>Bekor qilish</button>
+                <button type="submit" class="button button-primary" data-cash-submit>
+                    <span>To‘ldirish</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

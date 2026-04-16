@@ -108,16 +108,15 @@ def create_order(request):
         for i in card.items.all():
             OrderItem.objects.create(order=order, product=i.product, quantity=i.quantity, total_price=i.total_price)
 
-
         if order.finished_price > request.user.balance.amount:
             return JsonResponse({'status': 400, 'message': 'Afsuski pulingiz yetmaydi'})
 
-
-        cash = request.user.balance.amount - order.finished_price
+        cash = request.user.balance
+        cash.amount -= order.finished_price
         cash.save()
-
+        request.user.orders.filter(user=request.user,id=order.id).update(status='paid')
         data = []
-        for item in order.items:
+        for item in order.items.all():
             data.append({
                 "id": item.id,
                 "product_id": item.product.id if item.product else None,
