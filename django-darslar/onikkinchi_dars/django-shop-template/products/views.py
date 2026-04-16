@@ -224,3 +224,8 @@ def user_saveds(request):
 def user_recently(request):
     recently_products = request.user.recently_products.all().select_related('product')
     return render(request, 'recently.html', {'recently_products': recently_products})
+
+
+
+def test():
+    pass
