@@ -2,8 +2,7 @@ from django.db import models
 from shared.models import BaseModel
 from users.models import CustomUser
 from products.models import Product
-# Create your models here.
-
+from django.http import HttpResponse
 
 class Card(BaseModel):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, unique=True, related_name='card')
@@ -26,8 +25,6 @@ class CardItem(BaseModel):
 
     class Meta:
         unique_together = ['product', 'card']
-
-
 
 class Order(BaseModel):
     STATUS = (

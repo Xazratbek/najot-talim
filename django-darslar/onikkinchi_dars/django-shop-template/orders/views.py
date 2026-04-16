@@ -2,8 +2,13 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from products.models import Product
 from django.contrib.auth.decorators import login_required
+<<<<<<< Updated upstream
 from .models import Order, Card, CardItem, OrderItem
 
+=======
+from .models import Order, Card, CardItem
+from decimal import Decimal
+>>>>>>> Stashed changes
 
 @login_required(login_url='login')
 def add_card(request):
@@ -60,7 +65,7 @@ def my_cart(request):
                 "product_id": item.product.id if item.product else None,
                 "card_id": str(card.id),
                 "title": item.product.title if item.product else "Deleted product",
-                "price": float(item.total_price),
+                "price": Decimal(item.total_price),
                 "quantity": item.quantity,
                 "image": item.product.images.first().photo.url if item.product and item.product.images.exists() else "",
             })
