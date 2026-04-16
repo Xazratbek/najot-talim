@@ -2,13 +2,15 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from products.models import Product
 from django.contrib.auth.decorators import login_required
-from .models import Order, Card, CardItem
+from .models import Order, Card, CardItem, OrderItem
+
 
 @login_required(login_url='login')
 def add_card(request):
     if request.method == "POST":
         product_id = request.POST.get('product_id')
         quantity = int(request.POST.get('quantity', 1))
+        
         product = get_object_or_404(Product, pk=product_id)
         card, created = Card.objects.get_or_create(user=request.user)
         card_item = CardItem.objects.filter(card=card, product=product).first()
@@ -92,6 +94,37 @@ def clear_cart(request, card_id):
         item.delete()
 
     return JsonResponse({"status": 'success','message': 'Card items cleared'})
+
+
+@login_required(login_url="login")
+def create_order(request):
+    if request.method == 'POST':
+        address = request.POST.get('address')
+        
+        order = Order.objects.create(user=request.user, address=address)
+                
+        card = Card.objects.filter(user=request.user).first()
+        
+        for i in card.items.all():
+            OrderItem.objects.create(order=order, product=i.product, quantity=i.quantity, total_price=i.total_price)
+            
+        data = []
+        for item in order.items:
+            data.append({
+                "id": item.id,
+                "product_id": item.product.id if item.product else None,
+                "order_id": str(order.id),
+                "title": item.product.title if item.product else "Deleted product",
+                "price": float(item.total_price),
+                "quantity": item.quantity,
+                "image": item.product.images.first().photo.url if item.product and item.product.images.exists() else "",
+            })
+        
+        return JsonResponse({'status': 201, 'message': 'zakaz yaratildi', 'finish_price': order.finished_price, 'items':data})
+        
+        
+
+
 
 @login_required(login_url="login")
 def my_orders(request):
