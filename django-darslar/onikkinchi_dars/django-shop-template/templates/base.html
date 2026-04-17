@@ -178,9 +178,24 @@
                     </div>
                     <form class="checkout-form" data-checkout-form>
                         <label class="field-group">
+                            <span>Promokod</span>
+                            <input type="text" name="promo_code" placeholder="Agar bo‘lsa promo code kiriting">
+                        </label>
+                        <p class="promo-feedback" data-promo-feedback hidden></p>
+                        <label class="field-group">
                             <span>Manzil</span>
                             <textarea name="address" rows="5" placeholder="Buyurtma yetkaziladigan manzilni yozing" required></textarea>
                         </label>
+                        <div class="checkout-summary" data-checkout-summary hidden>
+                            <div class="checkout-summary__row">
+                                <span>Chegirma</span>
+                                <strong data-checkout-discount>$0</strong>
+                            </div>
+                            <div class="checkout-summary__row">
+                                <span>Yakuniy summa</span>
+                                <strong data-checkout-total>$0</strong>
+                            </div>
+                        </div>
                         <div class="checkout-form__actions">
                             <button type="button" class="button button-secondary" data-close-checkout>Bekor qilish</button>
                             <button type="submit" class="button button-primary" data-checkout-submit>

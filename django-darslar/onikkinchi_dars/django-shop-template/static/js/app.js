@@ -101,10 +101,17 @@ const checkoutOpenButton = document.querySelector("[data-open-checkout]");
 const checkoutModal = document.querySelector("[data-checkout-modal]");
 const checkoutForm = document.querySelector("[data-checkout-form]");
 const checkoutSubmitButton = document.querySelector("[data-checkout-submit]");
+const checkoutSummary = document.querySelector("[data-checkout-summary]");
+const checkoutDiscountNode = document.querySelector("[data-checkout-discount]");
+const checkoutTotalNode = document.querySelector("[data-checkout-total]");
+const promoFeedbackNode = document.querySelector("[data-promo-feedback]");
 const cashModal = document.querySelector("[data-cash-modal]");
 const cashForm = document.querySelector("[data-cash-form]");
 const cashSubmitButton = document.querySelector("[data-cash-submit]");
 const balanceAmountNode = document.querySelector("[data-balance-amount]");
+let promoCheckTimer = null;
+let promoCheckRequestId = 0;
+let promoValidationState = { status: "idle", message: "" };
 
 function formatSensitiveValue(type, value, hidden = true) {
     const raw = String(value || "");
@@ -165,6 +172,57 @@ function closeCheckout() {
     if (!checkoutModal) return;
     checkoutModal.classList.remove("is-open");
     checkoutModal.setAttribute("aria-hidden", "true");
+}
+
+function resetCheckoutSummary() {
+    if (checkoutSummary) {
+        checkoutSummary.hidden = true;
+    }
+    if (checkoutDiscountNode) {
+        checkoutDiscountNode.textContent = "$0";
+    }
+    if (checkoutTotalNode) {
+        checkoutTotalNode.textContent = "$0";
+    }
+}
+
+function setPromoFeedback(status, message = "") {
+    promoValidationState = { status, message };
+    if (!promoFeedbackNode) return;
+
+    if (!message) {
+        promoFeedbackNode.hidden = true;
+        promoFeedbackNode.textContent = "";
+        promoFeedbackNode.className = "promo-feedback";
+        return;
+    }
+
+    promoFeedbackNode.hidden = false;
+    promoFeedbackNode.textContent = message;
+    promoFeedbackNode.className = `promo-feedback promo-feedback--${status}`;
+}
+
+async function checkPromoCode(promoCode, requestId) {
+    try {
+        const response = await fetch(`/orders/check-promo/${encodeURIComponent(promoCode)}/`, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        });
+
+        const data = await response.json();
+        if (requestId !== promoCheckRequestId) return;
+
+        if (!response.ok || String(data.status).startsWith("4")) {
+            setPromoFeedback("error", data.message || "Promo code mavjud emas");
+            return;
+        }
+
+        setPromoFeedback("success", data.message || "Promo code mavjud");
+    } catch (error) {
+        if (requestId !== promoCheckRequestId) return;
+        setPromoFeedback("error", "Promo codeni tekshirib bo'lmadi");
+    }
 }
 
 async function loadCart() {
@@ -290,9 +348,10 @@ async function clearCart(cardId) {
     await loadCart();
 }
 
-async function createOrder(address, cardId) {
+async function createOrder(address, promoCode) {
     const formData = new FormData();
     formData.append("address", address);
+    formData.append("promo_code", promoCode || "");
 
     const response = await fetch("/orders/create_order/", {
         method: "POST",
@@ -304,18 +363,16 @@ async function createOrder(address, cardId) {
     });
 
     let data = null;
+    let rawText = "";
     try {
-        data = await response.json();
+        rawText = await response.text();
+        data = rawText ? JSON.parse(rawText) : null;
     } catch (error) {
         data = null;
     }
 
     if (!response.ok || !data || String(data.status).startsWith("4")) {
-        throw new Error(data?.message || "Buyurtma yaratib bo'lmadi.");
-    }
-
-    if (cardId) {
-        await clearCart(cardId);
+        throw new Error(data?.message || "Backend xatoligi sabab buyurtma yaratilmadi.");
     }
 
     return data;
@@ -452,6 +509,8 @@ if (clearCartButton) {
 
 if (checkoutOpenButton) {
     checkoutOpenButton.addEventListener("click", () => {
+        resetCheckoutSummary();
+        setPromoFeedback("idle", "");
         openCheckout();
     });
 }
@@ -469,15 +528,44 @@ if (checkoutModal) {
 }
 
 if (checkoutForm) {
+    const promoInput = checkoutForm.elements.promo_code;
+
+    promoInput?.addEventListener("input", () => {
+        const promoCode = promoInput.value.trim();
+        promoCheckRequestId += 1;
+        const requestId = promoCheckRequestId;
+
+        if (promoCheckTimer) {
+            window.clearTimeout(promoCheckTimer);
+        }
+
+        if (!promoCode) {
+            setPromoFeedback("idle", "");
+            return;
+        }
+
+        setPromoFeedback("loading", "Promo code tekshirilmoqda...");
+        promoCheckTimer = window.setTimeout(() => {
+            checkPromoCode(promoCode, requestId);
+        }, 450);
+    });
+
     checkoutForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const address = checkoutForm.elements.address?.value?.trim();
-        const cardId = checkoutOpenButton?.dataset.cardId || clearCartButton?.dataset.cardId || "";
+        const promoCode = checkoutForm.elements.promo_code?.value?.trim() || "";
 
         if (!address) {
             if (checkoutSubmitButton) {
                 setButtonState(checkoutSubmitButton, "Manzil kiriting");
+            }
+            return;
+        }
+
+        if (promoCode && promoValidationState.status === "error") {
+            if (checkoutSubmitButton) {
+                setButtonState(checkoutSubmitButton, "Promo code xato");
             }
             return;
         }
@@ -489,13 +577,34 @@ if (checkoutForm) {
         }
 
         try {
-            await createOrder(address, cardId);
-            checkoutForm.reset();
-            closeCheckout();
-            closeCart();
+            const data = await createOrder(address, promoCode);
+            if (checkoutSummary) {
+                checkoutSummary.hidden = false;
+            }
+            if (checkoutDiscountNode) {
+                checkoutDiscountNode.textContent = `$${data.discount ?? 0}`;
+            }
+            if (checkoutTotalNode) {
+                checkoutTotalNode.textContent = `$${data.finished_price ?? 0}`;
+            }
+            setPromoFeedback("success", promoCode ? "Promo code qo‘llandi. Buyurtma yaratildi." : "Buyurtma yaratildi.");
+            if (checkoutSubmitButton) {
+                checkoutSubmitButton.textContent = "Buyurtma yaratildi";
+            }
             await loadCart();
-            window.location.href = "/orders/my_orders/?new=1";
+            window.setTimeout(() => {
+                closeCheckout();
+                closeCart();
+                checkoutForm.reset();
+                resetCheckoutSummary();
+                setPromoFeedback("idle", "");
+                window.location.href = "/orders/my_orders/?new=1";
+            }, 2000);
         } catch (error) {
+            setPromoFeedback("error", error.message || "Buyurtma yaratishda xatolik yuz berdi");
+            if (checkoutSummary) {
+                checkoutSummary.hidden = true;
+            }
             if (checkoutSubmitButton) {
                 checkoutSubmitButton.textContent = error.message || "Xatolik";
                 window.setTimeout(() => {

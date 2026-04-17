@@ -11,7 +11,6 @@ from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from decimal import Decimal
 
-
 class IndexView(View):
     def get(self, request):
         queryset = Product.objects.all().select_related("category", "user").prefetch_related("images").order_by("-created_at")
@@ -224,6 +223,3 @@ def user_saveds(request):
 def user_recently(request):
     recently_products = request.user.recently_products.all().select_related('product')
     return render(request, 'recently.html', {'recently_products': recently_products})
-
-
-

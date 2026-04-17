@@ -7,6 +7,8 @@ from .forms import SignUpForm, ProfileUpdateForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Cash
 from django.http import JsonResponse
+from decimal import Decimal
+
 
 class SignUpView(View):
     def get(self, request):
@@ -73,7 +75,7 @@ def add_cash(request):
         amount = request.POST.get('amount')
 
         cash = Cash.objects.filter(user=request.user).first()
-        cash.ammount += amount
+        cash.amount += Decimal(amount)
         cash.save()
 
-    return JsonResponse({'status': 200, 'message':'Muvaffaqiyatli pul otkazildi', 'amount': cash.ammount})
+    return JsonResponse({'status': 200, 'message':'Muvaffaqiyatli pul otkazildi', 'amount': cash.amount})

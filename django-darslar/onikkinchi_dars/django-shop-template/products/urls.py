@@ -11,4 +11,5 @@ urlpatterns = [
     path('add/to/saved/<uuid:id>/',saved, name='add-to-saved'),
     path('wishlist/',user_saveds,name='wishlist'),
     path('recently/', user_recently, name='recently'),
+
 ]

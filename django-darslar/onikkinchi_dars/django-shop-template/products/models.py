@@ -84,15 +84,49 @@ class ProductView(BaseModel):
     def __str__(self):
         return f"{self.product.title}"
 
+class PromoCode(BaseModel):
+    DISCOUNT_TYPE = (
+        ('percent', 'Percent'),
+        ('fixed', 'Fixed'),
+    )
 
-class Promocode(BaseModel):
-    code = models.CharField(max_length=100)
-    amount = models.DecimalField(max_digits=6, decimal_places=2)
-    min_amount = models.DecimalField(max_digits=6, decimal_places=2)
-    expire_date = models.DateTimeField()
-    count = models.PositiveBigIntegerField(default=1)
-    
+    PROMO_TYPE = (
+        ('welcome', 'Welcome'),
+        ('public', 'Public'),
+        ('personal','Personal'),
+    )
+    title = models.CharField(max_length=150, help_text="Promo code turi masalan: Birinchi xarid uchun 30 000 so'm sovg'a")
+    code = models.CharField(max_length=50, unique=True,db_index=True)
+    discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPE, default='percent')
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2)
+    min_order_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    promo_type = models.CharField(max_length=30,choices=PROMO_TYPE,default='welcome')
+    is_active = models.BooleanField(default=True)
+    expire_at = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
-        return self.code
-    
-    
+        return f"{self.title} - {self.code}"
+
+    @staticmethod
+    def apply_discount(discount_type, discount_value, summa):
+        summa = Decimal(summa)
+        discount_value = Decimal(discount_value)
+
+        if discount_type == 'percent':
+            chegirma = (summa * discount_value) / Decimal(100)
+        else:
+            chegirma = discount_value
+
+        return summa - chegirma
+
+class PromoCodeUsage(BaseModel):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='promo_usages')
+    promocode = models.ForeignKey(PromoCode, on_delete=models.CASCADE, related_name='usages')
+    usage_count = models.PositiveIntegerField(default=0)
+    last_used_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'promocode')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.promocode.code} ({self.usage_count})"
