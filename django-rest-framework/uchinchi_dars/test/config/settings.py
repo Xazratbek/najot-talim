@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bm7_^fx$_uk4!3pgpu^ret#1&$ycr71j)lbx+9x^xaroxi3r75'
+SECRET_KEY = 'django-insecure-$xpygy!92o*(3=aj#wpw=v+b-6)9$bq1suh@jihtth&ewn9&#='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'book',
+    'book_store',
 ]
 
 MIDDLEWARE = [
@@ -73,20 +73,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "neondb",
-        "USER": "neondb_owner",
-        "PASSWORD": "npg_AP5eY0DGFgRf",
-        "HOST": "ep-gentle-leaf-amlj74zn-pooler.c-5.us-east-1.aws.neon.tech",
-        "PORT": "5432",
-        "OPTIONS": {
-            "sslmode": "require",
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 
 # Password validation
