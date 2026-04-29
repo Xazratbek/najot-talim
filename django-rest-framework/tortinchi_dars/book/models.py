@@ -8,18 +8,10 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13)
     price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
-    is_deleted = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
 
     class Meta:
         db_table = "books"
-
-class Meva(models.Model):
-    name = models.CharField(max_length=150)
-    desc = models.TextField()
-
-    def __str__(self):
-        return self.name
