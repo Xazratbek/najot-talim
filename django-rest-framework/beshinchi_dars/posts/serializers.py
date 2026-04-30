@@ -18,8 +18,10 @@ class PostSerializer(serializers.ModelSerializer):
     def validate_desc(self, value):
         if not value:
             raise ValidationError('Content bosh bo\'lishi mumkin emas')
-        if [1,2,3,4,5,6,7,8,9] in value:
+        if '4' in value:
             raise ValidationError('Content ichida raqamlar bo\'lmasin')
+
+        return value
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
