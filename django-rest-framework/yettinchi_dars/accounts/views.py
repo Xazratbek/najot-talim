@@ -6,6 +6,7 @@ from .models import CustomUser
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import login
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class SignUpView(APIView):
     def post(self, request):
@@ -25,7 +26,7 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
-            token, created = Token.objects.get_or_create(user=user)
+            token, created = RefreshToken.for_user(user)
             return Response({
                 "token": token.key,
                 'user_id': user.pk,
