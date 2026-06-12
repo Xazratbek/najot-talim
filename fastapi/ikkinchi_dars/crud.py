@@ -3,8 +3,7 @@ from models import Book
 
 def create_book(db, book):
     new_book = Book(
-        title=book.title,
-        author=book.author
+        **book.dict()
     )
     db.add(new_book)
     db.commit()
