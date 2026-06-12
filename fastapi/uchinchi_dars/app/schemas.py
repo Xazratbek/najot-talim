@@ -1,13 +1,14 @@
 from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel, ConfigDict,Field
+from pydantic import EmailStr
 
 class ProductBase(BaseModel):
     make: str = Field(...,min_length=3,max_length=100,description="Mashina nomi")
     price: Decimal = Field(...,gt=0,description="Mahsulot narxi 0 dan katta bo'lishi shart")
 
 class ProductCreate(ProductBase):
-    pass
+    email: EmailStr
 
 class ProductUpdate(BaseModel):
     make: str | None = Field(None,min_length=3,max_length=100)
