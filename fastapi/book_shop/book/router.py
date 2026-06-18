@@ -96,5 +96,5 @@ def get_user_saved_books_router(user: str, session: Session = Depends(get_db)):
     return crud.get_user_saved_books(session,user)
 
 @router.delete('comment/{comment_id}')
-def delete_comment_router(comment_id: int, session: Session = Depends(get_db))
+def delete_comment_router(comment_id: int, session: Session = Depends(get_db)):
     return crud.delete_comment(session,comment_id)
