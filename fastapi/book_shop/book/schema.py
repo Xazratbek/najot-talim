@@ -69,7 +69,6 @@ class UpdateBookSchema(CreateBookSchema):
 
 class CreateCommentSchema(BaseModel):
     summary : str = Field(max_length=100)
-    user : str
     book_id : int
 
     class Config:
@@ -78,13 +77,6 @@ class CreateCommentSchema(BaseModel):
 
 class UpdateCommentSchema(BaseModel):
     summary : Optional[str]  = Field(default=None, max_length=100)
-
-    class Config:
-        from_attribute=True
-
-class CreateSavedSchema(BaseModel):
-    user : str
-    book_id : int
 
     class Config:
         from_attribute=True

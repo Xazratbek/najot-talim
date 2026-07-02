@@ -50,7 +50,7 @@ class Comment(Base):
 
     id = Column(Integer, primary_key=True)
     summary = Column(String(120))
-    user = Column(String(12))
+    user = Column(String(50))
     book_id = Column(Integer, ForeignKey('books.id', ondelete='CASCADE'))
     created_at = Column(DateTime, default=func.now())
 
@@ -61,7 +61,7 @@ class Saved(Base):
     __tablename__ = 'saveds'
 
     id = Column(Integer, primary_key=True)
-    user = Column(String(12))
+    user = Column(String(50))
     book_id = Column(Integer, ForeignKey('books.id', ondelete='CASCADE'))
     created_at = Column(DateTime, default=func.now())
 

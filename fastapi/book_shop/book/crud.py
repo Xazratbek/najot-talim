@@ -6,6 +6,7 @@ from fastapi.exceptions import HTTPException
 from fastapi import status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+from auth.models import User
 
 
 def get_object(session, id, model):
@@ -18,6 +19,15 @@ def get_object(session, id, model):
             status_code=status.HTTP_404_NOT_FOUND
         )
     return obj
+
+
+def check_owner_or_admin(user: User, owner_username: str):
+    if user.username != owner_username and not user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Bu amalni faqat egasi yoki admin bajara oladi"
+        )
+
 
 def response_model(msg, status, data, etc = None):
     return {
@@ -62,8 +72,13 @@ def author_detail(session: Session, author_id: int):
     return response_model('Author', status.HTTP_200_OK, {'author': {author}, 'books': author.books})
 
 
-def author_list(session: Session):
-    authors = session.query(Author).order_by(Author.id.desc()).all()
+def author_list(session: Session, search: str = None):
+    query = session.query(Author)
+
+    if search:
+        query = query.filter(Author.name.ilike(f'%{search}%'))
+
+    authors = query.order_by(Author.id.desc()).all()
     return response_model('Author', status.HTTP_200_OK, authors)
 
 def author_delete(session: Session, author_id: int):
@@ -108,8 +123,13 @@ def category_delete(session: Session, category_id:int):
     return response_model('category deleted', status.HTTP_204_NO_CONTENT, data=None)
 
 
-def category_list(session: Session):
-    categories = session.query(Category).order_by(Category.id.desc()).all()
+def category_list(session: Session, search: str = None):
+    query = session.query(Category)
+
+    if search:
+        query = query.filter(Category.title.ilike(f'%{search}%'))
+
+    categories = query.order_by(Category.id.desc()).all()
     return response_model('category', status.HTTP_200_OK, categories)
 
 
@@ -136,9 +156,6 @@ def update_book(session: Session, data: UpdateBookSchema, book_id: int):
 
     return response_model('book updated', status.HTTP_200_OK, book)
 
-
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session, joinedload
 
 def book_detail(session: Session, book_id: int):
 
@@ -190,13 +207,33 @@ def book_delete(session: Session, book_id:int):
     return response_model('book deleted', status.HTTP_204_NO_CONTENT, data=None)
 
 
-def book_list(session: Session):
-    books = session.query(Book).options(joinedload(Book.author)).order_by(Book.id.desc()).all()
+def book_list(
+    session: Session,
+    search: str = None,
+    author_id: int = None,
+    category_id: int = None,
+    is_published: bool = None,
+):
+    query = session.query(Book).options(joinedload(Book.author))
+
+    if search:
+        query = query.filter(Book.title.ilike(f'%{search}%'))
+
+    if author_id:
+        query = query.filter(Book.author_id == author_id)
+
+    if category_id:
+        query = query.filter(Book.category_id == category_id)
+
+    if is_published is not None:
+        query = query.filter(Book.is_published == is_published)
+
+    books = query.order_by(Book.id.desc()).all()
     return response_model('book', status.HTTP_200_OK, books)
 
 
-def create_comment(session: Session, data: CreateCommentSchema):
-    comment = Comment(summary=data.summary, book_id=data.book_id, user=data.user)
+def create_comment(session: Session, data: CreateCommentSchema, user: User):
+    comment = Comment(summary=data.summary, book_id=data.book_id, user=user.username)
     session.add(comment)
     session.commit()
     session.refresh(comment)
@@ -209,21 +246,28 @@ def create_comment(session: Session, data: CreateCommentSchema):
 
     return response
 
-def delete_comment(session:Session, comment_id:int):
+def delete_comment(session: Session, comment_id: int, user: User):
     comment = get_object(session, comment_id, Comment)
+    check_owner_or_admin(user, comment.user)
+
     session.delete(comment)
     session.commit()
     return response_model('Comment deleted', status.HTTP_204_NO_CONTENT, data=None)
 
-def update_comment(session: Session, data: UpdateCommentSchema,comment_id: int):
-    comment = get_object(session,id,Comment)
-    print(comment)
-    print(repr(comment))
-    comment.summary = data.summary
-    session.commit(comment)
+def update_comment(session: Session, data: UpdateCommentSchema, comment_id: int, user: User):
+    comment = get_object(session, comment_id, Comment)
+    check_owner_or_admin(user, comment.user)
+
+    data = data.model_dump(exclude_unset=True)
+
+    for key, value in data.items():
+        setattr(comment, key, value)
+
+    session.commit()
     session.refresh(comment)
+
     return {
-        "message":f"comment: {comment_id}-id dagi comment yangilandi",
+        "message": f"comment: {comment_id}-id dagi comment yangilandi",
         "status": status.HTTP_200_OK
     }
 
@@ -232,8 +276,8 @@ def book_comments_list(session: Session, book_id: int):
 
     return {"message": "Barcha commentlar","comments": comments}
 
-def create_saved(session: Session, data: CreateSavedSchema):
-    saved = Saved(book_id=data.book_id, user=data.user)
+def create_saved(session: Session, book_id: int, user: User):
+    saved = Saved(book_id=book_id, user=user.username)
     session.add(saved)
     session.commit()
     session.refresh(saved)
@@ -246,25 +290,25 @@ def create_saved(session: Session, data: CreateSavedSchema):
 
     return response
 
-def get_user_saved_books(session: Session, user: str):
-    saved = session.query(Saved).filter(Saved.user == user).options(
+def get_user_saved_books(session: Session, user: User):
+    saved = session.query(Saved).filter(Saved.user == user.username).options(
         joinedload(Saved.book).joinedload(Book.author),
         joinedload(Saved.book).joinedload(Book.category)
     ).all()
 
     if not saved:
-        return {"user": user, "books": []}
+        return {"user": user.username, "books": []}
 
     return {
-        "user": user,
+        "user": user.username,
         "books": [s.book for s in saved]
     }
 
-def delete_saved(session: Session, book_id: int, user: str):
-    saved = session.query(Saved).filter(Saved.book_id==book_id,Saved.user == user).first()
+def delete_saved(session: Session, book_id: int, user: User):
+    saved = session.query(Saved).filter(Saved.book_id == book_id, Saved.user == user.username).first()
     if saved:
         session.delete(saved)
         session.commit()
-        return {"ok":True,"saved":saved}
+        return {"ok": True, "saved": saved}
     else:
-        return {"message":f"{user.title()}-ning saqlanganlarida ushbu kitob mavjud emas"}
+        return {"message": "Saqlanganlar orasida ushbu kitob mavjud emas"}
