@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
-from auth.models import User
+from auth.models import User, TokenBlacklist
 from auth.schema import SignupSchema, LoginSchema, ProfileUpdateSchema, PasswordChangeSchema
-from auth.auth_config import create_access_token
+from auth.auth_config import create_access_token, create_refresh_token, decode_token
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -42,8 +42,9 @@ def login(session: Session, data: LoginSchema):
         )
 
     access_token = create_access_token(user.id)
+    refresh_token = create_refresh_token(user.id)
 
-    return {'access_token': access_token}
+    return {'access_token': access_token, 'refresh_token': refresh_token}
 
 
 def get_profile(user: User):
@@ -73,3 +74,28 @@ def change_password(session: Session, data: PasswordChangeSchema, user: User):
     session.commit()
 
     return {'message': "Parol muvaffaqiyatli o'zgartirildi"}
+
+
+def refresh_access_token(refresh_token: str):
+    try:
+        payload = decode_token(refresh_token)
+        user_id = int(payload.get('sub'))
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token noto'g'ri yoki eskirgan"
+        )
+
+    access_token = create_access_token(user_id)
+    return {'access_token': access_token, 'refresh_token': refresh_token}
+
+
+def logout(session: Session, access_token: str):
+    existing = session.query(TokenBlacklist).filter(TokenBlacklist.token == access_token).first()
+    if existing:
+        return {'message': "Allaqachon chiqib ketgansiz"}
+
+    blacklisted_token = TokenBlacklist(token=access_token)
+    session.add(blacklisted_token)
+    session.commit()
+    return {'message': "Muvaffaqiyatli chiqib ketdingiz"}

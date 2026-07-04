@@ -16,6 +16,7 @@ class LoginSchema(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str = 'bearer'
 
 
@@ -37,6 +38,10 @@ class ProfileUpdateSchema(BaseModel):
 class PasswordChangeSchema(BaseModel):
     old_password: str
     new_password: str
+
+
+class RefreshTokenSchema(BaseModel):
+    refresh_token: str
 
 
 class MessageResponse(BaseModel):

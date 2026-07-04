@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from db import get_db
 import auth.crud as crud
@@ -32,3 +33,17 @@ def profile_update_router(data: schema.ProfileUpdateSchema, session: Session = D
 @router.post('/password-change', response_model=schema.MessageResponse)
 def password_change_router(data: schema.PasswordChangeSchema, session: Session = Depends(get_db), user: User = Depends(get_current_user)):
     return crud.change_password(session, data, user)
+
+
+@router.post('/refresh', response_model=schema.TokenResponse)
+def refresh_router(data: schema.RefreshTokenSchema):
+    return crud.refresh_access_token(data.refresh_token)
+
+
+@router.post('/logout', response_model=schema.MessageResponse)
+def logout_router(
+    credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+    session: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    return crud.logout(session, credentials.credentials)

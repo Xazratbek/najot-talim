@@ -11,3 +11,11 @@ class User(Base):
     full_name = Column(String(120), nullable=True)
     hashed_password = Column(String(255))
     created_at = Column(DateTime, default=func.now())
+
+
+class TokenBlacklist(Base):
+    __tablename__ = 'token_blacklist'
+
+    id = Column(Integer, primary_key=True)
+    token = Column(String(500), unique=True)
+    blacklisted_at = Column(DateTime, default=func.now())
