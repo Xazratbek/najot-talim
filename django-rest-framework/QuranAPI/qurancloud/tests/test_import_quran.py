@@ -1,3 +1,6 @@
+import json
+import os
+import tempfile
 from io import StringIO
 from unittest.mock import MagicMock, patch
 
@@ -139,3 +142,27 @@ class ImportQuranCommandTests(TestCase):
     def test_skip_juz_does_not_create_juz(self, mock_get):
         call_command("import_quran", "--skip-juz", stdout=StringIO())
         self.assertEqual(Juz.objects.count(), 0)
+
+    def test_editions_file_loads_from_disk_without_network_call(self):
+        editions_path = self._write_json(EDITIONS_PAYLOAD)
+        quran_path = self._write_json(QURAN_PAYLOAD)
+
+        with patch("qurancloud.management.commands.import_quran.requests.get") as mock_get:
+            call_command(
+                "import_quran",
+                editions_file=editions_path,
+                quran_file=quran_path,
+                stdout=StringIO(),
+            )
+
+        mock_get.assert_not_called()
+        self.assertEqual(Edition.objects.count(), 2)
+        self.assertEqual(Surah.objects.count(), 1)
+        self.assertEqual(Ayah.objects.count(), 2)
+
+    def _write_json(self, payload):
+        fd, path = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, "w") as fh:
+            fh.write(json.dumps(payload))
+        self.addCleanup(os.remove, path)
+        return path
