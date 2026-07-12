@@ -17,8 +17,8 @@ class AyahSerializer(ModelSerializer):
         model = Ayah
         fields = [
             "number","text","number_in_surah","juz","manzil","page",
-            "ruku","hizb_quarter","sajda","audio","audio_secondary",
-            "edition",'surah'
+            "ruku","hizb_quarter","sajda","sajda_obligatory","sajda_recommended",
+            "audio","audio_secondary","edition",'surah'
         ]
 
 class SurahSerializer(ModelSerializer):

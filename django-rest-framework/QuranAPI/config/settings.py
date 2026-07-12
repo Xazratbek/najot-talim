@@ -11,21 +11,24 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-xd1yr9_pxx-*eaw$opn5s%s4gr1@%k#lgd7nr5b%cq*=(+01k^"
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-xd1yr9_pxx-*eaw$opn5s%s4gr1@%k#lgd7nr5b%cq*=(+01k^")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 
 # Application definition
@@ -77,14 +80,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "alqurancloudapi",
-        "USER": "xazratbek",
-        "PASSWORD": "1967",
-        "HOST": "localhost",  # Set this to the host where your PostgreSQL database is running.
-        "PORT": "5432",  # Default PostgreSQL port is 5432.
-    }
+    "default": env.db(
+        "DATABASE_URL",
+        default="postgresql://xazratbek:1967@localhost:5432/alqurancloudapi",
+    )
 }
 
 
@@ -123,6 +122,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
