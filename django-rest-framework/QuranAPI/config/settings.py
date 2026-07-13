@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "qurancloud",
-    'rest_framework_swagger',
-    'drf_yasg',
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -146,4 +146,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Quran API Documentation",
+    "DESCRIPTION": "The following endpoints are supported by the Quran API. They all support the HTTP GET method and return JSON.",
+    "VERSION": "v1",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
