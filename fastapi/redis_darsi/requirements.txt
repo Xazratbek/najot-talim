@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+aiosqlite
+redis
+pydantic
+Django
+djangorestframework
+django-redis
+celery
+pyamqp
