@@ -8,20 +8,13 @@ DATABASE_URL = os.getenv(
     "postgresql+psycopg2://xazratbek:196712@localhost:5432/yettinchi_dars",
 )
 
-engine = create_engine(DATABASE_URL)
+engine = create_async_engine(settings.database_url)
 
-SessionLocal = sessionmaker(
-    autoflush=False,
-    autocommit=False,
-    bind=engine
+SessionLocal = async_sessionmaker(
+    engine,
+    expire_on_commit=False,
 )
 
-Base = declarative_base()
-
-
-def get_db():
-    session = SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
+async def get_db():
+    async with SessionLocal() as db:
+        yield db
